@@ -14,9 +14,15 @@ struct TicketDetailTopView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(ticketInfo.departureCode)
+                Text(
+//                      ticketInfo.departureCode
+                    "departurecode"
+                )
                     .font(.custom("Futura-Medium", size: 20.0, relativeTo: .title3))
-                Text(ticketInfo.departure)
+                Text(
+//                    ticketInfo.departure
+                    "departure"
+                )
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
@@ -45,16 +51,23 @@ struct TicketDetailTopView: View {
                         .fill(Color.teal)
                         .frame(width: 6.0, height: 6.0)
                 }
-                Text(ticketInfo.journeyTime)
+                Text(
+                    "journeyTime"
+//                    ticketInfo.journeyTime
+                )
                     .font(.caption)
                     .fontWeight(.semibold)
             }
             .offset(x: .zero, y: 4.0)
             Spacer()
             VStack(alignment: .trailing) {
-                Text(ticketInfo.destinationCode)
+                Text("destinationCode"
+//                    ticketInfo.destinationCode
+                )
                     .font(.custom("Futura-Medium", size: 20.0, relativeTo: .title3))
-                Text(ticketInfo.destination)
+                Text("destination"
+//                     ticketInfo.destination
+                )
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
@@ -69,10 +82,10 @@ struct TicketDetailTopView: View {
     }
 }
 
-struct TicketDetailTopView_Previews: PreviewProvider {
-    static var previews: some View {
-        TicketDetailTopView(ticketInfo: sampleTicketData[0])
-            .frame(height: 80.0)
-            .previewLayout(PreviewLayout.sizeThatFits)
-    }
-}
+//struct TicketDetailTopView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TicketDetailTopView(ticketInfo: sampleTicketData[0])
+//            .frame(height: 80.0)
+//            .previewLayout(PreviewLayout.sizeThatFits)
+//    }
+//}

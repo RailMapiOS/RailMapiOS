@@ -10,7 +10,7 @@ import SwiftUI
 struct listStopPointView: View {
     
     @StateObject var viewModel: AddTicketViewModel
-    @EnvironmentObject var addTicketInfoVM: AddTicketInfo
+//    @EnvironmentObject var addTicketInfoVM: AddTicketInfo
     
     @Binding var Departure: String?
     @Binding var Arrival: String?
@@ -43,8 +43,8 @@ struct listStopPointView: View {
                                     Text("\(formattedDepartureTime) - \(stopName)")
                                         .onTapGesture {
                                             Departure = stopName
-                                            addTicketInfoVM.addTicketInfo[0].departureCode = stopName
-                                            addTicketInfoVM.addTicketInfo[0].departureTime = formattedDepartureTime
+//                                            addTicketInfoVM.addTicketInfo[0].departureCode = stopName
+//                                            addTicketInfoVM.addTicketInfo[0].departureTime = formattedDepartureTime
                                         }
                                 }
                             }
@@ -65,8 +65,8 @@ struct listStopPointView: View {
                                         Text("\(formattedArrivalTime) - \(stopName)")
                                             .onTapGesture {
                                                 Arrival = stopName
-                                                addTicketInfoVM.addTicketInfo[0].destinationCode = stopName
-                                                addTicketInfoVM.addTicketInfo[0].arrivalTime = formattedArrivalTime
+//                                                addTicketInfoVM.addTicketInfo[0].destinationCode = stopName
+//                                                addTicketInfoVM.addTicketInfo[0].arrivalTime = formattedArrivalTime
                                             }
                                     }
                                 }
@@ -77,14 +77,14 @@ struct listStopPointView: View {
 //                        print("Vehicle Journeys changed in listStopPointView: \(newVehicleJourneys[0].stopTimes)")
 //                    }
 
-                    .onAppear {
-                        if let firstStopTime = firstStopTimes?.first {
-                            let stopPointID = firstStopTime.stopPoint.id ?? "N/A"
-                            addTicketInfoVM.addTicketInfo[0].compagny = viewModel.extractName(from: stopPointID)
-                        } else {
-                            print("On Appear - No first stop time available")
-                        }
-                    }
+//                    .onAppear {
+//                        if let firstStopTime = firstStopTimes?.first {
+//                            let stopPointID = firstStopTime.stopPoint.id ?? "N/A"
+//                            addTicketInfoVM.addTicketInfo[0].compagny = viewModel.extractName(from: stopPointID)
+//                        } else {
+//                            print("On Appear - No first stop time available")
+//                        }
+//                    }
                     .listStyle(.plain)
                 } else {
 Text("")                            }

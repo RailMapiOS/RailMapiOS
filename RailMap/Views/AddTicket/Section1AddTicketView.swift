@@ -46,5 +46,5 @@ struct Section1AddTicketView: View {
 
 #Preview {
     AddTicket()
-        .environmentObject(AddTicketInfo())
+//        .environmentObject(AddTicketInfo())
 }

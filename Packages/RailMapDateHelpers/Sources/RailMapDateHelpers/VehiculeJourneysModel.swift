@@ -1,13 +1,9 @@
 //
-//  vehiculeJourneysModel.swift
-//  NavitiaAPI
+//  VehiculeJourneysModel.swift
+//  
 //
-//  Created by Jérémie - Ada on 10/08/2023.
+//  Created by Jérémie Patot on 28/06/2024.
 //
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let vehiculeJourneys = try? JSONDecoder().decode(VehiculeJourneys.self, from: jsonData)
 
 import Foundation
 

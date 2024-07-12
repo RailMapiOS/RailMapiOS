@@ -34,8 +34,8 @@ struct TicketListView: View {
     }
 }
 
-struct TicketListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct TicketListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}

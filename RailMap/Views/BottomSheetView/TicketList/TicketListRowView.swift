@@ -1,10 +1,10 @@
+////
+////  TicketListRowView.swift
+////  FlightTicketBrowser
+////
+////  Created by Takuya Aso on 2021/12/26.
+////
 //
-//  TicketListRowView.swift
-//  FlightTicketBrowser
-//
-//  Created by Takuya Aso on 2021/12/26.
-//
-
 import CoreData
 import SwiftUI
 
@@ -18,7 +18,7 @@ struct TicketListRowView: View {
     var body: some View {
 
 
-        ForEach(journeys, id: \.self) { journey in
+        ForEach($journeys, id: \.self) { journey in
                 NavigationLink(destination: TicketDetailView(ticketInfo: journey)) {
                     
                     HStack {

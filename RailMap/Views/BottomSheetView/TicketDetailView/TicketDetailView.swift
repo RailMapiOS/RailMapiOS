@@ -9,13 +9,15 @@ import SwiftUI
 
 struct TicketDetailView: View {
     
- //   let ticketInfo: TicketInfo
+    let ticketInfo: TicketInfo
     @State private var isShowModal = false
     
     var body: some View {
         ScrollView {
             VStack(spacing: .zero) {
-                TicketDetailTopView(ticketInfo: ticketInfo)
+                TicketDetailTopView(
+                    ticketInfo: ticketInfo
+                )
                 ZStack {
                     LREdgeCutShapeView()
                         .fill(Color(UIColor.tertiarySystemBackground), style: FillStyle(eoFill: false, antialiased: false))
@@ -26,7 +28,9 @@ struct TicketDetailView: View {
                         .frame(height: 1.0)
                         .padding(.horizontal, 20.0)
                 }
-                TicketDetailMainView(ticketInfo: ticketInfo)
+                TicketDetailMainView(
+//                    ticketInfo: ticketInfo
+                )
             }
             .padding(.all, 20.0)
         }

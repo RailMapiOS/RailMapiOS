@@ -61,9 +61,9 @@ struct BottomSheetViewLarge: View {
                         
                     }
                     .listStyle(PlainListStyle())
-                .onAppear {
-                    viewModel.fetchTicketList()
-                }
+//                .onAppear {
+//                    viewModel.fetchTicketList()
+//                }
                 Spacer()
             }
             .padding(.top)

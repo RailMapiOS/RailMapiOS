@@ -31,6 +31,8 @@
 		868AC91F2AB446F9002DA720 /* Section2SubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868AC91E2AB446F9002DA720 /* Section2SubtitleView.swift */; };
 		868AC9212AB4489E002DA720 /* listStopPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868AC9202AB4489E002DA720 /* listStopPointView.swift */; };
 		868AC9242AB482D4002DA720 /* AddTicketInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868AC9232AB482D4002DA720 /* AddTicketInfo.swift */; };
+		8696660B2C2EACDA00173B9F /* RailMapDateHelpers in Resources */ = {isa = PBXBuildFile; fileRef = 869666092C2EACDA00173B9F /* RailMapDateHelpers */; };
+		8696660E2C2EACF800173B9F /* RailMapDateHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 8696660D2C2EACF800173B9F /* RailMapDateHelpers */; };
 		869821A12AB1EE6E0014BDC2 /* AddTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869821A02AB1EE6E0014BDC2 /* AddTicketView.swift */; };
 		86E467E62B0F69E400487567 /* NewJourneyVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E467E52B0F69E400487567 /* NewJourneyVM.swift */; };
 		86E467E72B0FA4E000487567 /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B775352AC45B540033B574 /* NewJourneyModel.swift */; };
@@ -85,10 +87,11 @@
 		868AC91E2AB446F9002DA720 /* Section2SubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section2SubtitleView.swift; sourceTree = "<group>"; };
 		868AC9202AB4489E002DA720 /* listStopPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = listStopPointView.swift; sourceTree = "<group>"; };
 		868AC9232AB482D4002DA720 /* AddTicketInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketInfo.swift; sourceTree = "<group>"; };
+		869666092C2EACDA00173B9F /* RailMapDateHelpers */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RailMapDateHelpers; sourceTree = "<group>"; };
 		869821A02AB1EE6E0014BDC2 /* AddTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketView.swift; sourceTree = "<group>"; };
 		86B775352AC45B540033B574 /* NewJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyModel.swift; sourceTree = "<group>"; };
 		86E467E52B0F69E400487567 /* NewJourneyVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyVM.swift; sourceTree = "<group>"; };
-		86E467EA2B10B46400487567 /* TicketListRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TicketListRowViewModel.swift; path = "RailMap/View Models/TicketListRowViewModel.swift"; sourceTree = "<group>"; };
+		86E467EA2B10B46400487567 /* TicketListRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketListRowViewModel.swift; sourceTree = "<group>"; };
 		86F87B5F2AA35E8D00F7B710 /* RailMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86F87B622AA35E8D00F7B710 /* RailMapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailMapApp.swift; sourceTree = "<group>"; };
 		86F87B642AA35E8D00F7B710 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -104,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8696660E2C2EACF800173B9F /* RailMapDateHelpers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,6 +158,7 @@
 			children = (
 				868AC9162AB34744002DA720 /* AddTicketVM */,
 				863D04392AAB4D9800632672 /* TicketListViewModel.swift */,
+				86E467EA2B10B46400487567 /* TicketListRowViewModel.swift */,
 				86E467E52B0F69E400487567 /* NewJourneyVM.swift */,
 			);
 			path = "View Models";
@@ -294,6 +299,21 @@
 			path = AddTicket;
 			sourceTree = "<group>";
 		};
+		8696660A2C2EACDA00173B9F /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				869666092C2EACDA00173B9F /* RailMapDateHelpers */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		8696660C2C2EACF800173B9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		86E467E22B0CABBA00487567 /* Date */ = {
 			isa = PBXGroup;
 			children = (
@@ -304,10 +324,11 @@
 		86F87B562AA35E8C00F7B710 = {
 			isa = PBXGroup;
 			children = (
-				86E467EA2B10B46400487567 /* TicketListRowViewModel.swift */,
+				8696660A2C2EACDA00173B9F /* Packages */,
 				86F87B612AA35E8D00F7B710 /* RailMap */,
 				86FD8F672AB9CDE4006D113C /* RailMapTests */,
 				86F87B602AA35E8D00F7B710 /* Products */,
+				8696660C2C2EACF800173B9F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -370,6 +391,9 @@
 			dependencies = (
 			);
 			name = RailMap;
+			packageProductDependencies = (
+				8696660D2C2EACF800173B9F /* RailMapDateHelpers */,
+			);
 			productName = RailMap;
 			productReference = 86F87B5F2AA35E8D00F7B710 /* RailMap.app */;
 			productType = "com.apple.product-type.application";
@@ -436,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				86F87B6A2AA35E8D00F7B710 /* Preview Assets.xcassets in Resources */,
+				8696660B2C2EACDA00173B9F /* RailMapDateHelpers in Resources */,
 				86F87B672AA35E8D00F7B710 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -757,6 +782,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8696660D2C2EACF800173B9F /* RailMapDateHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RailMapDateHelpers;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		8671CBB22B076ED300042F30 /* RailMap.xcdatamodeld */ = {

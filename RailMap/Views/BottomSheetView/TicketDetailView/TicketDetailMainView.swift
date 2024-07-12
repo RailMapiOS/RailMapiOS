@@ -14,37 +14,37 @@ struct TicketDetailMainView: View {
     var body: some View {
         VStack(spacing: 16.0) {
             HStack(spacing: .zero) {
-                BlockView(key: "TRAIN NUM", value: ticketInfo.trainNumber, rows: 3)
+                BlockView(key: "TRAIN NUM", value: "num", rows: 3)
                 Divider()
-                BlockView(key: "HALL", value: ticketInfo.hall, rows: 3)
+                BlockView(key: "HALL", value: "hall", rows: 3)
                 Divider()
-                BlockView(key: "VOIE", value: ticketInfo.platform, rows: 3)
+                BlockView(key: "VOIE", value: "voie", rows: 3)
             }
             Divider()
             HStack(spacing: .zero) {
-                BlockView(key: "DATE", value: ticketInfo.date, rows: 3)
+                BlockView(key: "DATE", value: "date", rows: 3)
                 Divider()
-                BlockView(key: "DEPARTURE TIME", value: ticketInfo.departureTime, rows: 3)
+                BlockView(key: "DEPARTURE TIME", value: "heure", rows: 3)
                 Divider()
-                BlockView(key: "SEAT", value: ticketInfo.seatNumber, rows: 3)
+                BlockView(key: "SEAT", value: "siege", rows: 3)
             }
             Divider()
             HStack(spacing: .zero) {
-                BlockView(key: "PASSENGER", value: ticketInfo.passenger, rows: 2)
+                BlockView(key: "PASSENGER", value: "passager", rows: 2)
                 Divider()
-                BlockView(key: "PASSPORT", value: ticketInfo.passportNumber, rows: 2)
+                BlockView(key: "PASSPORT", value: "passport", rows: 2)
             }
             Divider()
             HStack(spacing: .zero) {
-                BlockView(key: "E-TICKET NUM", value: ticketInfo.eTicketNumber, rows: 2)
+                BlockView(key: "E-TICKET NUM", value: "eticket num", rows: 2)
                 Divider()
-                BlockView(key: "BOOKING CODE", value: ticketInfo.bookingCode, rows: 2)
+                BlockView(key: "BOOKING CODE", value: "booking code", rows: 2)
             }
             Divider()
             HStack(spacing: .zero) {
-                BlockView(key: "PAYMENT METHOD", value: ticketInfo.payment, rows: 2)
+                BlockView(key: "PAYMENT METHOD", value: "method", rows: 2)
                 Divider()
-                BlockView(key: "PRICE", value: ticketInfo.price, rows: 2)
+                BlockView(key: "PRICE", value: "price", rows: 2)
             }
             // Pattern 1
             //Image(uiImage: UIImage(data: BarcodeGenerator.generate(barcodeStr: ticketInfo.eTicketNumber + ticketInfo.bookingCode)!)!)
@@ -71,6 +71,7 @@ struct TicketDetailMainView: View {
         }
     }
 }
+
 
 struct TicketDetailMainView_Previews: PreviewProvider {
     static var previews: some View {

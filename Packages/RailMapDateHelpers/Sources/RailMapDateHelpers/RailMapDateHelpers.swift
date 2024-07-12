@@ -1,78 +1,15 @@
-//
-//  AddTicketViewModel.swift
-//  RailMap
-//
-//  Created by Jérémie - Ada on 14/09/2023.
-//
+// The Swift Programming Language
+// https://docs.swift.org/swift-book
+
 
 import Foundation
-import SwiftUI
 
-class AddTicketViewModel: ObservableObject {
-    @Environment(\.managedObjectContext) var moc
+/// A utility structure providing various date-related helper functions.
+struct Datehelpers {
     
-    @FetchRequest(sortDescriptors: []) var journey: FetchedResults<Journey>
-    @FetchRequest(sortDescriptors: []) var stop: FetchedResults<Stop>
-    @FetchRequest(sortDescriptors: []) var stopInfo: FetchedResults<StopInfo>
-
-
-    typealias foundationCalendar = Foundation.Calendar
-
-        
-    @Published var vehicleJourneys = [VehicleJourney]() {
-        didSet {
-            //Quand 
-            updateDatePickerVehiculeJourney()
-        }
-    }
-    
-    @Published var datePickerVeehicleJourneys: [Date: String] = [:]
-    
-    
-    func updateDatePickerVehiculeJourney() {
-        // Code boucle forEach
-        vehicleJourneys.forEach { vehicleJourney in
-            let dateArray = convertCalendarToDDMMYY(calendar:vehicleJourney.calendars.first!)
-            let vehicleJourneyID = vehicleJourney.id
-            
-            dateArray?.forEach { date in
-                datePickerVeehicleJourneys[date] = vehicleJourneyID
-            }
-        }
-    }
-        
-        func fetchHeadsignAddTicket(headsign: String) async {
-            let urlString = "https://api.navitia.io/v1/coverage/fr-se/physical_modes/physical_mode%3ATrain/vehicle_journeys//?headsign=\(headsign)&"
-            
-            guard let url = URL(string: urlString) else {
-                print("Invalid URL")
-                return
-            }
-            
-            var request = URLRequest(url: url)
-            let username = "22c8f870-f331-446c-9694-749c67f88fa6"
-            let loginData = "\(username):".data(using: .utf8)!
-            let base64LoginData = loginData.base64EncodedString()
-            request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
-            
-            do {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                
-                do {
-                    let decodedResponse = try JSONDecoder().decode(VehiculeJourneys.self, from: data)
-                    DispatchQueue.main.async {
-                        self.vehicleJourneys = decodedResponse.vehicleJourneys
-                    }
-                    } catch {
-                        print("Error JSONDecoder: \(error)")
-                    }
-
-
-            } catch {
-                print("Error: \(error)")
-            }
-        }
-    
+    /// Converts active periods in a given calendar to an array of `Date` objects in DDMMYY format.
+       /// - Parameter calendar: The calendar object containing active periods and week pattern.
+       /// - Returns: An array of `Date` objects representing the active periods, or `nil` if conversion fails.
     public func convertCalendarToDDMMYY(calendar: VehicleCalendar) -> [Date]? {
         guard let activePeriod = calendar.activePeriods.first else {
             return nil // Aucune période active
@@ -92,7 +29,7 @@ class AddTicketViewModel: ObservableObject {
         var currentDate = startDate
         var formattedDates : [Date] = []
         
-        let calendar = foundationCalendar.current
+        let calendar = Calendar.current
         
         while currentDate <= endDate {
             let dayOfWeek = calendar.component(.weekday, from: currentDate)
@@ -126,15 +63,21 @@ class AddTicketViewModel: ObservableObject {
         
     }
     
+    /// Formats a `Date` object into a string with the format "dd/MM/yy".
+       /// - Parameter date: The `Date` object to be formatted.
+       /// - Returns: A string representing the formatted date.
     func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yy"
         return dateFormatter.string(from: date)
     }
     
+    /// Converts a date string from "dd/MM/yyyy" format to "dd MMMM" format.
+       /// - Parameter dateString: The date string to be converted.
+       /// - Returns: A string representing the date in "dd MMMM" format, or "N/A" if conversion fails.
     func formatDateLettre(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM/yyy"
+        dateFormatter.dateFormat = "dd/MM/yyyy"
         
         if let date = dateFormatter.date(from: dateString) {
             let outputFormatter = DateFormatter()
@@ -145,6 +88,9 @@ class AddTicketViewModel: ObservableObject {
         }
     }
     
+    /// Extracts a name from an input string based on a specific pattern.
+       /// - Parameter input: The input string containing the name.
+       /// - Returns: The extracted name, or an empty string if extraction fails.
     func extractName(from input: String) -> String {
         let pattern = ".*:(OCE[\\w ]+)-\\d+"
         do {
@@ -165,6 +111,9 @@ class AddTicketViewModel: ObservableObject {
         return ""
     }
     
+    /// Formats a time string from "HHmmss" format to "HH:mm" format.
+        /// - Parameter dateString: The time string to be formatted.
+        /// - Returns: A string representing the formatted time, or an error message if conversion fails.
     func formattedHour(from dateString: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HHmmss"
@@ -176,7 +125,4 @@ class AddTicketViewModel: ObservableObject {
         }
         return "Erreur, mauvais format de date"
     }
-
-    
 }
-
