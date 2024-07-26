@@ -11,6 +11,8 @@ import MapKit
 public struct ContentView: View {
     public init() {}
     
+    @Environment(\.managedObjectContext) var moc
+    
     @State private var isSheetPresented = true
     @State private var sheetSize: PresentationDetent = .fraction(0.3)
     
@@ -21,6 +23,10 @@ public struct ContentView: View {
             } else {
                 iPadLayout(sheetSize: $sheetSize)
             }
+        }
+        .onAppear() {
+            let dataController = DataController()
+            dataController.deleteAllObjects(of: "Journey", context: moc)
         }
     }
 }

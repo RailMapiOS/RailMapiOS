@@ -10,9 +10,8 @@ import CoreData
 
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(sortDescriptors: []) var journeys: FetchedResults<Journey>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
     @State private var path = NavigationPath()
-    var mocks: [String] = ["A", "B", "C"]
     
     @Binding var sheetSize: PresentationDetent
     @State private var searchText = ""

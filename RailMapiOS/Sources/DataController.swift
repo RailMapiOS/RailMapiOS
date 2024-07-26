@@ -11,8 +11,8 @@ import Foundation
 class DataController: ObservableObject {
     let container = NSPersistentContainer(name: "RailMap")
     
-    @Published var journeys: [Journey] = [Journey]()
-    
+    @Published var journeys: [Journey] = []
+
     init() {
         container.loadPersistentStores { description, error in
             if let error = error {
@@ -60,7 +60,6 @@ class DataController: ObservableObject {
                 stopInfo.dropOffAllowed = newStopInfo.dropOffAllowed
                 stopInfo.skippedStop = newStopInfo.skippedStop
                 
-                stopInfo.stop = stop
                 stop.stopinfo = stopInfo
             }
             
@@ -71,18 +70,47 @@ class DataController: ObservableObject {
     }
 
     func createMockJourneys(context: NSManagedObjectContext) {
-        var compagnies = ["Deutsche Bahn", "SNCF", "Eurostar", "Trenitalia", "Renfe"]
+        let compagnies = ["Deutsche Bahn", "SNCF", "Eurostar", "TER", "Trenitalia", "Renfe"]
         var date = Date()
         
         for i in 1...5 {
             let journey = Journey(context: context)
             journey.id = UUID()
-            journey.idVehiculeJourney = "\(String(describing: journey.id))_idVehiculeJourney"
+            journey.idVehiculeJourney = "\(journey.id?.uuidString ?? UUID().uuidString)_idVehiculeJourney"
             journey.headsign = "Headsign \(i)"
             journey.archived = false
             journey.company = compagnies.randomElement()
             journey.startDate = generateEndDate(from: date)
             journey.endDate = generateEndDate(from: journey.startDate!)
+
+            // Créer les objets Stop
+            let departureStop = Stop(context: context)
+            departureStop.arrivalTimeUTC = journey.startDate
+            departureStop.departureTimeUTC = journey.startDate
+            departureStop.status = "departure"
+            
+            let departureStopInfo = StopInfo(context: context)
+            departureStopInfo.label = "Gare de Lyon"
+            departureStopInfo.dropOffAllowed = true
+            departureStopInfo.pickUpAllowed = true
+            departureStopInfo.skippedStop = false
+            departureStop.stopinfo = departureStopInfo
+            
+            let arrivalStop = Stop(context: context)
+            arrivalStop.arrivalTimeUTC = journey.endDate
+            arrivalStop.departureTimeUTC = journey.endDate
+            arrivalStop.status = "arrival"
+            
+            let arrivalStopInfo = StopInfo(context: context)
+            arrivalStopInfo.label = "Gare de Perpignan"
+            arrivalStopInfo.dropOffAllowed = true
+            arrivalStopInfo.pickUpAllowed = true
+            arrivalStopInfo.skippedStop = false
+            arrivalStop.stopinfo = arrivalStopInfo
+            
+            // Ajouter les arrêts au voyage
+            journey.addToStops(departureStop)
+            journey.addToStops(arrivalStop)
         }
         do {
             try context.save()
@@ -106,7 +134,19 @@ class DataController: ObservableObject {
         
         return endDate
     }
-
+    
+    func deleteAllObjects(of entityName: String, context: NSManagedObjectContext) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+            print("All objects of entity \(entityName) deleted.")
+        } catch {
+            print("Failed to delete objects: \(error.localizedDescription)")
+        }
+    }
 }
 
 extension NSPersistentContainer {

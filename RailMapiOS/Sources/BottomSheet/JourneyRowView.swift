@@ -9,129 +9,80 @@ import CoreData
 import SwiftUI
 
 struct JourneyRowView: View {
-    @State var journey: Journey
-
+    @ObservedObject var viewModel: JourneyRowViewModel
+    
+    init(journey: Journey) {
+        self.viewModel = JourneyRowViewModel(journey: journey)
+    }
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                if let startDate = journey.startDate {
-                    Text(startDate.formattedDate())
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                } else {
-                    Text("N/A")
-                        .font(.custom("Futura-Medium", size: 12.0, relativeTo: .subheadline))
-                }
+                Spacer()
+                Text(viewModel.departureTime)
+                    .font(.title)
+                    .fontWeight(.semibold)
+                Text(viewModel.departureDate)
+                    .font(.title3)
+                Spacer()
+                Text("Total \(viewModel.duration)")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
             }
             .frame(alignment: .leading)
             
             Divider()
             
-            VStack(alignment: .leading) {
-                if let departureStop = journey.departureStop {
-                    Text(departureStop.stopinfo?.label ?? "N/A")
-                        .font(.custom("Futura-Medium", size: 15.0, relativeTo: .title3))
-                        .multilineTextAlignment(.leading)
-                    
-                    if let departureTimeUTC = departureStop.departureTimeUTC {
-                        Text(departureTimeUTC.formattedTime())
-                            .font(.caption2)
-                            .fontWeight(.bold)
+            VStack {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Gare de")
+                            .font(.title3)
+                        Text(viewModel.departureLabel.replacingOccurrences(of: "Gare de ", with: ""))
+                            .font(.title2)
+                            .fontWeight(.semibold)
                     }
-                } else {
-                    Text("N/A")
-                        .font(.custom("Futura-Medium", size: 15.0, relativeTo: .title3))
-                        .multilineTextAlignment(.leading)
+                    Spacer()
+                    Image(systemName: "train.side.front.car")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20.0)
+                        .foregroundColor(.blue)
+                        .padding(.all, 3)
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        Text("Gare de")
+                            .font(.title3)
+                        Text(viewModel.arrivalLabel.replacingOccurrences(of: "Gare de ", with: ""))
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    }
                 }
-            }
-            .padding(.leading, 8.0)
-            
-            Spacer()
-            
-            VStack(alignment: .center) {
-                Image(systemName: "train.side.front.car")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20.0)
-                    .foregroundColor(.blue)
-                    .padding(.all, 3)
                 
                 HStack {
-                    Spacer()
-                    
-                    Text(journey.company ?? "Unknown")
+                    Text(viewModel.departureTime)
                         .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.gray)
+                        .fontWeight(.bold)
                     
-                    VStack{Divider().frame(maxWidth: 50)}
-                    
-                    Text(journey.durationString())
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.gray)
-                    
-                    Spacer()
-                }
-                .padding(.top, 3)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing) {
-                if let arrivalStop = journey.arrivalStop {
-                    Text(arrivalStop.stopinfo?.label ?? "N/A")
-                        .font(.custom("Futura-Medium", size: 15.0, relativeTo: .title3))
-                        .multilineTextAlignment(.trailing)
-                    
-                    if let arrivalTimeUTC = arrivalStop.arrivalTimeUTC {
-                        Text(arrivalTimeUTC.formattedTime())
-                            .font(.caption2)
-                            .fontWeight(.bold)
+                    VStack {
+                        Divider().frame(maxWidth: 50)
                     }
-                } else {
-                    Text("N/A")
-                        .font(.custom("Futura-Medium", size: 15.0, relativeTo: .title3))
-                        .multilineTextAlignment(.trailing)
+                    
+                    Text(viewModel.headsign)
+                        .font(.caption2)
+                    VStack {
+                        Divider().frame(maxWidth: 50)
+                    }
+                    
+                    Text(viewModel.arrivalTime)
+                        .font(.caption2)
+                        .fontWeight(.bold)
                 }
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8.0)
-    }
-}
-
-extension Date {
-    func formattedDate() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm\ndd MMMM"
-        return dateFormatter.string(from: self)
-    }
-
-    func formattedTime() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        return dateFormatter.string(from: self)
-    }
-}
-
-extension Journey {
-    var departureStop: Stop? {
-        return (stops as? Set<Stop>)?.first { $0.status == "departure" }
-    }
-    
-    var arrivalStop: Stop? {
-        return (stops as? Set<Stop>)?.first { $0.status == "arrival" }
-    }
-
-    func durationString() -> String {
-        guard let startDate = startDate, let endDate = endDate else {
-            return "N/A"
-        }
-        let interval = endDate.timeIntervalSince(startDate)
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        return String(format: "%02dh%02d", hours, minutes)
     }
 }
 

@@ -8,27 +8,25 @@
 import SwiftUI
 
 struct JourneysListView: View {
-    //    @FetchRequest(sortDescriptors: []) var journeys: FetchedResults<Journey>
     var journeys: [Journey]
-    var mocks: [String] = ["A", "B", "C"]
     @State var path: NavigationPath
     
     var body: some View {
-        //        if journeys.isEmpty {
-        //            VStack {
-        //                Text("Prenons le train vers l'inconnu")
-        //                    .fontWeight(.bold)
-        //                Text("Utilisez la barre de recherche ou")
-        //                    .font(.subheadline)
-        //                    .foregroundStyle(.gray)
-        //                Button(action: {
-        //                    print("trajet aléatoire")
-        //                }, label: {
-        //                    Text("Ajoutez un trajet aléatoire")
-        //                        .font(.subheadline)
-        //                })
-        //            }
-        //        } else {
+                if journeys.isEmpty {
+                    VStack {
+                        Text("Prenons le train vers l'inconnu")
+                            .fontWeight(.bold)
+                        Text("Utilisez la barre de recherche ou")
+                            .font(.subheadline)
+                            .foregroundStyle(.gray)
+                        Button(action: {
+                            print("trajet aléatoire")
+                        }, label: {
+                            Text("Ajoutez un trajet aléatoire")
+                                .font(.subheadline)
+                        })
+                    }
+                } else {
             List(journeys, id: \.self) { journey in
                 JourneyRowView(journey: journey)
                     .onTapGesture {
@@ -36,7 +34,7 @@ struct JourneysListView: View {
                     }
             }
             .listStyle(.plain)
-        // }
+         }
     }
 }
 

@@ -10,89 +10,129 @@ import CoreData
 
 struct JourneyDetailsV: View {
     @State var journey: Journey
+    
     var body: some View {
-        LazyVStack {
-            //Departure
-            VStack {
-                HStack {
-                    Text("Gare de Lyon")
-                        .multilineTextAlignment(.leading)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                    Spacer()
-                    Text(dateFormatter(for:journey.startDate))
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
-            }
-            HStack {
-                VStack{
-                    Divider()
-                }
-                Text("Total \(calculateDurationString(from: journey.startDate!, to: journey.endDate!))")
-                VStack{
-                    Divider()
-                }
-            }
-            //Arrival
-            VStack {
-                HStack {
-                    Text("Gare de Perpignan")
-                        .multilineTextAlignment(.leading)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                    Spacer()
-                    Text(dateFormatter(for: journey.endDate))
-                        .multilineTextAlignment(.trailing)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
+        VStack {
+            headerView
+            Divider()
+            stationView(stationLabel: "Gare de Lyon" , date: journey.startDate!)
+            durationView
+            stationView(stationLabel: "Gare de Perpignan" , date: journey.endDate!)
+            Divider()
+        }
+    }
+    
+    private var headerView: some View {
+        HStack {
+            companyLogo
+            Spacer()
+            journeyInfo
+        }
+        .padding(.horizontal)
+    }
+    
+    private var companyLogo: some View {
+        VStack(alignment: .leading) {
+            if let company = journey.company {
+                Image("logo_\(company.lowercased().replacingOccurrences(of: " ", with: ""))")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 120, maxHeight: 60)
             }
         }
     }
     
-    func dateFormatter(for date: Date?) -> String {
-        guard let date = date else {
-            return "Date non disponible"
+    private var journeyInfo: some View {
+        VStack(alignment: .trailing) {
+            if let headsign = journey.headsign, let company = journey.company {
+                Text(headsign)
+                    .font(.title3)
+                Text(company)
+                    .font(.subheadline)
+            }
         }
+    }
+    
+    private func stationView(stationLabel: String, date: Date) -> some View {
+        let (timeString, dateString) = dateFormatter(for: date)
+        return VStack {
+            HStack(alignment: .center) {
+                Text(stationLabel)
+                    .multilineTextAlignment(.leading)
+                    .fontWeight(.semibold)
+                    .font(.title2)
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text(timeString)
+                        .fontWeight(.semibold)
+                        .font(.title2)
+                    Text(dateString)
+                        .font(.subheadline)
+                }
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top)
+    }
+    
+    private var durationView: some View {
+        HStack {
+            VStack {
+                Divider()
+            }
+            Text("Total \(calculateDurationString(from: journey.startDate, to: journey.endDate))")
+            VStack {
+                Divider()
+            }
+        }
+        .padding(.horizontal)
+    }
+    
+    func dateFormatter(for date: Date?) -> (String, String) {
+        guard let date = date else {
+            return ("Heure non disponible", "Date non disponible")
+        }
+        
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
         
         let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM"
         
-        // Configurer le format de la date
-        dateFormatter.dateFormat = "HH:mm\ndd MMMM"
+        let timeString = timeFormatter.string(from: date)
+        let dateString = dateFormatter.string(from: date)
         
-        // Convertir la date en chaîne
-        return dateFormatter.string(from: date)
+        return (timeString, dateString)
     }
     
-    func calculateDurationString(from startDate: Date, to endDate: Date) -> String {
-        let interval = endDate.timeIntervalSince(startDate) // Durée en secondes
+    func calculateDurationString(from startDate: Date?, to endDate: Date?) -> String {
+        guard let startDate = startDate, let endDate = endDate else {
+            return "Durée non disponible"
+        }
         
-        // Convertir les secondes en heures et minutes
+        let interval = endDate.timeIntervalSince(startDate)
         let hours = Int(interval) / 3600
         let minutes = (Int(interval) % 3600) / 60
-        
-        // Formater la chaîne de caractères
         return String(format: "%02dh%02d", hours, minutes)
     }
 }
 
 #Preview {
     let container = NSPersistentContainer.preview
-           let context = container.viewContext
-           
-           // Création de données fictives pour la prévisualisation
-           let dataController = DataController()
-           dataController.createMockJourneys(context: context)
-           
-           // Récupération d'un voyage fictif pour la prévisualisation
-           let fetchRequest: NSFetchRequest<Journey> = Journey.fetchRequest()
-           fetchRequest.fetchLimit = 1
-           
-           guard let journey = try? context.fetch(fetchRequest).first else {
-               fatalError("Aucun voyage trouvé pour la prévisualisation.")
-           }
-           
-           return JourneyDetailsV(journey: journey)
-               .environment(\.managedObjectContext, context)
+    let context = container.viewContext
+    
+    // Création de données fictives pour la prévisualisation
+    let dataController = DataController()
+    dataController.createMockJourneys(context: context)
+    
+    // Récupération d'un voyage fictif pour la prévisualisation
+    let fetchRequest: NSFetchRequest<Journey> = Journey.fetchRequest()
+    fetchRequest.fetchLimit = 1
+    
+    guard let journey = try? context.fetch(fetchRequest).first else {
+        fatalError("Aucun voyage trouvé pour la prévisualisation.")
+    }
+    
+    return JourneyDetailsV(journey: journey)
+        .environment(\.managedObjectContext, context)
 }
