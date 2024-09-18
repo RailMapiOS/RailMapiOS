@@ -16,69 +16,74 @@ struct JourneyRowView: View {
     }
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Spacer()
-                Text(viewModel.departureTime)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                Text(viewModel.departureDate)
-                    .font(.title3)
-                Spacer()
-                Text("Total \(viewModel.duration)")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.gray)
-            }
-            .frame(alignment: .leading)
+        VStack {
             
-            Divider()
-            
-            VStack {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Gare de")
-                            .font(.title3)
-                        Text(viewModel.departureLabel.replacingOccurrences(of: "Gare de ", with: ""))
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                    }
-                    Spacer()
-                    Image(systemName: "train.side.front.car")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20.0)
-                        .foregroundColor(.blue)
-                        .padding(.all, 3)
-                    Spacer()
-                    VStack(alignment: .trailing) {
-                        Text("Gare de")
-                            .font(.title3)
-                        Text(viewModel.arrivalLabel.replacingOccurrences(of: "Gare de ", with: ""))
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                    }
-                }
+            HStack{
                 
-                HStack {
-                    Text(viewModel.departureTime)
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                    
-                    VStack {
-                        Divider().frame(maxWidth: 50)
-                    }
-                    
+                Image("icon_\(viewModel.compagny.lowercased().replacingOccurrences(of: " ", with: ""))")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 40, maxHeight: 40)
+                    .clipShape(.circle)
+                    .padding(.horizontal, 10)
+                
+                VStack(alignment: .leading) {
+                    Text(viewModel.compagny)
                     Text(viewModel.headsign)
                         .font(.caption2)
-                    VStack {
-                        Divider().frame(maxWidth: 50)
-                    }
-                    
-                    Text(viewModel.arrivalTime)
-                        .font(.caption2)
-                        .fontWeight(.bold)
+                        .foregroundStyle(.gray)
                 }
+                Spacer()
+                
+                Image(systemName: "clock.fill")
+                    .foregroundStyle(.gray)
+                    .aspectRatio(CGSize(width: 10, height: 10), contentMode: .fit)
+                    .opacity(0.5)
+                
+                Text(viewModel.duration)
+                    .font(.caption2)
+                    .foregroundStyle(.gray)
+            }
+            
+            HStack {
+                VStack {
+                    Text(viewModel.departureTime)
+                        .font(.title2)
+                    Text(viewModel.departureLabel)
+                        .font(.subheadline)
+                }
+                Spacer()
+                Image(systemName: "train.side.front.car")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20.0)
+                    .foregroundColor(.blue)
+                    .padding(.all, 3)
+                    .padding(.bottom, 4)
+                Spacer()
+                VStack {
+                    Text(viewModel.arrivalTime)
+                        .font(.title2)
+                    Text(viewModel.arrivalLabel)
+                        .font(.subheadline)
+                }
+            }
+            DashedDivider()
+                .stroke(style: StrokeStyle(lineWidth: 1, dash: [5, 3]))
+                .frame(height: 1)
+                .opacity(0.2)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 10)
+            HStack {
+                Text(viewModel.departureDate)
+                    .font(.subheadline)
+                    .foregroundStyle(.gray)
+                
+                Spacer()
+                
+                Text("Direct")
+                    .font(.subheadline)
+                    .foregroundStyle(.gray)
             }
         }
         .frame(maxWidth: .infinity)

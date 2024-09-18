@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -112,6 +112,10 @@
 		FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		86351F602C9AC7640053689A /* UIComponents */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UIComponents; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		6C2A791C9B933FD35FBAC54E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -195,6 +199,7 @@
 		88A1B75B2752D1E969E914AD /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				86351F602C9AC7640053689A /* UIComponents */,
 				50DEC67C63CFD8276B89B33C /* AddJourney */,
 				B3CF1EC9E5B67931A24D2856 /* BottomSheet */,
 				664A6D5E22AED755B9F229ED /* JourneyDetailsView */,
@@ -321,6 +326,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				86351F602C9AC7640053689A /* UIComponents */,
 			);
 			name = RailMapiOS;
 			productName = RailMapiOS;

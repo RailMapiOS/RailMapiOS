@@ -42,6 +42,10 @@ class JourneyRowViewModel: ObservableObject {
         arrivalStop?.stopinfo?.label ?? "N/A"
     }
     
+    var compagny: String {
+        journey.company ?? "N/A"
+    }
+    
     var duration: String {
         guard let startDate = journey.startDate, let endDate = journey.endDate else {
             return "N/A"
@@ -65,7 +69,7 @@ class JourneyRowViewModel: ObservableObject {
             return "Date non disponible"
         }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM"
+        dateFormatter.dateFormat = "EE. dd MMM."
         return dateFormatter.string(from: date)
     }
     

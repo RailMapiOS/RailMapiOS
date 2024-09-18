@@ -23,7 +23,7 @@ struct BottomSheetView: View {
         }
     }
     
-    @State private var searchTicket = "" // Variable for searching a train journey online to add a new ticket
+    @State private var searchTicket = ""
     
     var filteredJourneys: [Journey] {
         searchText.isEmpty ? Array(journeys) : journeys.filter { $0.headsign?.contains(searchText) ?? false }
@@ -57,24 +57,24 @@ struct BottomSheetView: View {
                         .font(.title)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-//                    if searchPresented && filteredJourneys.isEmpty {
-                        Button(action: {
-                            if journeys.isEmpty {
-                                let dataController = DataController()
-                                                            dataController.createMockJourneys(context: moc)
-                            }
-                        }) {
-                            Text("Save")
-                                .foregroundColor(.blue)
+                    //                    if searchPresented && filteredJourneys.isEmpty {
+                    Button(action: {
+                        if journeys.isEmpty {
+                            let dataController = DataController()
+                            dataController.createMockJourneys(context: moc)
                         }
-//                    } else {
-//                        Button(action: {
-//                            DataController.shared.createMockJourneys(context: moc)
-//                        }) {
-//                            Image(systemName: "plus")
-//                                .foregroundColor(.blue)
-//                        }
-//                    }
+                    }) {
+                        Text("Save")
+                            .foregroundColor(.blue)
+                    }
+                    //                    } else {
+                    //                        Button(action: {
+                    //                            DataController.shared.createMockJourneys(context: moc)
+                    //                        }) {
+                    //                            Image(systemName: "plus")
+                    //                                .foregroundColor(.blue)
+                    //                        }
+                    //                    }
                 }
             }
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
