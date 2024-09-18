@@ -17,74 +17,20 @@ struct JourneyRowView: View {
     
     var body: some View {
         VStack {
-            
-            HStack{
-                
-                Image("icon_\(viewModel.compagny.lowercased().replacingOccurrences(of: " ", with: ""))")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 40, maxHeight: 40)
-                    .clipShape(.circle)
-                    .padding(.horizontal, 10)
-                
-                VStack(alignment: .leading) {
-                    Text(viewModel.compagny)
-                    Text(viewModel.headsign)
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
-                }
-                Spacer()
-                
-                Image(systemName: "clock.fill")
-                    .foregroundStyle(.gray)
-                    .aspectRatio(CGSize(width: 10, height: 10), contentMode: .fit)
-                    .opacity(0.5)
-                
-                Text(viewModel.duration)
-                    .font(.caption2)
-                    .foregroundStyle(.gray)
-            }
-            
-            HStack {
-                VStack {
-                    Text(viewModel.departureTime)
-                        .font(.title2)
-                    Text(viewModel.departureLabel)
-                        .font(.subheadline)
-                }
-                Spacer()
-                Image(systemName: "train.side.front.car")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20.0)
-                    .foregroundColor(.blue)
-                    .padding(.all, 3)
-                    .padding(.bottom, 4)
-                Spacer()
-                VStack {
-                    Text(viewModel.arrivalTime)
-                        .font(.title2)
-                    Text(viewModel.arrivalLabel)
-                        .font(.subheadline)
-                }
-            }
+            JourneyRowHeader(company: viewModel.compagny, headsign: viewModel.headsign, duration: viewModel.duration)
+            JourneyTimes(
+                departureTime: viewModel.departureTime,
+                departureLabel: viewModel.departureLabel,
+                arrivalTime: viewModel.arrivalTime,
+                arrivalLabel: viewModel.arrivalLabel
+            )
             DashedDivider()
                 .stroke(style: StrokeStyle(lineWidth: 1, dash: [5, 3]))
                 .frame(height: 1)
                 .opacity(0.2)
                 .foregroundColor(.gray)
                 .padding(.horizontal, 10)
-            HStack {
-                Text(viewModel.departureDate)
-                    .font(.subheadline)
-                    .foregroundStyle(.gray)
-                
-                Spacer()
-                
-                Text("Direct")
-                    .font(.subheadline)
-                    .foregroundStyle(.gray)
-            }
+            JourneyRowFooter(departureDate: viewModel.departureDate)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8.0)
