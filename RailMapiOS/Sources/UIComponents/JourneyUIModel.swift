@@ -1,5 +1,5 @@
 //
-//  JouneyUIModel.swift
+//  JourneyUIModel.swift
 //  RailMapiOS
 //
 //  Created by Jérémie Patot on 18/09/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct JouneyUIModel: Codable {
+struct JourneyUIModel: Codable {
     var archived: Bool
     let company : String
     var endDate: String

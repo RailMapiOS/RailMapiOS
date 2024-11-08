@@ -22,6 +22,12 @@
 public enum RailMapiOSAsset {
   public enum Assets {
   public static let accentColor = RailMapiOSColors(name: "AccentColor")
+    public static let iconDeutschebahn = RailMapiOSImages(name: "icon_deutschebahn")
+    public static let iconEurostar = RailMapiOSImages(name: "icon_eurostar")
+    public static let iconRenfe = RailMapiOSImages(name: "icon_renfe")
+    public static let iconSncf = RailMapiOSImages(name: "icon_sncf")
+    public static let iconTer = RailMapiOSImages(name: "icon_ter")
+    public static let iconTrenitalia = RailMapiOSImages(name: "icon_trenitalia")
     public static let logoDeutschebahn = RailMapiOSImages(name: "logo_deutschebahn")
     public static let logoEurostar = RailMapiOSImages(name: "logo_eurostar")
     public static let logoRenfe = RailMapiOSImages(name: "logo_renfe")
