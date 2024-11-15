@@ -19,14 +19,23 @@ jobs:
         with:
           xcode-version: latest
 
+      - name: Install Tuist
+        run: |
+          curl -Ls https://install.tuist.io | bash
+
+      - name: Generate Xcode project with Tuist
+        run: |
+          tuist fetch
+          tuist generate --no-open
+
       - name: Resolve Swift Packages
         run: |
-          xcodebuild -resolvePackageDependencies -scheme RailMap
+          xcodebuild -resolvePackageDependencies -scheme <SchemeName> # Remplace <SchemeName> par le vrai nom de ton scheme
 
       - name: Build and run tests
         run: |
           set -o pipefail && xcodebuild \
             clean test \
-            -scheme RailMap \
+            -scheme <SchemeName> \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 12' | xcpretty
