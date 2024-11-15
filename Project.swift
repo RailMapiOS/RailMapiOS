@@ -2,6 +2,9 @@ import ProjectDescription
 
 let project = Project(
     name: "RailMapiOS",
+    packages: [
+            .package(path: "RailMapiOS/Packages/Helpers"),
+        ],
     targets: [
         .target(
             name: "RailMapiOS",
@@ -15,7 +18,7 @@ let project = Project(
             ),
             sources: ["RailMapiOS/Sources/**"],
             resources: ["RailMapiOS/Resources/**"],
-            dependencies: [.package(product: "RailMapiOS/Packages/Helpers", type: .runtime)],
+            dependencies: [.package(product: "Helpers")],
             coreDataModels: [
                 .coreDataModel("CoreData/RailMap.xcdatamodeld")
             ]
