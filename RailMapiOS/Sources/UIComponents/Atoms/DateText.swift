@@ -10,12 +10,18 @@ import SwiftUI
 
 struct DateText: View {
     let time: String
+    let timeRemaining: String
+    let arrival: Bool
     
     var body: some View {
         VStack(alignment: .trailing) {
             Text(time)
                 .fontWeight(.semibold)
-                .font(.title2)
+                .font(.largeTitle)
+            Text("\(arrival ? "Arrivé" : "Départ") dans \(timeRemaining)")
+                .fontWeight(.semibold)
+                .foregroundStyle(.gray)
+                .font(.caption2)
         }
     }
 }

@@ -23,9 +23,9 @@ struct JourneyDetailsV: View {
             Divider()
             ScrollView(showsIndicators: true) {
                 VStack{
-                    StationView(stationLabel: "Gare de Lyon", date: journey.startDate!)
+                    StationView(stationLabel: "Gare de Lyon", date: journey.startDate!, arrival: false)
                     DurationView(startDate: journey.startDate, endDate: journey.endDate)
-                    StationView(stationLabel: "Gare de Perpignan", date: journey.endDate!)
+                    StationView(stationLabel: "Gare de Perpignan", date: journey.endDate!, arrival: true)
                 }
                 .padding(.vertical)
                 Divider()
