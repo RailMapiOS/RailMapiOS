@@ -16,10 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Mise and Tuist
+      - name: Install Mise
         uses: jdx/mise-action@v2
         with:
-          tools: tuist@latest 
+          install: tuist
+
+      - name: Use Tuist version
+        run: mise use --pin tuist@latest
+        env:
+          PATH: $HOME/.local/share/mise/bin:$PATH
 
       - name: Install xcbeautify
         run: brew install xcbeautify
