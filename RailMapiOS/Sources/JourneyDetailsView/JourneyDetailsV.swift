@@ -34,26 +34,18 @@ struct JourneyDetailsV: View {
                     Text("Détail du voyage")
                         .font(.headline)
                     
-                    if let sations = journey.stops?.allObjects as? [Stop]{
-                        ForEach(sations, id: \.self) { station in
-                            VerticalTimeline(
-                                timelineConfig: .trip,
-                                stationLabel: (station.stopinfo?.label)!,
-                                timeLabel: station.departureTimeUTC!.description)
-                            //                        StationView(stationLabel: station.label, date: station.date)
-                            Spacer()
-                        }
-                        .padding()
-                    }
-                    //                } else {
-                    //                    Text("Aucune station disponible.")
-                    //                        .font(.subheadline)
-                    //            }
-                    Spacer()
+                    ClippedRow(title: "Prevision à l'arrivée",
+                               bodyTexts: ["14°C et ensoleillée"],
+                               icon: "cloud.sun.fill")
                 }
-                .padding(.vertical)
+                //                } else {
+                //                    Text("Aucune station disponible.")
+                //                        .font(.subheadline)
+                //            }
                 Spacer()
             }
+            .padding(.vertical)
+            Spacer()
         }
     }
 }

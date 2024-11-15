@@ -15,7 +15,7 @@ let project = Project(
             ),
             sources: ["RailMapiOS/Sources/**"],
             resources: ["RailMapiOS/Resources/**"],
-            dependencies: [],
+            dependencies: [.package(product: "RailMapiOS/Packages/Helpers", type: .runtime)],
             coreDataModels: [
                 .coreDataModel("CoreData/RailMap.xcdatamodeld")
             ]

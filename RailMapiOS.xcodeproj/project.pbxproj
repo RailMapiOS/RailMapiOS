@@ -26,7 +26,7 @@
 		6C1ED2E5EAA19154400E7F22 /* AddTicketVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414F625900B341A1C4D48679 /* AddTicketVM.swift */; };
 		7A43D13FB7A3C5F8FCEA83CB /* DateText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27611039302B040FEB808624 /* DateText.swift */; };
 		7FC2BCD7665B03A37DE62ACD /* DurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A09DBFF61D413960ACAD42 /* DurationView.swift */; };
-		8627A06D2CE7946C004C8A15 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 8627A06C2CE7946C004C8A15 /* Helpers */; };
+		864F8E792CE7DE7400AED649 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 864F8E782CE7DE7400AED649 /* Helpers */; };
 		8BBD9340FB2FD8B55D5CBF7B /* StationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */; };
 		97F18F0E3ADE8BE87904DF94 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCD0205832989CB2C111FF /* Preview Assets.xcassets */; };
 		A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
@@ -36,6 +36,7 @@
 		B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26715D26F442F91E5006F92F /* JourneyDetails.swift */; };
 		BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EC15022E746D349E4C9B3D /* StationView.swift */; };
 		BC053432A6F5BC9030133FCF /* CompanyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48EC3E26A96904215273AE /* CompanyLogo.swift */; };
+		BD74FEB5C406BECBC6CD2367 /* RailMapiOS/Packages/Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = AE03395E038176E61572E75E /* RailMapiOS/Packages/Helpers */; };
 		C17B6DBC47EDE3BCEA901D87 /* AddTicketV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF9703A6F41169A2DD4FE18 /* AddTicketV.swift */; };
 		CAC6F2C9B8CD31137390C2DB /* TuistBundle+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */; };
 		CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */; };
@@ -45,6 +46,7 @@
 		D55ABE8F7E48A0485E5171B1 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94505A9346DF3789939EA951 /* DataController.swift */; };
 		D6A542D6A0F4D7CA03DE82B6 /* RailMapiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BDB2FE2AADB9EE96E8E56 /* RailMapiOSTests.swift */; };
 		DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */; };
+		E2817C280EC2C4C0DD597661 /* ClipRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52C182521BB95AE0F7460D /* ClipRow.swift */; };
 		F677B53EB7E39133483C6D8E /* JourneyRowVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */; };
 		FCA7AE8FCE392F8F1018E57F /* RailMapiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1BDB2FE2AADB9EE96E8E56 /* RailMapiOSTests.swift */; };
 /* End PBXBuildFile section */
@@ -138,6 +140,7 @@
 		CE29BF1855E8D788EC222B6A /* TimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLabel.swift; sourceTree = "<group>"; };
 		D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowVMTests.swift; sourceTree = "<group>"; };
 		E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+RailMapiOS.swift"; sourceTree = "<group>"; };
+		EB52C182521BB95AE0F7460D /* ClipRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRow.swift; sourceTree = "<group>"; };
 		F070D96178C8D25D6AF725D7 /* ClockIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockIcon.swift; sourceTree = "<group>"; };
 		F23F43B69EF77486A675F7AC /* RailMapiOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "RailMapiOS-Info.plist"; sourceTree = "<group>"; };
 		F3828E96BCDBEE3E532D63F1 /* JourneyHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyHeaderView.swift; sourceTree = "<group>"; };
@@ -164,7 +167,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8627A06D2CE7946C004C8A15 /* Helpers in Frameworks */,
+				864F8E792CE7DE7400AED649 /* Helpers in Frameworks */,
+				BD74FEB5C406BECBC6CD2367 /* RailMapiOS/Packages/Helpers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +221,7 @@
 		6211ED424EDF2D4558DB2E3C /* Organisms */ = {
 			isa = PBXGroup;
 			children = (
+				EB52C182521BB95AE0F7460D /* ClipRow.swift */,
 				F3828E96BCDBEE3E532D63F1 /* JourneyHeaderView.swift */,
 				83B4DC9B77E89CBE8E37B5E6 /* JourneyRowFooter.swift */,
 				3A6764A3CC64853FD871B8AD /* JourneyRowHeader.swift */,
@@ -405,6 +410,10 @@
 			dependencies = (
 			);
 			name = RailMapiOS;
+			packageProductDependencies = (
+				AE03395E038176E61572E75E /* RailMapiOS/Packages/Helpers */,
+				864F8E782CE7DE7400AED649 /* Helpers */,
+			);
 			productName = RailMapiOS;
 			productReference = 58E5DCB89A6A9966D527DF79 /* RailMapiOS.app */;
 			productType = "com.apple.product-type.application";
@@ -473,7 +482,7 @@
 			);
 			mainGroup = CF1E7906C8878DA5FB2F9A1B;
 			packageReferences = (
-				8627A06B2CE7946C004C8A15 /* XCLocalSwiftPackageReference "../../RailMap/RailMapiOS/Packages/Helpers" */,
+				864F8E772CE7DE7400AED649 /* XCLocalSwiftPackageReference "../../RailMap/RailMapiOS/Packages/Helpers" */,
 			);
 			productRefGroup = BCADE8619646559D8AB08D21 /* Products */;
 			projectDirPath = "";
@@ -553,6 +562,7 @@
 				B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */,
 				2ACFA1AA65ED4BD9CBECA344 /* JourneyTimes.swift in Sources */,
 				BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */,
+				E2817C280EC2C4C0DD597661 /* ClipRow.swift in Sources */,
 				663BF5E481F9F63337ACEEB9 /* JourneyHeaderView.swift in Sources */,
 				0F6ECAA6B6E28B05F847D77B /* JourneyRowFooter.swift in Sources */,
 				CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */,
@@ -894,16 +904,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		8627A06B2CE7946C004C8A15 /* XCLocalSwiftPackageReference "../../RailMap/RailMapiOS/Packages/Helpers" */ = {
+		864F8E772CE7DE7400AED649 /* XCLocalSwiftPackageReference "../../RailMap/RailMapiOS/Packages/Helpers" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../RailMap/RailMapiOS/Packages/Helpers;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8627A06C2CE7946C004C8A15 /* Helpers */ = {
+		864F8E782CE7DE7400AED649 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Helpers;
+		};
+		AE03395E038176E61572E75E /* RailMapiOS/Packages/Helpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RailMapiOS/Packages/Helpers;
 		};
 /* End XCSwiftPackageProductDependency section */
 
