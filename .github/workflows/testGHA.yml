@@ -14,28 +14,22 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3
 
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@v1.5.1
-        with:
-          xcode-version: latest
-
-      - name: Install Tuist
+      - name: Install rtx and Tuist
         run: |
-          curl -Ls https://install.tuist.io | bash
+          brew install rtx
+          rtx plugin add tuist
+          rtx install tuist@latest
+          rtx use -g tuist@latest
 
       - name: Generate Xcode project with Tuist
         run: |
           tuist fetch
           tuist generate --no-open
 
-      - name: Resolve Swift Packages
-        run: |
-          xcodebuild -resolvePackageDependencies -scheme <SchemeName> # Remplace <SchemeName> par le vrai nom de ton scheme
-
       - name: Build and run tests
         run: |
           set -o pipefail && xcodebuild \
             clean test \
-            -scheme <SchemeName> \
+            -scheme RailMapiOSTests \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 12' | xcpretty
