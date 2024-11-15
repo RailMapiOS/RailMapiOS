@@ -24,9 +24,6 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Build with tuist
-        run: tuist build
-
       - name: Build and test with Xcode
         run: |
           set -o pipefail && xcodebuild \
