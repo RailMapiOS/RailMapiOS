@@ -21,18 +21,11 @@ jobs:
         with:
           install: tuist
 
-      - name: Use Tuist version
-        run: mise use --pin tuist@latest
-        env:
-          PATH: $HOME/.local/share/mise/bin:$PATH
-
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Fetch and generate project with Tuist
-        run: |
-          tuist fetch
-          tuist generate --no-open
+      - name: Build with tuist
+        run: tuist build
 
       - name: Build and test with Xcode
         run: |
