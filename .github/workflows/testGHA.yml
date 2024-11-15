@@ -1,4 +1,4 @@
-name: Run Unit Tests
+name: CI Workflow
 
 on:
   push:
@@ -20,6 +20,14 @@ jobs:
           mise plugin add tuist
           mise install tuist@latest
           mise use -g tuist@latest
+        env:
+          PATH: $HOME/.local/share/mise/shims:$PATH
+
+      - name: Setup PATH for mise
+        run: echo 'export PATH="$HOME/.local/share/mise/shims:$PATH"' >> $GITHUB_ENV
+
+      - name: Reload environment
+        run: source $GITHUB_ENV
 
       - name: Generate Xcode project with Tuist
         run: |
