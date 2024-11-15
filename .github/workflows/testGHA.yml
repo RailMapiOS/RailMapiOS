@@ -11,19 +11,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Mise
-        uses: jdx/mise-action@v2
-        with:
-          tools: tuist@latest
-
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
-      - name: Build and test with Xcode
-        run: |
-          set -o pipefail && tuist test RailMapiOSTests | xcbeautify --renderer github-actions
+      - uses: actions/checkout@v3
+      - uses: jdx/mise-action@v2
+      - run: tuist test RailMapiOSTests | xcbeautify --renderer github-actions
