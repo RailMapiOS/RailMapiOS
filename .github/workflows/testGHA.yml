@@ -14,12 +14,12 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3
 
-      - name: Install rtx and Tuist
+      - name: Install mise and Tuist
         run: |
-          brew install rtx
-          rtx plugin add tuist
-          rtx install tuist@latest
-          rtx use -g tuist@latest
+          brew install mise
+          mise plugin add tuist
+          mise install tuist@latest
+          mise use -g tuist@latest
 
       - name: Generate Xcode project with Tuist
         run: |
