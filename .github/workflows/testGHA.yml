@@ -19,7 +19,7 @@ jobs:
       - name: Install Mise
         uses: jdx/mise-action@v2
         with:
-          install: tuist
+          tools: tuist@latest
 
       - name: Install xcbeautify
         run: brew install xcbeautify
