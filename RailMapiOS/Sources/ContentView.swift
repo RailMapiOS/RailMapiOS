@@ -41,7 +41,10 @@ public struct iPhoneLayout: View {
                 .sheet(isPresented: $isSheetPresented) {
                     BottomSheetView(sheetSize: $sheetSize)
                         .padding(.top)
-                        .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
+                        .presentationDetents([.fraction(0.3),
+                                              .medium,
+                                              .large],
+                                             selection: $sheetSize)
                         .presentationBackgroundInteraction(.enabled)
                         .interactiveDismissDisabled()
                         .ignoresSafeArea()

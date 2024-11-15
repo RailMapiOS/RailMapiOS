@@ -9,7 +9,8 @@ import SwiftUI
 
 struct VerticalTimeline: View {
     public var timelineConfig: TimelineConfig = .outOfTrip
-    public var text: String = "Station 1"
+    public var stationLabel: String = "Station 1"
+    public var timeLabel: String = "17:30"
     private var color: UIColor {
         switch timelineConfig {
         case .trip: return .blue
@@ -32,7 +33,11 @@ struct VerticalTimeline: View {
                     .fill(.tint)
                     .frame(width: 5)
             }
-            Text(text)
+            VStack(alignment: .leading) {
+                Text(stationLabel)
+                Text(timeLabel)
+                    .font(.subheadline)
+            }
         }
     }
 }

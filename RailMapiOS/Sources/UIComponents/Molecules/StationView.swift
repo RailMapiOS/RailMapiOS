@@ -13,26 +13,22 @@ struct StationView: View {
     let date: Date
     
     var body: some View {
-        let (timeString, dateString) = dateFormatter(for: date)
+        let timeString = dateFormatter(for: date)
         return HStack(alignment: .center) {
             StationLabel(station: stationLabel)
             Spacer()
-            DateText(time: timeString, date: dateString)
+            DateText(time: timeString)
         }
         .padding(.horizontal)
         .padding(.top)
     }
     
-    func dateFormatter(for date: Date) -> (String, String) {
+    func dateFormatter(for date: Date) -> String {
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm"
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM"
-        
         let timeString = timeFormatter.string(from: date)
-        let dateString = dateFormatter.string(from: date)
         
-        return (timeString, dateString)
+        return timeString
     }
 }
