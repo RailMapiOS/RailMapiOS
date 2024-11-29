@@ -49,6 +49,7 @@ struct BottomSheetView: View {
             }
             .navigationDestination(for: Journey.self) { journey in
                 JourneyDetailsV(journey: journey)
+                    .ignoresSafeArea(.all, edges: .bottom)
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

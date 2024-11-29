@@ -1,4 +1,4 @@
-name: Build Application
+name: Build and Test
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
   push:
     branches:
-      - main
+      - all
 
 jobs:
   build:
