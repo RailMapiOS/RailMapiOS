@@ -16,6 +16,7 @@ struct TimeLabel: View {
         VStack {
             Text(time)
                 .font(.title2)
+                .fontWeight(.semibold)
             Text(label)
                 .font(.subheadline)
         }

@@ -29,9 +29,9 @@ let project = Project(
             product: .unitTests,
             bundleId: "com.railmap.RailMapiOSTests",
             infoPlist: .default,
-            sources: ["RailMapiOS/Tests/**"],
+            sources: ["RailMapiOS/Tests/UnitTests/**"],
             resources: [],
-            dependencies: [.target(name: "RailMapiOS")]
+            dependencies: [.target(name: "RailMapiOS"), .package(product: "Helpers")]
         ),
         .target(
             name: "RailMapiOSUITests",
@@ -39,10 +39,16 @@ let project = Project(
             product: .uiTests,
             bundleId: "com.railmap.RailMapiOSUITests",
             infoPlist: .default,
-            sources: ["RailMapiOS/Tests/**"],
-            resources: [],
-            dependencies: [.target(name: "RailMapiOS")]
-        ),
+            sources: ["RailMapiOS/Tests/UITests/**"],
+//            resources: [],
+            dependencies: [
+                .target(name: "RailMapiOS"),
+                .package(product: "Helpers"),
+                .sdk(name: "XCTest.framework", type: .framework),
+                .sdk(name: "UIKit.framework", type: .framework),
+            ]
+        )
+
     ],
     resourceSynthesizers: .default //+ [.coreData()]
 )

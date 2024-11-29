@@ -13,9 +13,18 @@ struct DurationView: View {
     let endDate: Date?
     
     var body: some View {
-        HStack {
-            VStack { Divider() }
-            Text("Total \(calculateDurationString(from: startDate, to: endDate))")
+        HStack(spacing: 5) {
+            Image(systemName: "clock")
+                .foregroundStyle(.gray)
+            Text(calculateDurationString(from: startDate, to: endDate))
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+            Text("•")
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+            Text("345 km")
+                .font(.subheadline)
+                .foregroundStyle(.gray)
             VStack { Divider() }
         }
         .padding(.horizontal)

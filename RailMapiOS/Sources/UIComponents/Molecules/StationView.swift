@@ -22,6 +22,5 @@ struct StationView: View {
                      arrival: arrival)
         }
         .padding(.horizontal)
-        .padding(.top)
     }
 }
