@@ -38,8 +38,17 @@ public extension Date {
 public extension TimeInterval {
     public func formattedTimeRemaining() -> String {
         let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.year, .month, .day, .hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        formatter.zeroFormattingBehavior = .dropLeading
+        
+        return formatter.string(from: self) ?? "Temps inconnu"
+    }
+    
+    public func formattedTimeRemainingDelayed() -> String {
+        let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
-        formatter.unitsStyle = .short
+        formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropLeading
         
         return formatter.string(from: self) ?? "Temps inconnu"
