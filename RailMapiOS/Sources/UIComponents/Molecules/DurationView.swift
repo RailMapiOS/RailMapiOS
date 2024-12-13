@@ -5,17 +5,27 @@
 //  Created by Jérémie Patot on 18/09/2024.
 //
 
-
+import Helpers
 import SwiftUI
 
+//TODO: Calculer la distance et l'afficher
 struct DurationView: View {
     let startDate: Date?
     let endDate: Date?
     
     var body: some View {
-        HStack {
-            VStack { Divider() }
-            Text("Total \(calculateDurationString(from: startDate, to: endDate))")
+        HStack(spacing: 5) {
+            Image(systemName: "clock")
+                .foregroundStyle(.gray)
+            Text(calculateDurationString(from: startDate, to: endDate))
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+            Text("•")
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+            Text("345 km")
+                .font(.subheadline)
+                .foregroundStyle(.gray)
             VStack { Divider() }
         }
         .padding(.horizontal)
@@ -26,9 +36,10 @@ struct DurationView: View {
             return "Durée non disponible"
         }
         
-        let interval = endDate.timeIntervalSince(startDate)
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        return String(format: "%02dh%02d", hours, minutes)
+        return startDate.duration(to: endDate)
     }
+}
+
+#Preview {
+    DurationView(startDate: Date.now, endDate: Date.distantFuture)
 }
