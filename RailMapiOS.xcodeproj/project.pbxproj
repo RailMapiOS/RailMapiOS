@@ -27,7 +27,6 @@
 		758AE03336AFEE14034A2DB4 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 7E251E8B71E7059433E27B04 /* Helpers */; };
 		7A43D13FB7A3C5F8FCEA83CB /* DateText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27611039302B040FEB808624 /* DateText.swift */; };
 		7FC2BCD7665B03A37DE62ACD /* DurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A09DBFF61D413960ACAD42 /* DurationView.swift */; };
-		86C0ED402CF9C3B90082C4B6 /* DepartureStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C0ED3F2CF9C3B60082C4B6 /* DepartureStatusView.swift */; };
 		8BBD9340FB2FD8B55D5CBF7B /* StationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */; };
 		97F18F0E3ADE8BE87904DF94 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCD0205832989CB2C111FF /* Preview Assets.xcassets */; };
 		A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
@@ -37,6 +36,7 @@
 		B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26715D26F442F91E5006F92F /* JourneyDetails.swift */; };
 		BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EC15022E746D349E4C9B3D /* StationView.swift */; };
 		BC053432A6F5BC9030133FCF /* CompanyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48EC3E26A96904215273AE /* CompanyLogo.swift */; };
+		BCC1D81F7C1149FFA025DB71 /* DepartureStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */; };
 		BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
 		BFCEEA36F1C2F56E54811186 /* XCTest.framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1922A944C075DACE8E00EBA2 /* XCTest.framework.framework */; };
 		C17B6DBC47EDE3BCEA901D87 /* AddTicketV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF9703A6F41169A2DD4FE18 /* AddTicketV.swift */; };
@@ -129,7 +129,6 @@
 		806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+RailMapiOS.swift"; sourceTree = "<group>"; };
 		81A693990B0026E7D87826ED /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		83B4DC9B77E89CBE8E37B5E6 /* JourneyRowFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowFooter.swift; sourceTree = "<group>"; };
-		86C0ED3F2CF9C3B60082C4B6 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
 		88EC15022E746D349E4C9B3D /* StationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationView.swift; sourceTree = "<group>"; };
 		94505A9346DF3789939EA951 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		97A09DBFF61D413960ACAD42 /* DurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationView.swift; sourceTree = "<group>"; };
@@ -140,6 +139,7 @@
 		ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainIcon.swift; sourceTree = "<group>"; };
 		AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTimeline.swift; sourceTree = "<group>"; };
 		B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
 		C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VehiculeJourneysModel-Navitia.swift"; sourceTree = "<group>"; };
 		CE29BF1855E8D788EC222B6A /* TimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLabel.swift; sourceTree = "<group>"; };
 		D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowVMTests.swift; sourceTree = "<group>"; };
@@ -236,6 +236,7 @@
 		6211ED424EDF2D4558DB2E3C /* Organisms */ = {
 			isa = PBXGroup;
 			children = (
+				BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */,
 				EB52C182521BB95AE0F7460D /* ClipRow.swift */,
 				F3828E96BCDBEE3E532D63F1 /* JourneyHeaderView.swift */,
 				83B4DC9B77E89CBE8E37B5E6 /* JourneyRowFooter.swift */,
@@ -256,7 +257,6 @@
 		664A6D5E22AED755B9F229ED /* JourneyDetailsView */ = {
 			isa = PBXGroup;
 			children = (
-				86C0ED3F2CF9C3B60082C4B6 /* DepartureStatusView.swift */,
 				F66973A9D15847122DE679D3 /* JourneyDetailsV.swift */,
 			);
 			path = JourneyDetailsView;
@@ -574,6 +574,7 @@
 				DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */,
 				56C554474444AD1F8FA637BA /* ContentView.swift in Sources */,
 				D55ABE8F7E48A0485E5171B1 /* DataController.swift in Sources */,
+				BCC1D81F7C1149FFA025DB71 /* DepartureStatusView.swift in Sources */,
 				0D2D5B2B6DEF124019EF135A /* JourneyDetailsV.swift in Sources */,
 				6BF9F69FA94619A1025F395C /* RailMapiOSApp.swift in Sources */,
 				A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */,
@@ -595,7 +596,6 @@
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
 				CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */,
-				86C0ED402CF9C3B90082C4B6 /* DepartureStatusView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

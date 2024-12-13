@@ -8,6 +8,7 @@
 import Helpers
 import SwiftUI
 
+//TODO: Calculer la distance et l'afficher
 struct DurationView: View {
     let startDate: Date?
     let endDate: Date?
@@ -37,4 +38,8 @@ struct DurationView: View {
         
         return startDate.duration(to: endDate)
     }
+}
+
+#Preview {
+    DurationView(startDate: Date.now, endDate: Date.distantFuture)
 }
