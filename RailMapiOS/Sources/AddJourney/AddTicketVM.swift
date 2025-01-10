@@ -34,6 +34,7 @@ class AddTicketVM: ObservableObject {
     /// Met à jour les données du sélecteur de date en fonction des voyages en véhicule.
     func updateDatePickerVehicleJourney() {
         datePickerVehicleJourneys = vehicleJourneys.reduce(into: [:]) { result, vehicleJourney in
+            print("vehicleJourney.calendars: \(vehicleJourney.calendars.description)")
             guard let dateArray = convertCalendarToDDMMYY(calendar: vehicleJourney.calendars.first!) else { return }
             let vehicleJourneyID = vehicleJourney.id
             
@@ -47,7 +48,8 @@ class AddTicketVM: ObservableObject {
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     /// - Throws: Erreurs liées à la récupération des données ou à la décodage du JSON.
     func fetchHeadsignAddTicket(headsign: String) async {
-        let urlString = "https://api.navitia.io/v1/coverage/fr-se/physical_modes/physical_mode%3ATrain/vehicle_journeys//?headsign=\(headsign)&"
+//        let urlString = "https://api.navitia.io/v1/coverage/fr-se/physical_modes/physical_mode%3ATrain/vehicle_journeys//?headsign=\(headsign)&"
+        let urlString = "http://127.0.0.1:8080/stop/\(headsign)?agency=sncf&serviceType=tgv"
         
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -55,16 +57,19 @@ class AddTicketVM: ObservableObject {
         }
         
         var request = URLRequest(url: url)
-        let username = "22c8f870-f331-446c-9694-749c67f88fa6"
-        let loginData = "\(username):".data(using: .utf8)!
-        let base64LoginData = loginData.base64EncodedString()
-        request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
+//        let username = "22c8f870-f331-446c-9694-749c67f88fa6"
+//        let loginData = "\(username):".data(using: .utf8)!
+//        let base64LoginData = loginData.base64EncodedString()
+//        request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let decodedResponse = try JSONDecoder().decode(VehicleJourneys.self, from: data)
             DispatchQueue.main.async {
+                print("data: \(data.debugDescription)")
                 self.vehicleJourneys = decodedResponse.vehicleJourneys
+                print("self.vehicleJourneys: \(self.vehicleJourneys)")
+
             }
         } catch {
             print("Error: \(error)")

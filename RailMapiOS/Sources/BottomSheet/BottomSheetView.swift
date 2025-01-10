@@ -23,7 +23,7 @@ struct BottomSheetView: View {
         }
     }
     
-    @State private var searchTicket = ""
+    //@State private var searchTicket = ""
     
     var filteredJourneys: [Journey] {
         searchText.isEmpty ? Array(journeys) : journeys.filter { $0.headsign?.contains(searchText) ?? false }
@@ -33,7 +33,7 @@ struct BottomSheetView: View {
         NavigationStack(path: $path) {
             VStack {
                 if searchPresented && filteredJourneys.isEmpty {
-                    AddTicketV(searchText: $searchTicket)
+                    AddTicketV(searchText: $searchText)
                 } else {
                     List(filteredJourneys, id: \.self) { journey in
                         JourneyRowView(journey: journey)
@@ -58,7 +58,7 @@ struct BottomSheetView: View {
                         .font(.title)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    //                    if searchPresented && filteredJourneys.isEmpty {
+                                        if searchPresented && filteredJourneys.isEmpty {
                     Button(action: {
                         if journeys.isEmpty {
                             let dataController = DataController()
@@ -68,14 +68,15 @@ struct BottomSheetView: View {
                         Text("Save")
                             .foregroundColor(.blue)
                     }
-                    //                    } else {
-                    //                        Button(action: {
-                    //                            DataController.shared.createMockJourneys(context: moc)
-                    //                        }) {
-                    //                            Image(systemName: "plus")
-                    //                                .foregroundColor(.blue)
-                    //                        }
-                    //                    }
+                                        } else {
+                                            Button(action: {
+                                                let dataController = DataController()
+                                                dataController.createMockJourneys(context: moc)
+                                            }) {
+                                                Image(systemName: "plus")
+                                                    .foregroundColor(.blue)
+                                            }
+                                        }
                 }
             }
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
