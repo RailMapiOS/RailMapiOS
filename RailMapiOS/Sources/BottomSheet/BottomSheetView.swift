@@ -5,14 +5,21 @@
 //  Created by Jérémie Patot on 12/07/2024.
 //
 
+//  BottomSheetView.swift
+//  RailMapiOS
+//
+//  Created by Jérémie Patot on 12/07/2024.
+//
+
 import SwiftUI
 import CoreData
 
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject var dataController: DataController
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
-    @State private var path = NavigationPath()
-    
+    @ObservedObject var router: Router
+
     @Binding var sheetSize: PresentationDetent
     @State private var searchText = ""
     @State private var searchPresented: Bool = false {
@@ -22,34 +29,57 @@ struct BottomSheetView: View {
             }
         }
     }
-    
-    //@State private var searchTicket = ""
-    
+        
     var filteredJourneys: [Journey] {
         searchText.isEmpty ? Array(journeys) : journeys.filter { $0.headsign?.contains(searchText) ?? false }
     }
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $router.path) {
             VStack {
                 if searchPresented && filteredJourneys.isEmpty {
-                    AddTicketV(searchText: $searchText)
+                    AddTicketV(router: router, searchText: $searchText)
+                        .padding(.top)
+                } else if !searchPresented && filteredJourneys.isEmpty {
+                    EmptyListJourneyView()
                 } else {
-                    List(filteredJourneys, id: \.self) { journey in
+                    List(filteredJourneys, id: \.objectID) { journey in
                         JourneyRowView(journey: journey)
                             .onTapGesture {
-                                path.append(journey)
-                                if sheetSize != .large || sheetSize != .medium {
-                                    sheetSize = .medium
+                                withAnimation {
+                                    router.navigate(to: .journeyDetails(objectID: journey.objectID))
+                                    updateSheetSize()
                                 }
                             }
                     }
                     .listStyle(.plain)
                 }
             }
-            .navigationDestination(for: Journey.self) { journey in
-                JourneyDetailsV(journey: journey)
-                    .ignoresSafeArea(.all, edges: .bottom)
+            .navigationDestination(for: Router.Flow.self) { flow in
+                switch flow {
+                case .journeys:
+                    Text("My Journeys")
+                case .addTicket(let searchText):
+                    AddTicketV(router: router, searchText: .constant(searchText ?? ""))
+                case .journeyDetails(let objectID):
+                    if let journey = moc.object(with: objectID) as? Journey {
+                        JourneyDetailsV(journey: journey)
+                    } else {
+                                Text("Journey not found")
+                            }
+                case .stationPicker(let selectedDateRow):
+                    StationPickerView(viewModel: StationPickerViewModel(pickedJourney: selectedDateRow)) { pickedJourney in
+                        router.navigate(to: .confirmation(pickedJourney))
+                    }
+                case .confirmation(let pickedJourney):
+                    ConfirmationPickerView(viewModel: ConfirmationPickerViewModel(pickedJourney: pickedJourney, dataController: dataController)) {
+                        router.navigateToRoot()
+                    }
+                case .datePicker(let dateRows):
+                    DatePickerView(viewModel: DatePickerViewModel(dateRows: dateRows), router: router) { selectedRow in
+                        router.navigate(to: .stationPicker(selectedRow))
+                    }
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -58,35 +88,38 @@ struct BottomSheetView: View {
                         .font(.title)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                                        if searchPresented && filteredJourneys.isEmpty {
-                    Button(action: {
-                        if journeys.isEmpty {
+                    if searchPresented && filteredJourneys.isEmpty {
+                        Button(action: {
+                            if journeys.isEmpty {
+                                let dataController = DataController()
+                                dataController.createMockJourneys(context: moc)
+                            }
+                        }) {
+                            Text("Save")
+                                .foregroundColor(.blue)
+                        }
+                    } else {
+                        Button(action: {
                             let dataController = DataController()
                             dataController.createMockJourneys(context: moc)
+                        }) {
+                            Image(systemName: "plus")
+                                .foregroundColor(.blue)
                         }
-                    }) {
-                        Text("Save")
-                            .foregroundColor(.blue)
                     }
-                                        } else {
-                                            Button(action: {
-                                                let dataController = DataController()
-                                                dataController.createMockJourneys(context: moc)
-                                            }) {
-                                                Image(systemName: "plus")
-                                                    .foregroundColor(.blue)
-                                            }
-                                        }
                 }
             }
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
             .searchPresentationToolbarBehavior(.avoidHidingContent)
         }
     }
-}
-
-#Preview {
-    let context = NSPersistentContainer.preview.viewContext
-    return BottomSheetView(sheetSize: .constant(.medium))
-        .environment(\.managedObjectContext, context)
+    
+    private func updateSheetSize() {
+        switch sheetSize {
+        case .large, .medium:
+            sheetSize = .large
+        default:
+            sheetSize = .medium
+        }
+    }
 }

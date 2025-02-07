@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - VehiculeJourneys
 struct VehicleJourneys: Codable {
-    let pagination: Pagination
+    let pagination: Pagination?
     let feedPublishers: [FeedPublisher]
     let disruptions: [JSONAnyVJ]
     let context: Context
@@ -19,7 +19,8 @@ struct VehicleJourneys: Codable {
     enum CodingKeys: String, CodingKey {
         case pagination
         case feedPublishers = "feed_publishers"
-        case disruptions, context
+        case disruptions
+        case context
         case vehicleJourneys = "vehicle_journeys"
         case links
     }
@@ -63,7 +64,7 @@ struct Pagination: Codable {
 }
 
 // MARK: - VehicleJourney
-struct VehicleJourney: Codable {
+struct VehicleJourney: Codable, Identifiable, Hashable {
     let id, name: String
     let journeyPattern: JourneyPattern
     let stopTimes: [StopTime]
@@ -73,7 +74,7 @@ struct VehicleJourney: Codable {
     let trip: JourneyPattern
     let disruptions: [JSONAnyVJ]
     let headsign: String
-
+    
     enum CodingKeys: String, CodingKey {
         case id, name
         case journeyPattern = "journey_pattern"
@@ -81,6 +82,16 @@ struct VehicleJourney: Codable {
         case codes
         case validityPattern = "validity_pattern"
         case calendars, trip, disruptions, headsign
+    }
+    
+    static func == (lhs: VehicleJourney, rhs: VehicleJourney) -> Bool {
+        return lhs.id == rhs.id && lhs.name == rhs.name && lhs.headsign == rhs.headsign
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(headsign)
     }
 }
 

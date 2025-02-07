@@ -27,7 +27,7 @@ class JourneyRowViewModel: ObservableObject {
     }
     
     var departureLabel: String {
-        departureStop?.stopinfo?.label ?? "N/A"
+        departureStop?.stopinfo?.label ?? "N/A departureLabel"
     }
     
     var arrivalTime: String {
@@ -39,11 +39,11 @@ class JourneyRowViewModel: ObservableObject {
     }
     
     var arrivalLabel: String {
-        arrivalStop?.stopinfo?.label ?? "N/A"
+        arrivalStop?.stopinfo?.label ?? "N/A arrivalLabel"
     }
     
     var compagny: String {
-        journey.company ?? "N/A"
+        journey.company ?? "N/A company"
     }
     
     var duration: String {
