@@ -5,14 +5,9 @@
 //  Created by Jérémie Patot on 12/07/2024.
 //
 
-//  BottomSheetView.swift
-//  RailMapiOS
-//
-//  Created by Jérémie Patot on 12/07/2024.
-//
-
 import SwiftUI
 import CoreData
+import AuthenticationServices
 
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
@@ -20,6 +15,9 @@ struct BottomSheetView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
     @ObservedObject var router: Router
 
+    @State var isUserLogin: Bool = false
+    @State var showSignIn: Bool = false
+    
     @Binding var sheetSize: PresentationDetent
     @State private var searchText = ""
     @State private var searchPresented: Bool = false {
@@ -88,29 +86,26 @@ struct BottomSheetView: View {
                         .font(.title)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if searchPresented && filteredJourneys.isEmpty {
-                        Button(action: {
-                            if journeys.isEmpty {
-                                let dataController = DataController()
-                                dataController.createMockJourneys(context: moc)
-                            }
-                        }) {
-                            Text("Save")
-                                .foregroundColor(.blue)
+                    Button {
+                        showSignIn.toggle()
+                            
+                    } label: {
+                        switch self.isUserLogin {
+                        case true:
+                            Image(systemName: "person.crop.circle.fill.badge.checkmark")
+                        case false:
+                            Image(systemName: "person.crop.circle.fill.badge.plus")
+                                .foregroundStyle(.gray)
                         }
-                    } else {
-                        Button(action: {
-                            let dataController = DataController()
-                            dataController.createMockJourneys(context: moc)
-                        }) {
-                            Image(systemName: "plus")
-                                .foregroundColor(.blue)
-                        }
+                       
                     }
                 }
             }
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
             .searchPresentationToolbarBehavior(.avoidHidingContent)
+            .sheet(isPresented: $showSignIn) {
+                SignInView()
+            }
         }
     }
     
