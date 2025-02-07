@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 // swiftlint:disable all
 // swift-format-ignore-file
 // swiftformat:disable all
@@ -19,11 +20,13 @@
 // MARK: - Asset Catalogs
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
-public enum RailMapiOSAsset {
+public enum RailMapiOSAsset: Sendable {
   public enum Assets {
   public static let accentColor = RailMapiOSColors(name: "AccentColor")
     public static let iconDeutschebahn = RailMapiOSImages(name: "icon_deutschebahn")
     public static let iconEurostar = RailMapiOSImages(name: "icon_eurostar")
+    public static let iconEurostarMinimal = RailMapiOSImages(name: "icon_eurostar_minimal")
+    public static let iconInouiMinimal = RailMapiOSImages(name: "icon_inoui_minimal")
     public static let iconRenfe = RailMapiOSImages(name: "icon_renfe")
     public static let iconSncf = RailMapiOSImages(name: "icon_sncf")
     public static let iconTer = RailMapiOSImages(name: "icon_ter")
@@ -42,8 +45,8 @@ public enum RailMapiOSAsset {
 
 // MARK: - Implementation Details
 
-public final class RailMapiOSColors {
-  public fileprivate(set) var name: String
+public final class RailMapiOSColors: Sendable {
+  public let name: String
 
   #if os(macOS)
   public typealias Color = NSColor
@@ -52,27 +55,17 @@ public final class RailMapiOSColors {
   #endif
 
   @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
-  public private(set) lazy var color: Color = {
+  public var color: Color {
     guard let color = Color(asset: self) else {
       fatalError("Unable to load color asset named \(name).")
     }
     return color
-  }()
+  }
 
   #if canImport(SwiftUI)
-  private var _swiftUIColor: Any? = nil
   @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-  public private(set) var swiftUIColor: SwiftUI.Color {
-    get {
-      if self._swiftUIColor == nil {
-        self._swiftUIColor = SwiftUI.Color(asset: self)
-      }
-
-      return self._swiftUIColor as! SwiftUI.Color
-    }
-    set {
-      self._swiftUIColor = newValue
-    }
+  public var swiftUIColor: SwiftUI.Color {
+      return SwiftUI.Color(asset: self)
   }
   #endif
 
@@ -105,8 +98,8 @@ public extension SwiftUI.Color {
 }
 #endif
 
-public struct RailMapiOSImages {
-  public fileprivate(set) var name: String
+public struct RailMapiOSImages: Sendable {
+  public let name: String
 
   #if os(macOS)
   public typealias Image = NSImage
