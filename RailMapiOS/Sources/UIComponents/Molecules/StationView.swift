@@ -24,3 +24,10 @@ struct StationView: View {
         .padding(.horizontal)
     }
 }
+
+#Preview {
+    StationView(stationLabel: "Label", date: Date(timeIntervalSinceNow: TimeInterval(floatLiteral: 10000)) , arrival: true)
+    StationView(stationLabel: "Label", date: Date(timeIntervalSinceNow: TimeInterval(floatLiteral: 10000)), arrival: false)
+    StationView(stationLabel: "Label", date: Date() , arrival: true)
+    StationView(stationLabel: "Label", date: Date(), arrival: false)
+}

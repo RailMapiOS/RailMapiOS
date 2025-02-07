@@ -12,39 +12,41 @@ public struct ContentView: View {
     public init() {}
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject var dataController: DataController
     
     @State private var isSheetPresented = true
     @State private var sheetSize: PresentationDetent = .fraction(0.3)
     
+    @StateObject private var router = Router()
+
     public var body: some View {
         Group {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                iPhoneLayout(isSheetPresented: $isSheetPresented, sheetSize: $sheetSize)
+                iPhoneLayout(isSheetPresented: $isSheetPresented, sheetSize: $sheetSize, router: router)
             } else {
-                iPadLayout(sheetSize: $sheetSize)
+                iPadLayout(sheetSize: $sheetSize, router: router)
             }
         }
         .onAppear() {
-            let dataController = DataController()
             dataController.deleteAllObjects(of: "Journey", context: moc)
         }
     }
 }
 
 public struct iPhoneLayout: View {
+    @EnvironmentObject var dataController: DataController
+
     @Binding var isSheetPresented: Bool
     @Binding var sheetSize: PresentationDetent
+    @ObservedObject var router: Router
 
     public var body: some View {
         ZStack {
             Map()
                 .sheet(isPresented: $isSheetPresented) {
-                    BottomSheetView(sheetSize: $sheetSize)
+                    BottomSheetView(router: router, sheetSize: $sheetSize)
                         .padding(.top)
-                        .presentationDetents([.fraction(0.3),
-                                              .medium,
-                                              .large],
-                                             selection: $sheetSize)
+                        .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
                         .presentationBackgroundInteraction(.enabled)
                         .interactiveDismissDisabled()
                         .ignoresSafeArea()
@@ -55,21 +57,16 @@ public struct iPhoneLayout: View {
 
 public struct iPadLayout: View {
     @Binding var sheetSize: PresentationDetent
+    @ObservedObject var router: Router
 
     public var body: some View {
         NavigationSplitView {
-            BottomSheetView(sheetSize: $sheetSize)
+            BottomSheetView(router: router, sheetSize: $sheetSize)
                 .listStyle(SidebarListStyle())
                 .frame(minWidth: 200)
         } detail: {
             Map()
                 .edgesIgnoringSafeArea(.all)
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }

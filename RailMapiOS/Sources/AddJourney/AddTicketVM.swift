@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+//TODO: créer service layer
+
 /// `AddTicketViewModel` gère la logique métier liée à l'ajout de tickets, notamment la récupération des données des voyages en véhicule et la conversion des dates.
 class AddTicketVM: ObservableObject {
     
@@ -22,96 +24,135 @@ class AddTicketVM: ObservableObject {
     typealias FoundationCalendar = Foundation.Calendar
     
     /// Les voyages en véhicule actuellement disponibles.
-    @Published var vehicleJourneys = [VehicleJourney]() {
-        didSet {
-            updateDatePickerVehicleJourney()
-        }
-    }
+    @Published var vehicleJourneys: [VehicleJourney] = []
     
     /// Les dates formatées associées aux voyages en véhicule.
     @Published var datePickerVehicleJourneys: [Date: String] = [:]
     
     /// Met à jour les données du sélecteur de date en fonction des voyages en véhicule.
-    func updateDatePickerVehicleJourney() {
-        datePickerVehicleJourneys = vehicleJourneys.reduce(into: [:]) { result, vehicleJourney in
-            guard let dateArray = convertCalendarToDDMMYY(calendar: vehicleJourney.calendars.first!) else { return }
-            let vehicleJourneyID = vehicleJourney.id
-            
-            dateArray.forEach { date in
-                result[date] = vehicleJourneyID
-            }
-        }
-    }
+//    func updateDatePickerVehicleJourney() {
+//        datePickerVehicleJourneys = vehicleJourneys.reduce(into: [:]) { result, vehicleJourney in
+//            guard let dateArray = convertCalendarToDDMMYY(calendar: vehicleJourney.calendars.first!) else { return }
+//            let vehicleJourneyID = vehicleJourney.id
+//            
+//            dateArray.forEach { date in
+//                result[date] = vehicleJourneyID
+//            }
+//            
+//            print("datePickerVehicleJourneys KEYS: \(datePickerVehicleJourneys.keys)")
+//            print("datePickerVehicleJourneys VALUER: \(datePickerVehicleJourneys.values)")
+//
+//        }
+//    }
     
     /// Récupère les voyages en véhicule depuis une API en fonction du `headsign` spécifié.
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     /// - Throws: Erreurs liées à la récupération des données ou à la décodage du JSON.
     func fetchHeadsignAddTicket(headsign: String) async {
-        let urlString = "https://api.navitia.io/v1/coverage/fr-se/physical_modes/physical_mode%3ATrain/vehicle_journeys//?headsign=\(headsign)&"
+        //        let urlString = "https://api.navitia.io/v1/coverage/fr-se/physical_modes/physical_mode%3ATrain/vehicle_journeys//?headsign=\(headsign)&"
+        let urlString = "http://127.0.0.1:8080/stop/\(headsign)?agency=sncf&serviceType=tgv"
         
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return
         }
         
-        var request = URLRequest(url: url)
-        let username = "22c8f870-f331-446c-9694-749c67f88fa6"
-        let loginData = "\(username):".data(using: .utf8)!
-        let base64LoginData = loginData.base64EncodedString()
-        request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
+        var responseData: Data?
+        
+        //        let username = "22c8f870-f331-446c-9694-749c67f88fa6"
+        //        let loginData = "\(username):".data(using: .utf8)!
+        //        let base64LoginData = loginData.base64EncodedString()
+        //        request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
         
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let decodedResponse = try JSONDecoder().decode(VehicleJourneys.self, from: data)
+            let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
+            responseData = data
+            // Vérification de la réponse HTTP
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                print("Server error: \(response)")
+                return
+            }
+            
+            let decoder = JSONDecoder()
+            let decodedResponse = try decoder.decode(VehicleJourneys.self, from: data)
+            
             DispatchQueue.main.async {
                 self.vehicleJourneys = decodedResponse.vehicleJourneys
             }
         } catch {
-            print("Error: \(error)")
+            print("Error fetching headsign data: \(error)")
+            
+            if let data = responseData,
+               let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                print("Received JSON structure: \(json)")
+            }
         }
     }
     
     /// Convertit un objet `VehicleCalendar` en un tableau de dates formatées.
     /// - Parameter calendar: Le calendrier du véhicule à convertir.
     /// - Returns: Un tableau de dates formatées en `dd/MM/yy` ou `nil` si aucune période active n'est disponible.
-    public func convertCalendarToDDMMYY(calendar: VehicleCalendar) -> [Date]? {
-        guard let activePeriod = calendar.activePeriods.first else {
-            return nil // Aucune période active
-        }
-        
-        let weekDaysPattern = calendar.weekPattern
+    func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
+        var passageDays: [String: [Date]] = [:]
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         
-        guard let startDate = dateFormatter.date(from: activePeriod.begin),
-              let endDate = dateFormatter.date(from: activePeriod.end) else {
-            return nil // Impossible de convertir les dates
-        }
-        
-        var currentDate = startDate
-        var formattedDates: [Date] = []
-        
-        let calendar = FoundationCalendar.current
-        
-        while currentDate <= endDate {
-            let dayOfWeek = calendar.component(.weekday, from: currentDate)
-            let dayName = calendar.weekdaySymbols[dayOfWeek - 1]
+        for journey in vehicleJourneys {
+            passageDays[journey.id] = []
             
-            if (weekDaysPattern.sunday && dayName == "Sunday") ||
-                (weekDaysPattern.monday && dayName == "Monday") ||
-                (weekDaysPattern.tuesday && dayName == "Tuesday") ||
-                (weekDaysPattern.wednesday && dayName == "Wednesday") ||
-                (weekDaysPattern.thursday && dayName == "Thursday") ||
-                (weekDaysPattern.friday && dayName == "Friday") ||
-                (weekDaysPattern.saturday && dayName == "Saturday") {
-                formattedDates.append(currentDate)
+            for calendar in journey.calendars {
+                // Process each active period
+                for period in calendar.activePeriods {
+                    guard let startDate = dateFormatter.date(from: period.begin),
+                          let endDate = dateFormatter.date(from: period.end) else {
+                        continue
+                    }
+                    
+                    var currentDate = startDate
+                    while currentDate <= endDate {
+                        let weekday = Calendar.current.component(.weekday, from: currentDate) // 1 = Sunday, 2 = Monday, etc.
+                        
+                        // Check week pattern
+                        let isValidDay = (weekday == 1 && calendar.weekPattern.sunday) ||
+                        (weekday == 2 && calendar.weekPattern.monday) ||
+                        (weekday == 3 && calendar.weekPattern.tuesday) ||
+                        (weekday == 4 && calendar.weekPattern.wednesday) ||
+                        (weekday == 5 && calendar.weekPattern.thursday) ||
+                        (weekday == 6 && calendar.weekPattern.friday) ||
+                        (weekday == 7 && calendar.weekPattern.saturday)
+                        
+                        if isValidDay {
+                            passageDays[journey.id]?.append(currentDate)
+                        }
+                        
+                        currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
+                    }
+                }
+                
+                // Process exceptions
+                if let exceptions = calendar.exceptions {
+                    for exception in exceptions {
+                        if let exceptionDate = dateFormatter.date(from: exception.datetime) {
+                            switch exception.type {
+                            case .add:
+                                if !passageDays[journey.id]!.contains(exceptionDate) {
+                                    passageDays[journey.id]?.append(exceptionDate)
+                                }
+                            case .remove:
+                                passageDays[journey.id]?.removeAll { $0 == exceptionDate }
+                            }
+                        }
+                    }
+                }
             }
             
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? Date()
+            // Sort dates
+            passageDays[journey.id]?.sort()
         }
         
-        return formattedDates
+        return passageDays
     }
+
     
     /// Formate une date en chaîne de caractères au format `dd/MM/yy`.
     /// - Parameter date: La date à formater.

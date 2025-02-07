@@ -21,3 +21,7 @@ struct JourneyDetails: View {
         }
     }
 }
+
+#Preview {
+    JourneyDetails(company: "SNCF", headsign: "12345")
+}

@@ -15,16 +15,21 @@
 		14A3D815C090E86CB8DFC0F8 /* DashedDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EFD27DBA0F054974A4B3 /* DashedDivider.swift */; };
 		21991ED9C3521272CDBA4E13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0031F231D734849B7FFD67C8 /* LaunchScreen.storyboard */; };
 		2ACFA1AA65ED4BD9CBECA344 /* JourneyTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014011F4C3CAD2CD786779EE /* JourneyTimes.swift */; };
+		302EF570C82AE06692AC5BD5 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293B08E4B735257A48FC4B68 /* DatePickerView.swift */; };
 		311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */; };
 		39BE0360B1760E02615FEEFD /* TrainIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */; };
+		4160CE17A1ED470CAA99E83C /* EmptyListJourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7F2EEB6DC39D2D6B975517 /* EmptyListJourneyView.swift */; };
 		56C554474444AD1F8FA637BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81A693990B0026E7D87826ED /* ContentView.swift */; };
+		5744539007525E8097AB401B /* DatePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084D181652C6E036DAE9EDB /* DatePickerViewModel.swift */; };
 		5DFC33C145F10C3D01FC53EF /* AddTicketDateV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EEE6200DC53F18D0BD76946 /* AddTicketDateV.swift */; };
 		6146E337372B3C5F852F0396 /* JourneyUIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E6452F78524BAC3C458949 /* JourneyUIModel.swift */; };
 		663BF5E481F9F63337ACEEB9 /* JourneyHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3828E96BCDBEE3E532D63F1 /* JourneyHeaderView.swift */; };
 		66D54993D3CB6EE955AFF9D3 /* JourneyRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2425E98306760391C7732ADC /* JourneyRowViewModel.swift */; };
 		6BF9F69FA94619A1025F395C /* RailMapiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F209F1298594FCC032126DE /* RailMapiOSApp.swift */; };
 		6C1ED2E5EAA19154400E7F22 /* AddTicketVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414F625900B341A1C4D48679 /* AddTicketVM.swift */; };
+		71E5B6844848F4C76E375904 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6280EF92B5B8E32B26995588 /* Router.swift */; };
 		758AE03336AFEE14034A2DB4 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 7E251E8B71E7059433E27B04 /* Helpers */; };
+		7930C44398F92A2A11185E78 /* StationPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C560145910235D4B33C643F0 /* StationPickerViewModel.swift */; };
 		7A43D13FB7A3C5F8FCEA83CB /* DateText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27611039302B040FEB808624 /* DateText.swift */; };
 		7FC2BCD7665B03A37DE62ACD /* DurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A09DBFF61D413960ACAD42 /* DurationView.swift */; };
 		8BBD9340FB2FD8B55D5CBF7B /* StationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */; };
@@ -34,12 +39,14 @@
 		A8E1686DE707CE11A8D68B01 /* TuistAssets+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */; };
 		A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */; };
 		B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26715D26F442F91E5006F92F /* JourneyDetails.swift */; };
+		BBC8CDA168173B90C91B01F5 /* DepartureStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */; };
 		BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EC15022E746D349E4C9B3D /* StationView.swift */; };
 		BC053432A6F5BC9030133FCF /* CompanyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48EC3E26A96904215273AE /* CompanyLogo.swift */; };
-		BCC1D81F7C1149FFA025DB71 /* DepartureStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */; };
+		BC9E0ED1A9936EF751EA8C82 /* ConfirmationPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */; };
 		BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
 		BFCEEA36F1C2F56E54811186 /* XCTest.framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1922A944C075DACE8E00EBA2 /* XCTest.framework.framework */; };
 		C17B6DBC47EDE3BCEA901D87 /* AddTicketV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF9703A6F41169A2DD4FE18 /* AddTicketV.swift */; };
+		C2BDE32EEF44592AD9B66BD2 /* StationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F964E4E8A300A519005EC01 /* StationPickerView.swift */; };
 		CAC6F2C9B8CD31137390C2DB /* TuistBundle+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */; };
 		CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */; };
 		CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A82A1FC146174A33FF7C58A8 /* RailMap.xcdatamodeld */; };
@@ -49,6 +56,7 @@
 		DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */; };
 		E2817C280EC2C4C0DD597661 /* ClipRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52C182521BB95AE0F7460D /* ClipRow.swift */; };
 		F677B53EB7E39133483C6D8E /* JourneyRowVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */; };
+		F69769B0D54780CD3FBC2BE0 /* ConfirmationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */; };
 		F9B9152F6DCFE428D46101F2 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = B84FBECDF06B2687B7C68274 /* Helpers */; };
 /* End PBXBuildFile section */
 
@@ -104,6 +112,7 @@
 
 /* Begin PBXFileReference section */
 		0031F231D734849B7FFD67C8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0084D181652C6E036DAE9EDB /* DatePickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewModel.swift; sourceTree = "<group>"; };
 		014011F4C3CAD2CD786779EE /* JourneyTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyTimes.swift; sourceTree = "<group>"; };
 		1117EFD27DBA0F054974A4B3 /* DashedDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashedDivider.swift; sourceTree = "<group>"; };
 		13E6452F78524BAC3C458949 /* JourneyUIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyUIModel.swift; sourceTree = "<group>"; };
@@ -112,6 +121,7 @@
 		2425E98306760391C7732ADC /* JourneyRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowViewModel.swift; sourceTree = "<group>"; };
 		26715D26F442F91E5006F92F /* JourneyDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetails.swift; sourceTree = "<group>"; };
 		27611039302B040FEB808624 /* DateText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateText.swift; sourceTree = "<group>"; };
+		293B08E4B735257A48FC4B68 /* DatePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerView.swift; sourceTree = "<group>"; };
 		29DCC8711A5AFE25FCDDD699 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2AC34B800322EFC030C773B4 /* RailMap.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RailMap.xcdatamodel; sourceTree = "<group>"; };
 		33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLabel.swift; sourceTree = "<group>"; };
@@ -121,7 +131,10 @@
 		55BCD0205832989CB2C111FF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		58E5DCB89A6A9966D527DF79 /* RailMapiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailMapiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C48EC3E26A96904215273AE /* CompanyLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogo.swift; sourceTree = "<group>"; };
+		5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
 		5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneysListView.swift; sourceTree = "<group>"; };
+		5F964E4E8A300A519005EC01 /* StationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerView.swift; sourceTree = "<group>"; };
+		6280EF92B5B8E32B26995588 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyModel.swift; sourceTree = "<group>"; };
 		6C205D0243AB6E3D5E2B5FBB /* RailMapiOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "RailMapiOSTests-Info.plist"; sourceTree = "<group>"; };
 		6EF9703A6F41169A2DD4FE18 /* AddTicketV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketV.swift; sourceTree = "<group>"; };
@@ -130,6 +143,7 @@
 		81A693990B0026E7D87826ED /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		83B4DC9B77E89CBE8E37B5E6 /* JourneyRowFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowFooter.swift; sourceTree = "<group>"; };
 		88EC15022E746D349E4C9B3D /* StationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationView.swift; sourceTree = "<group>"; };
+		92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPickerView.swift; sourceTree = "<group>"; };
 		94505A9346DF3789939EA951 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		97A09DBFF61D413960ACAD42 /* DurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationView.swift; sourceTree = "<group>"; };
 		9C0F02EC0E9883C98A6262C4 /* UIKit.framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/UIKit.framework.framework; sourceTree = DEVELOPER_DIR; };
@@ -139,10 +153,12 @@
 		ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainIcon.swift; sourceTree = "<group>"; };
 		AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTimeline.swift; sourceTree = "<group>"; };
 		B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
+		B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPickerViewModel.swift; sourceTree = "<group>"; };
 		C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VehiculeJourneysModel-Navitia.swift"; sourceTree = "<group>"; };
+		C560145910235D4B33C643F0 /* StationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerViewModel.swift; sourceTree = "<group>"; };
 		CE29BF1855E8D788EC222B6A /* TimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLabel.swift; sourceTree = "<group>"; };
 		D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowVMTests.swift; sourceTree = "<group>"; };
+		DA7F2EEB6DC39D2D6B975517 /* EmptyListJourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyListJourneyView.swift; sourceTree = "<group>"; };
 		E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+RailMapiOS.swift"; sourceTree = "<group>"; };
 		EB52C182521BB95AE0F7460D /* ClipRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipRow.swift; sourceTree = "<group>"; };
 		F070D96178C8D25D6AF725D7 /* ClockIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockIcon.swift; sourceTree = "<group>"; };
@@ -203,6 +219,8 @@
 		50DEC67C63CFD8276B89B33C /* AddJourney */ = {
 			isa = PBXGroup;
 			children = (
+				596C5990219E52D35C1A852E /* UI */,
+				9A9D84C9F80EE4B6A4860F26 /* ViewModel */,
 				9EEE6200DC53F18D0BD76946 /* AddTicketDateV.swift */,
 				6EF9703A6F41169A2DD4FE18 /* AddTicketV.swift */,
 				414F625900B341A1C4D48679 /* AddTicketVM.swift */,
@@ -221,6 +239,16 @@
 			path = InfoPlists;
 			sourceTree = "<group>";
 		};
+		596C5990219E52D35C1A852E /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */,
+				293B08E4B735257A48FC4B68 /* DatePickerView.swift */,
+				5F964E4E8A300A519005EC01 /* StationPickerView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		5CB41C62801C8DAAC91C2E7C /* UIComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -228,6 +256,7 @@
 				6E74C828E31556E8DD3F37BB /* Molecules */,
 				6211ED424EDF2D4558DB2E3C /* Organisms */,
 				1117EFD27DBA0F054974A4B3 /* DashedDivider.swift */,
+				DA7F2EEB6DC39D2D6B975517 /* EmptyListJourneyView.swift */,
 				13E6452F78524BAC3C458949 /* JourneyUIModel.swift */,
 			);
 			path = UIComponents;
@@ -236,8 +265,8 @@
 		6211ED424EDF2D4558DB2E3C /* Organisms */ = {
 			isa = PBXGroup;
 			children = (
-				BC745CDAC803676EFED799A9 /* DepartureStatusView.swift */,
 				EB52C182521BB95AE0F7460D /* ClipRow.swift */,
+				5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */,
 				F3828E96BCDBEE3E532D63F1 /* JourneyHeaderView.swift */,
 				83B4DC9B77E89CBE8E37B5E6 /* JourneyRowFooter.swift */,
 				3A6764A3CC64853FD871B8AD /* JourneyRowHeader.swift */,
@@ -277,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				AFFBC10A860DC04CFF825833 /* ApiService */,
+				6280EF92B5B8E32B26995588 /* Router.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -302,6 +332,16 @@
 				55BCD0205832989CB2C111FF /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		9A9D84C9F80EE4B6A4860F26 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */,
+				0084D181652C6E036DAE9EDB /* DatePickerViewModel.swift */,
+				C560145910235D4B33C643F0 /* StationPickerViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		AE11E292A41C995755D08DE4 /* UnitTests */ = {
@@ -428,8 +468,8 @@
 			buildPhases = (
 				6CE3BA3267793452412B306D /* Sources */,
 				97D2F96D492D8B445F219DA8 /* Resources */,
-				332DE44F75FE245CEA5AF39C /* Embed Frameworks */,
 				B1F466ACF190EEB94F36EB21 /* Frameworks */,
+				332DE44F75FE245CEA5AF39C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -449,8 +489,8 @@
 			buildPhases = (
 				EC2F6CA27E685275C315F83C /* Sources */,
 				66B144CBB59E4710E5793EAA /* Resources */,
-				C276BBC79BCFFC895A620344 /* Embed Frameworks */,
 				6C2A791C9B933FD35FBAC54E /* Frameworks */,
+				C276BBC79BCFFC895A620344 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -471,8 +511,8 @@
 			buildPhases = (
 				530212DC1095A1B61D26FE0C /* Sources */,
 				65FE8F84891C8FC949276E78 /* Resources */,
-				DADFCF6EFF31967B3605C6D4 /* Embed Frameworks */,
 				8870A1EF8AF9407CD14BE5A4 /* Frameworks */,
+				DADFCF6EFF31967B3605C6D4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -568,13 +608,18 @@
 				C17B6DBC47EDE3BCEA901D87 /* AddTicketV.swift in Sources */,
 				6C1ED2E5EAA19154400E7F22 /* AddTicketVM.swift in Sources */,
 				A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */,
+				F69769B0D54780CD3FBC2BE0 /* ConfirmationPickerView.swift in Sources */,
+				302EF570C82AE06692AC5BD5 /* DatePickerView.swift in Sources */,
+				C2BDE32EEF44592AD9B66BD2 /* StationPickerView.swift in Sources */,
+				BC9E0ED1A9936EF751EA8C82 /* ConfirmationPickerViewModel.swift in Sources */,
+				5744539007525E8097AB401B /* DatePickerViewModel.swift in Sources */,
+				7930C44398F92A2A11185E78 /* StationPickerViewModel.swift in Sources */,
 				CFD0F9AF15EA2A65054A1B24 /* BottomSheetView.swift in Sources */,
 				A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */,
 				66D54993D3CB6EE955AFF9D3 /* JourneyRowViewModel.swift in Sources */,
 				DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */,
 				56C554474444AD1F8FA637BA /* ContentView.swift in Sources */,
 				D55ABE8F7E48A0485E5171B1 /* DataController.swift in Sources */,
-				BCC1D81F7C1149FFA025DB71 /* DepartureStatusView.swift in Sources */,
 				0D2D5B2B6DEF124019EF135A /* JourneyDetailsV.swift in Sources */,
 				6BF9F69FA94619A1025F395C /* RailMapiOSApp.swift in Sources */,
 				A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */,
@@ -584,17 +629,20 @@
 				13DA546FDB3E371D5730AA43 /* TimeLabel.swift in Sources */,
 				39BE0360B1760E02615FEEFD /* TrainIcon.swift in Sources */,
 				14A3D815C090E86CB8DFC0F8 /* DashedDivider.swift in Sources */,
+				4160CE17A1ED470CAA99E83C /* EmptyListJourneyView.swift in Sources */,
 				6146E337372B3C5F852F0396 /* JourneyUIModel.swift in Sources */,
 				7FC2BCD7665B03A37DE62ACD /* DurationView.swift in Sources */,
 				B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */,
 				2ACFA1AA65ED4BD9CBECA344 /* JourneyTimes.swift in Sources */,
 				BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */,
 				E2817C280EC2C4C0DD597661 /* ClipRow.swift in Sources */,
+				BBC8CDA168173B90C91B01F5 /* DepartureStatusView.swift in Sources */,
 				663BF5E481F9F63337ACEEB9 /* JourneyHeaderView.swift in Sources */,
 				0F6ECAA6B6E28B05F847D77B /* JourneyRowFooter.swift in Sources */,
 				CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */,
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
+				71E5B6844848F4C76E375904 /* Router.swift in Sources */,
 				CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

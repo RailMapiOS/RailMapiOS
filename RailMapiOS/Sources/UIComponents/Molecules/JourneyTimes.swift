@@ -24,3 +24,7 @@ struct JourneyTimes: View {
         }
     }
 }
+
+#Preview {
+    JourneyTimes(departureTime: "12:30", departureLabel: "Label1", arrivalTime: "18:45", arrivalLabel: "Label2")
+}

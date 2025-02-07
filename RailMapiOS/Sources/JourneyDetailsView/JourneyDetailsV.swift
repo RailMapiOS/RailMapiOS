@@ -9,13 +9,26 @@ import SwiftUI
 import CoreData
 
 struct JourneyDetailsV: View {
-    @State var journey: Journey
+    @EnvironmentObject var dataController: DataController
+    @ObservedObject var journey: Journey
+    
+    var departureLabel: String {
+        let stop: Stop = ((journey.stops as? Set<Stop>)?.first(where: { $0.status == "departure" }))!
+        let stopInfoLabel = stop.stopinfo?.label
+        return stopInfoLabel ?? "N/A"
+    }
+    
+    var arrivalLabel: String {
+        let stop: Stop = ((journey.stops as? Set<Stop>)?.first(where: { $0.status == "arrival" }))!
+        let stopInfoLabel = stop.stopinfo?.label
+        return stopInfoLabel ?? "N/A"
+    }
     
     var body: some View {
         JourneyHeaderView(company: journey.company,
                           headsign: journey.headsign,
-                          departureCity: "Paris",
-                          arrivalCity: "Perpignan",
+                          departureCity: departureLabel,
+                          arrivalCity: arrivalLabel,
                           departureDate: journey.startDate,
                           size: CGSize(width: 60, height: 60))
         
@@ -26,9 +39,9 @@ struct JourneyDetailsV: View {
                     DepartureStatusView(status: .intime, time: startDate, station: "Gare de Lyon", hall: "3", platform: nil)
                 }
                 VStack{
-                    StationView(stationLabel: "Gare de Lyon", date: journey.startDate!, arrival: false)
+                    StationView(stationLabel: departureLabel, date: journey.startDate!, arrival: false)
                     DurationView(startDate: journey.startDate, endDate: journey.endDate)
-                    StationView(stationLabel: "Gare de Perpignan", date: journey.endDate!, arrival: true)
+                    StationView(stationLabel: arrivalLabel, date: journey.endDate!, arrival: true)
                 }
                 .padding(.vertical)
                 HStack {
@@ -59,15 +72,15 @@ struct JourneyDetailsV: View {
                     )
                     
                     ClippedRow(title: "My history on This Route",
-                               bodyTexts: ["14°C et ensoleillée","14°C et ensoleillée","14°C et ensoleillée"], displayMode: .large
+                               bodyTexts: ["14°C et ensoleillée","13°C et ensoleillée","12°C et ensoleillée"], displayMode: .large
                     )
                     
                     ClippedRow(title: "My history on This Route",
-                               bodyTexts: ["14°C et ensoleillée","14°C et ensoleillée","14°C et ensoleillée"], displayMode: .large
+                               bodyTexts: ["14°C et ensoleillée","13°C et ensoleillée","12°C et ensoleillée"], displayMode: .large
                     )
                     
                     ClippedRow(title: "My history on This Route",
-                               bodyTexts: ["14°C et ensoleillée","14°C et ensoleillée","14°C et ensoleillée"], displayMode: .large
+                               bodyTexts: ["14°C et ensoleillée","13°C et ensoleillée","12°C et ensoleillée"], displayMode: .large
                     )
                 }
                 .padding(.horizontal)
@@ -84,20 +97,19 @@ struct JourneyDetailsV: View {
     }
 }
 
-#Preview {
-    let container = NSPersistentContainer.preview
-    let context = container.viewContext
-    
-    let dataController = DataController()
-    dataController.createMockJourneys(context: context)
-    
-    let fetchRequest: NSFetchRequest<Journey> = Journey.fetchRequest()
-    fetchRequest.fetchLimit = 1
-    
-    guard let journey = try? context.fetch(fetchRequest).first else {
-        fatalError("Aucun voyage trouvé pour la prévisualisation.")
-    }
-    
-    return JourneyDetailsV(journey: journey)
-        .environment(\.managedObjectContext, context)
-}
+//#Preview {
+//    let container = NSPersistentContainer.preview
+//    let context = container.viewContext
+//    
+//    DataController.shared.createMockJourneys(context: context)
+//    
+//    let fetchRequest: NSFetchRequest<Journey> = Journey.fetchRequest()
+//    fetchRequest.fetchLimit = 1
+//    
+//    guard let journey = try? context.fetch(fetchRequest).last else {
+//        fatalError("Aucun voyage trouvé pour la prévisualisation.")
+//    }
+//    
+//    return JourneyDetailsV(journey: journey)
+//        .environment(\.managedObjectContext, context)
+//}
