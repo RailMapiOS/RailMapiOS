@@ -11,7 +11,12 @@ import CloudKit
 struct SignInView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-    @StateObject var vm = SignInViewModel()
+    @EnvironmentObject var userStorage: UserStorage
+    @ObservedObject var vm: SignInViewModel
+    
+    public init(userStorage: UserStorage) {
+        self.vm = SignInViewModel(userStorage: userStorage)
+    }
     
     var body: some View {
         NavigationStack {
@@ -136,6 +141,3 @@ struct SignInView: View {
     }
 }
 
-#Preview {
-    SignInView()
-}

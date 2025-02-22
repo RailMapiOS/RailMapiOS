@@ -26,6 +26,7 @@ public enum RailMapiOSAsset: Sendable {
     public static let iconDeutschebahn = RailMapiOSImages(name: "icon_deutschebahn")
     public static let iconEurostar = RailMapiOSImages(name: "icon_eurostar")
     public static let iconEurostarMinimal = RailMapiOSImages(name: "icon_eurostar_minimal")
+    public static let iconInoui = RailMapiOSImages(name: "icon_inoui")
     public static let iconInouiMinimal = RailMapiOSImages(name: "icon_inoui_minimal")
     public static let iconRenfe = RailMapiOSImages(name: "icon_renfe")
     public static let iconSncf = RailMapiOSImages(name: "icon_sncf")

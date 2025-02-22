@@ -15,7 +15,8 @@ struct BottomSheetView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
     @ObservedObject var router: Router
 
-    @State var isUserLogin: Bool = false
+    @StateObject var userStorage: UserStorage = UserStorage()
+    
     @State var showSignIn: Bool = false
     
     @Binding var sheetSize: PresentationDetent
@@ -90,9 +91,20 @@ struct BottomSheetView: View {
                         showSignIn.toggle()
                             
                     } label: {
-                        switch self.isUserLogin {
+                        switch self.userStorage.isLoggedIn() {
                         case true:
-                            Image(systemName: "person.crop.circle.fill.badge.checkmark")
+                            if let user = userStorage.currentUser,
+                               let data = user.profileImage,
+                               let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 34)
+                                    .clipShape(.circle)
+
+                            } else {
+                                Image(systemName: "person.crop.circle.fill.badge.checkmark")
+                            }
                         case false:
                             Image(systemName: "person.crop.circle.fill.badge.plus")
                                 .foregroundStyle(.gray)
@@ -104,7 +116,14 @@ struct BottomSheetView: View {
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
             .searchPresentationToolbarBehavior(.avoidHidingContent)
             .sheet(isPresented: $showSignIn) {
-                SignInView()
+                if let user = userStorage.currentUser {
+                    AccountView(userStorage: userStorage)
+                } else {
+                    SignInView(userStorage: userStorage)
+                }
+            }
+            .onAppear {
+                userStorage.loadUser()
             }
         }
     }
