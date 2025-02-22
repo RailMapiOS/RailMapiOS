@@ -1,4 +1,4 @@
-#!/bin/zsh
-curl https://mise.jdx.dev/install.sh | sh
-mise install
-mise exec -- tuist generate 
+#!/bin/sh
+brew install --formula tuist@4.39.1
+
+tuist generate
