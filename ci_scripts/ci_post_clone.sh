@@ -1,4 +1,5 @@
 #!/bin/zsh
+cd ..
 curl -Ls https://install.tuist.io | bash
 
 export HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications"
