@@ -27,7 +27,7 @@ jobs:
           which tuist
 
       - name: Debug Available Test Targets
-        run: tuist test --test-targets
+        run: tuist test --test-targets RailMapiOS
 
       - name: Run Tests
         run: |
