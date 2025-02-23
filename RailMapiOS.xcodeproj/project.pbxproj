@@ -38,7 +38,6 @@
 		97F18F0E3ADE8BE87904DF94 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCD0205832989CB2C111FF /* Preview Assets.xcassets */; };
 		A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
 		A785790E2D6A5FD100F305DE /* ci_post_clone.sh in Resources */ = {isa = PBXBuildFile; fileRef = A785790D2D6A5FD100F305DE /* ci_post_clone.sh */; };
-		A78579102D6A604100F305DE /* .mise.toml in Resources */ = {isa = PBXBuildFile; fileRef = A785790F2D6A603E00F305DE /* .mise.toml */; };
 		A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F070D96178C8D25D6AF725D7 /* ClockIcon.swift */; };
 		A8E1686DE707CE11A8D68B01 /* TuistAssets+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */; };
 		A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */; };
@@ -164,7 +163,6 @@
 		9F209F1298594FCC032126DE /* RailMapiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailMapiOSApp.swift; sourceTree = "<group>"; };
 		A251A30D989D02F4B344A856 /* BottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView.swift; sourceTree = "<group>"; };
 		A785790D2D6A5FD100F305DE /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
-		A785790F2D6A603E00F305DE /* .mise.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .mise.toml; sourceTree = "<group>"; };
 		ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainIcon.swift; sourceTree = "<group>"; };
 		AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTimeline.swift; sourceTree = "<group>"; };
 		B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -419,7 +417,6 @@
 		B36CDB855BCE2FB0D7116ADA /* Project */ = {
 			isa = PBXGroup;
 			children = (
-				A785790F2D6A603E00F305DE /* .mise.toml */,
 				A785790C2D6A5FC200F305DE /* ci_scripts */,
 				FB3CCB11F09D60D93AEDFC13 /* Config */,
 				63DF9ED49E4B05BFB90CB39D /* CoreData */,
@@ -658,7 +655,6 @@
 			files = (
 				11911C194CFF42A388892C28 /* Assets.xcassets in Resources */,
 				21991ED9C3521272CDBA4E13 /* LaunchScreen.storyboard in Resources */,
-				A78579102D6A604100F305DE /* .mise.toml in Resources */,
 				A785790E2D6A5FD100F305DE /* ci_post_clone.sh in Resources */,
 				97F18F0E3ADE8BE87904DF94 /* Preview Assets.xcassets in Resources */,
 			);
