@@ -18,5 +18,10 @@ jobs:
       - name: Install Tuist & Dependencies
         uses: jdx/mise-action@v2
 
+      - name: Install Tuist
+        run: |
+          curl -Ls https://install.tuist.io | bash
+          echo "$HOME/.tuist/bin" >> $GITHUB_PATH
+
       - name: Run Tests
         run: tuist test RailMapiOSTests | xcbeautify --renderer github-actions
