@@ -27,7 +27,7 @@ jobs:
           which tuist
 
       - name: Debug Available Test Targets
-        run: tuist test --list-targets
+        run: tuist test --test-targets
 
       - name: Run Tests
         run: |
