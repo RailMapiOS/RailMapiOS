@@ -10,23 +10,21 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Install Dependencies (Mise + Tuist)
         uses: jdx/mise-action@v2
 
-      - name: Install Tuist
-        run: |
-          curl -Ls https://install.tuist.io | bash
-          echo "$HOME/.tuist/bin" >> $GITHUB_PATH
+      - name: Ensure Tuist Version is Pinned
+        run: mise use --pin tuist
 
-      - name: Check Tuist Installation
-        run: which tuist
+      - name: Debug Tuist Installation
+        run: tuist --version
 
-      - name: Debug Tuist Targets
+      - name: Debug Available Test Targets
         run: tuist test --list-targets
 
       - name: Run Tests
