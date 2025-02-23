@@ -22,7 +22,9 @@ jobs:
         run: mise use --pin tuist
 
       - name: Debug Tuist Installation
-        run: tuist --version
+        run: |
+          tuist --version
+          which tuist
 
       - name: Debug Available Test Targets
         run: tuist test --list-targets
@@ -30,4 +32,4 @@ jobs:
       - name: Run Tests
         run: |
           set -o pipefail
-          tuist test RailMapiOSTests --verbose | xcbeautify --renderer github-actions
+          tuist test RailMapiOSTests --verbose --skip-cache | xcbeautify --renderer github-actions
