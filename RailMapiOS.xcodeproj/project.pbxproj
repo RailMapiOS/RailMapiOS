@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -180,6 +180,10 @@
 		F66973A9D15847122DE679D3 /* JourneyDetailsV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetailsV.swift; sourceTree = "<group>"; };
 		FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A7F31C5E2D6B6B1E00E8883D /* UITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		6C2A791C9B933FD35FBAC54E /* Frameworks */ = {
@@ -448,6 +452,7 @@
 		C5A693F0BF578474670CCDF5 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A7F31C5E2D6B6B1E00E8883D /* UITests */,
 				AE11E292A41C995755D08DE4 /* UnitTests */,
 			);
 			path = Tests;
@@ -578,6 +583,9 @@
 			);
 			dependencies = (
 				287A7A9810E450D56A2F1767 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A7F31C5E2D6B6B1E00E8883D /* UITests */,
 			);
 			name = RailMapiOSUITests;
 			packageProductDependencies = (
