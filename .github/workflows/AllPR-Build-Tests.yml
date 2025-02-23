@@ -23,5 +23,14 @@ jobs:
           curl -Ls https://install.tuist.io | bash
           echo "$HOME/.tuist/bin" >> $GITHUB_PATH
 
+      - name: Debug Tuist Targets
+        run: tuist test --list-targets
+
       - name: Run Tests
-        run: tuist test RailMapiOSTests | xcbeautify --renderer github-actions
+        run: |
+          set -o pipefail
+          tuist test RailMapiOSTests | xcbeautify --renderer github-actions
+
+      - name: Show Xcode Logs if Test Fails
+        if: failure()
+        run: cat ~/Library/Logs/DiagnosticReports/xcodebuild*.log || true
