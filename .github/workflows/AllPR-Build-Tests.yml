@@ -23,7 +23,7 @@ jobs:
 
       - name: Debug Tuist Installation
         run: |
-          tuist --version
+          tuist version
           which tuist
 
       - name: Debug Available Test Targets
