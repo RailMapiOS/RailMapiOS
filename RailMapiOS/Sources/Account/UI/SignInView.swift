@@ -119,14 +119,10 @@ struct SignInView: View {
                             .padding(.horizontal, 30)
                     }
                 }
+                
+                TermsAndPrivacyTextView()
 
-                Text("En vous inscrivant, vous acceptez nos [Conditions d'utilisation](https://example.com) et notre [Politique de confidentialité](https://example.com).")
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 30)
-
-                Spacer()
+                 Spacer()
             }
             .padding()
             .presentationDetents([.large])
@@ -140,4 +136,49 @@ struct SignInView: View {
         }
     }
 }
+
+struct TermsAndPrivacyTextView: View {
+    @State private var showTermsAndPrivacyPolicy = false
+
+    var body: some View {
+        VStack {
+            Text(termsText)
+                .font(.footnote)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 30)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            showTermsAndPrivacyPolicy = true
+        }
+        .sheet(isPresented: $showTermsAndPrivacyPolicy) {
+            TermsAndPrivacyView()
+        }
+    }
+    
+    private var termsText: AttributedString {
+        var text = AttributedString("En vous inscrivant, vous acceptez nos ")
+        
+        var termsText = AttributedString("Conditions d'utilisation")
+        termsText.foregroundColor = .blue
+        termsText.underlineStyle = .single
+        
+        var andText = AttributedString(" et notre ")
+        
+        var privacyText = AttributedString("Politique de confidentialité")
+        privacyText.foregroundColor = .blue
+        privacyText.underlineStyle = .single
+        
+        var endText = AttributedString(".")
+        
+        text.append(termsText)
+        text.append(andText)
+        text.append(privacyText)
+        text.append(endText)
+        
+        return text
+    }
+}
+
 

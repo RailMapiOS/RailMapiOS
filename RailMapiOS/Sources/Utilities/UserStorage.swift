@@ -21,14 +21,18 @@ public class UserStorage: ObservableObject {
         if let encoded = try? JSONEncoder().encode(user) {
             userDefaults.set(encoded, forKey: userDefaultsKey)
             userDefaults.set(true, forKey: isLoggedInKey)
-            self.currentUser = user
+            DispatchQueue.main.async { [weak self] in
+                self?.currentUser = user
+            }
         }
     }
     
     public func loadUser() -> User? {
         if let data = userDefaults.data(forKey: userDefaultsKey),
            let user = try? JSONDecoder().decode(User.self, from: data) {
-            self.currentUser = user
+            DispatchQueue.main.async { [weak self] in
+                self?.currentUser = user
+            }
             return user
         }
         return nil
@@ -37,12 +41,16 @@ public class UserStorage: ObservableObject {
     public func deleteUser() {
         userDefaults.removeObject(forKey: userDefaultsKey)
         userDefaults.set(false, forKey: isLoggedInKey)
-        self.currentUser = nil
+        DispatchQueue.main.async { [weak self] in
+            self?.currentUser = nil
+        }
     }
     
     public func isLoggedIn() -> Bool {
         if !userDefaults.bool(forKey: isLoggedInKey) {
-            self.currentUser = nil
+            DispatchQueue.main.async { [weak self] in
+                self?.currentUser = nil
+            }
             return false
         } else {
             return true

@@ -26,13 +26,17 @@ class SignInViewModel: ObservableObject {
             let status = try await CKContainer.default().accountStatus()
             switch status {
             case .available:
-                isSignedInToiCloud = true
+                DispatchQueue.main.async { [weak self] in
+                    self?.isSignedInToiCloud = true
+                }
                 await fetchiCloudRecordID()
             default:
                 break
             }
         } catch {
-            errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+            DispatchQueue.main.async { [weak self] in
+                self?.errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+            }
         }
     }
     
@@ -48,7 +52,9 @@ class SignInViewModel: ObservableObject {
             let id = try await CKContainer.default().userRecordID()
             await discoveriCloudUser(id: id)
         } catch {
-            errorMessage = "Erreur lors de la récupération de l'ID d'enregistrement : \(error.localizedDescription)"
+            DispatchQueue.main.async { [weak self] in
+                self?.errorMessage = "Erreur lors de la récupération de l'ID d'enregistrement : \(error.localizedDescription)"
+            }
         }
     }
     
@@ -57,7 +63,9 @@ class SignInViewModel: ObservableObject {
             let status = try await CKContainer.default().accountStatus()
             switch status {
             case .available:
-                isSignedInToiCloud = true
+                DispatchQueue.main.async { [weak self] in
+                    self?.isSignedInToiCloud = true
+                }
                 await fetchiCloudRecordID()
             case .noAccount:
                 errorMessage = CloudKitError.iCloudAccountNotfound.rawValue
@@ -69,7 +77,9 @@ class SignInViewModel: ObservableObject {
                 errorMessage = CloudKitError.iCloudAccountUnknown.rawValue
             }
         } catch {
-            errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+            DispatchQueue.main.async { [weak self] in
+                self?.errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+            }
         }
     }
     
@@ -80,13 +90,16 @@ class SignInViewModel: ObservableObject {
             if let nameComponents = participant.userIdentity.nameComponents,
                let givenName = nameComponents.givenName,
                let familyName = nameComponents.familyName {
-
-                user = User(userId: participant.participantID.description, firstName: givenName, lastName: familyName, email: participant.userIdentity.lookupInfo?.emailAddress , profileImage: nil)
+                DispatchQueue.main.async { [weak self] in
+                    self?.user = User(userId: participant.participantID.description, firstName: givenName, lastName: familyName, email: participant.userIdentity.lookupInfo?.emailAddress , profileImage: nil)
+                }
             }
             
             await fetchUserContactInfo(with: participant.userIdentity)
         } catch {
-            errorMessage = "Erreur lors de la découverte de l'utilisateur : \(error.localizedDescription)"
+            DispatchQueue.main.async { [weak self] in
+                self?.errorMessage = "Erreur lors de la découverte de l'utilisateur : \(error.localizedDescription)"
+            }
         }
     }
     

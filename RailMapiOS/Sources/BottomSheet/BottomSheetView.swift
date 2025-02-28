@@ -99,15 +99,24 @@ struct BottomSheetView: View {
                                 Image(uiImage: uiImage)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 34)
+                                    .frame(height: 40)
                                     .clipShape(.circle)
+                                    .padding(.horizontal, 10)
 
                             } else {
                                 Image(systemName: "person.crop.circle.fill.badge.checkmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 30)
+                                    .padding(.horizontal, 10)
                             }
                         case false:
                             Image(systemName: "person.crop.circle.fill.badge.plus")
+                                .resizable()
                                 .foregroundStyle(.gray)
+                                .scaledToFit()
+                                .frame(height: 30)
+                                .padding(.horizontal, 10)
                         }
                        
                     }

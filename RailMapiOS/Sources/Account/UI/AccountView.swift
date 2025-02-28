@@ -21,14 +21,16 @@ struct AccountView: View {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 34)
+                                .frame(height: 40)
                                 .clipShape(.circle)
+                                .padding(.horizontal, 10)
                         } else {
                             Image(systemName: "person.crop.circle.fill")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 34)
+                                .frame(height: 40)
                                 .foregroundStyle(.green)
+                                .padding(.horizontal, 10)
                         }
                         
                         VStack (alignment: .leading) {
@@ -41,6 +43,7 @@ struct AccountView: View {
                         }
                         Spacer()
                     }
+                    .padding(.top)
                     
                     
                     Button {
@@ -48,7 +51,7 @@ struct AccountView: View {
                     } label: {
                         RoundedRectangle(cornerRadius: 100)
                             .stroke()
-                            .frame(width: 100, height: 30)
+                            .frame(width: 90, height: 25)
                             .overlay(
                                 HStack {
                                     Image(systemName: "gear")
@@ -56,7 +59,7 @@ struct AccountView: View {
                                     Text("Settings")
                                         .font(.caption)
                                 }
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.gray)
                             )
                             .foregroundStyle(.gray)
                         
