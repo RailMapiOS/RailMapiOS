@@ -12,7 +12,7 @@ import AuthenticationServices
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
+    let journeys: FetchedResults<Journey>
     @ObservedObject var router: Router
 
     @StateObject var userStorage: UserStorage = UserStorage()

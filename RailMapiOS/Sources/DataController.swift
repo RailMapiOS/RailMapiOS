@@ -54,7 +54,8 @@ class DataController: ObservableObject {
                 let stopInfo = StopInfo(context: context)
                 stopInfo.id = newStopInfo.id
                 stopInfo.label = newStopInfo.label
-                stopInfo.coord = newStopInfo.coord
+                stopInfo.latitude = newStopInfo.latitude
+                stopInfo.longitude = newStopInfo.longitude
                 stopInfo.adress = newStopInfo.adress
                 stopInfo.pickUpAllowed = newStopInfo.pickUpAllowed
                 stopInfo.dropOffAllowed = newStopInfo.dropOffAllowed

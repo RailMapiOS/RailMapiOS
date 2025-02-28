@@ -55,7 +55,8 @@ struct NewStop {
 struct NewStopInfo {
     let id: String
     let label: String
-    let coord: String
+    let latitude: Double
+    let longitude: Double
     let adress: String
     let pickUpAllowed: Bool
     let dropOffAllowed: Bool
@@ -64,7 +65,8 @@ struct NewStopInfo {
     
     init(id: String,
          label: String,
-         coord: String,
+         latitude: Double,
+         longitude: Double,
          adress: String,
          pickUpAllowed: Bool,
          dropOffAllowed: Bool,
@@ -72,7 +74,8 @@ struct NewStopInfo {
     ) {
         self.id = id
         self.label = label
-        self.coord = coord
+        self.latitude = latitude
+        self.longitude = longitude
         self.adress = adress
         self.pickUpAllowed = pickUpAllowed
         self.dropOffAllowed = dropOffAllowed

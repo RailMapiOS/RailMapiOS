@@ -30,7 +30,8 @@ struct StopUIModel: Codable {
 
 struct StopInfoUIModel: Codable {
     let adress: String
-    let coord: String
+    let latitude: Double
+    let longitude: Double
     let dropOffAllowed: Bool
     let id: String
     let label: String

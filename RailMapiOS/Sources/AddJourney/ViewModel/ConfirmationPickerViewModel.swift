@@ -120,7 +120,8 @@ extension DateRow {
                 stopInfo: NewStopInfo(
                     id: stopTime.stopPoint.id,
                     label: stopTime.stopPoint.label,
-                    coord: "\(stopTime.stopPoint.coord.lat),\(stopTime.stopPoint.coord.lon)",
+                    latitude: stopTime.stopPoint.coord.lat.convertToDouble() ?? 0.0,
+                    longitude: stopTime.stopPoint.coord.lon.convertToDouble() ?? 0.0,
                     adress: "N/A adress", // À compléter
                     pickUpAllowed: stopTime.pickupAllowed,
                     dropOffAllowed: stopTime.dropOffAllowed,
