@@ -12,6 +12,8 @@ class DataController: ObservableObject {
     let container = NSPersistentContainer(name: "RailMap")
     
     @Published var journeys: [Journey] = []
+    
+    private var mapSettings: MapSettings?
 
     init() {
         container.loadPersistentStores { description, error in
@@ -19,6 +21,31 @@ class DataController: ObservableObject {
                 print("Core Data failed to load: \(error.localizedDescription)")
             }
         }
+        
+        loadJourneys()
+    }
+    
+    func connectMapSettings(_ mapSettings: MapSettings) {
+        self.mapSettings = mapSettings
+        updateMapSettings()
+    }
+    
+    func loadJourneys() {
+        let request: NSFetchRequest<Journey> = Journey.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]
+        
+        let context = container.viewContext
+        
+        do {
+            journeys = try context.fetch(request)
+        } catch {
+            print("Failed to load journeys: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateMapSettings() {
+        guard let mapSettings = mapSettings else { return }
+        mapSettings.updateJourneys(from: self.journeys)
     }
     
     func saveContext() {
@@ -27,6 +54,7 @@ class DataController: ObservableObject {
             do {
                 try context.save()
                 print("Data saved to CoreData")
+                loadJourneys()
             } catch {
                 print("Failed to save data: \(error.localizedDescription)")
             }
@@ -144,6 +172,7 @@ class DataController: ObservableObject {
             try context.execute(deleteRequest)
             try context.save()
             print("All objects of entity \(entityName) deleted.")
+            loadJourneys()
         } catch {
             print("Failed to delete objects: \(error.localizedDescription)")
         }
