@@ -1,0 +1,10 @@
+name: SwiftLint Check
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cirruslabs/swiftlint-action@v1
+        with:
+          version: latest
