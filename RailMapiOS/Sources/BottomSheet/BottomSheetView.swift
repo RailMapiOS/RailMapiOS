@@ -12,9 +12,10 @@ import AuthenticationServices
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
+    let journeys: FetchedResults<Journey>
     @ObservedObject var router: Router
-
+    
+    @ObservedObject var mapSettings: MapSettings
     @StateObject var userStorage: UserStorage = UserStorage()
     
     @State var showSignIn: Bool = false
@@ -46,12 +47,17 @@ struct BottomSheetView: View {
                         JourneyRowView(journey: journey)
                             .onTapGesture {
                                 withAnimation {
+                                    mapSettings.updateJourneys(from: [journey])
                                     router.navigate(to: .journeyDetails(objectID: journey.objectID))
-                                    updateSheetSize()
                                 }
                             }
                     }
                     .listStyle(.plain)
+                }
+            }
+            .onAppear() {
+                withAnimation {
+                    mapSettings.updateJourneys(from: journeys)
                 }
             }
             .navigationDestination(for: Router.Flow.self) { flow in

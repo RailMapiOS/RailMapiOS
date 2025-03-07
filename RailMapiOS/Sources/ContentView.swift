@@ -17,37 +17,61 @@ public struct ContentView: View {
     @State private var isSheetPresented = true
     @State private var sheetSize: PresentationDetent = .fraction(0.3)
     
+    @StateObject private var mapSettings = MapSettings()
+
     @StateObject private var router = Router()
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)])
+     var journeys: FetchedResults<Journey>
 
     public var body: some View {
         Group {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                iPhoneLayout(isSheetPresented: $isSheetPresented, sheetSize: $sheetSize, router: router)
+                iPhoneLayout(
+                    isSheetPresented: $isSheetPresented,
+                    sheetSize: $sheetSize,
+                    router: router,
+                    mapSettings: mapSettings,
+                    journeys: journeys
+                )
             } else {
-                iPadLayout(sheetSize: $sheetSize, router: router)
+                iPadLayout(
+                    sheetSize: $sheetSize,
+                    router: router,
+                    mapSettings: mapSettings,
+                    journeys: journeys
+                )
             }
         }
         .onAppear() {
-            dataController.deleteAllObjects(of: "Journey", context: moc)
-        }
+            dataController.connectMapSettings(mapSettings)        }
     }
 }
 
 public struct iPhoneLayout: View {
     @EnvironmentObject var dataController: DataController
-
     @Binding var isSheetPresented: Bool
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
+    @ObservedObject var mapSettings: MapSettings
+    let journeys: FetchedResults<Journey>
 
     public var body: some View {
         ZStack {
-            Map()
+            MapView(
+                sheetSize: $sheetSize,
+                mapSettings: mapSettings
+            )
+                .edgesIgnoringSafeArea(.all)
                 .sheet(isPresented: $isSheetPresented) {
-                    BottomSheetView(router: router, sheetSize: $sheetSize)
+                    BottomSheetView(
+                        journeys: journeys,
+                        router: router,
+                        mapSettings: mapSettings,
+                        sheetSize: $sheetSize
+                    )
                         .padding(.top)
                         .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
-                        .presentationBackgroundInteraction(.enabled)
+                        .presentationBackgroundInteraction(.enabled(upThrough: .large))
                         .interactiveDismissDisabled()
                         .ignoresSafeArea()
                 }
@@ -55,17 +79,27 @@ public struct iPhoneLayout: View {
     }
 }
 
+
 public struct iPadLayout: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
+    @ObservedObject var mapSettings: MapSettings
+    let journeys: FetchedResults<Journey>
 
     public var body: some View {
         NavigationSplitView {
-            BottomSheetView(router: router, sheetSize: $sheetSize)
+            BottomSheetView(
+                journeys: journeys,
+                router: router,
+                mapSettings: mapSettings, sheetSize: $sheetSize
+            )
                 .listStyle(SidebarListStyle())
                 .frame(minWidth: 200)
         } detail: {
-            Map()
+            MapView(
+                sheetSize: $sheetSize,
+                mapSettings: mapSettings
+            )
                 .edgesIgnoringSafeArea(.all)
         }
     }

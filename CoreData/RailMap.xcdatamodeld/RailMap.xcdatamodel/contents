@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Coordinates" representedClassName="Coordinates" syncable="YES" codeGenerationType="class">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="Journey" representedClassName=".Journey" syncable="YES" codeGenerationType="class">
         <attribute name="archived" optional="YES" attributeType="Boolean" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="company" optional="YES" attributeType="String"/>
@@ -19,10 +23,11 @@
     </entity>
     <entity name="StopInfo" representedClassName=".StopInfo" syncable="YES" codeGenerationType="class">
         <attribute name="adress" optional="YES" attributeType="String"/>
-        <attribute name="coord" optional="YES" attributeType="String"/>
         <attribute name="dropOffAllowed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="pickUpAllowed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="skippedStop" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="stop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Stop" inverseName="stopinfo" inverseEntity="Stop"/>
