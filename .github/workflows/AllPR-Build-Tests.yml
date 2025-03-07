@@ -28,8 +28,3 @@ jobs:
 
       - name: Debug Available Test Targets
         run: tuist test --test-targets RailMapiOS
-
-      - name: Run Tests
-        run: |
-          set -o pipefail
-          tuist test RailMapiOSTests --verbose --skip-cache | xcbeautify --renderer github-actions
