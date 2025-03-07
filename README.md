@@ -33,7 +33,9 @@ L’application suit une architecture **MVVM (Model-View-ViewModel)** pour une s
 - ⏳ Amélioration des **prédictions de retard**  
 - 🌍 Support **multilingue**  
 - 📱 Version **iPad optimisée**  
-- 🏠 Widgets pour l’écran d’accueil  
+- 🏠 Widgets pour l’écran d’accueil
+- 💡 Refonte de l’**architecture en MVI**
+-  🖥️ Version macOS
 
 ## 📜 Licence  
 Ce projet est sous licence **Apache 2.0**. Voir le fichier [`LICENSE`](LICENSE) pour plus de détails.  
