@@ -51,22 +51,8 @@ struct MapView: View {
             MapScaleView()
         }
         .safeAreaInset(edge: .bottom) {
-                Color.clear
-                    .frame(height: bottomSheetHeight)
-        }
-        .onChange(of: sheetSize) { newValue in
-            withAnimation {
-                updateBottomSheetHeight(for: newValue)
-            }
-        }
-    }
-    
-    private func updateBottomSheetHeight(for size: PresentationDetent) {
-        switch size {
-        case .medium:
-            bottomSheetHeight = UIScreen.main.bounds.height * 0.52
-        default:
-            bottomSheetHeight = UIScreen.main.bounds.height * 0.3
+            Color.clear
+                .frame(height: bottomSheetHeight)
         }
     }
 }

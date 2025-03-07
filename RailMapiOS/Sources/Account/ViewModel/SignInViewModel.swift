@@ -91,7 +91,13 @@ class SignInViewModel: ObservableObject {
                let givenName = nameComponents.givenName,
                let familyName = nameComponents.familyName {
                 DispatchQueue.main.async { [weak self] in
-                    self?.user = User(userId: participant.participantID.description, firstName: givenName, lastName: familyName, email: participant.userIdentity.lookupInfo?.emailAddress , profileImage: nil)
+                    self?.user = User(
+                        userId: participant.participantID.description,
+                        firstName: givenName,
+                        lastName: familyName,
+                        email: participant.userIdentity.lookupInfo?.emailAddress ,
+                        profileImage: nil
+                    )
                 }
             }
             

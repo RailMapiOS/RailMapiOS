@@ -102,11 +102,11 @@ class DataController: ObservableObject {
         let compagnies = ["Deutsche Bahn", "SNCF", "Eurostar", "TER", "Trenitalia", "Renfe"]
         var date = Date()
         
-        for i in 1...5 {
+        for indexMock in 1...5 {
             let journey = Journey(context: context)
             journey.id = UUID()
             journey.idVehiculeJourney = "\(journey.id?.uuidString ?? UUID().uuidString)_idVehiculeJourney"
-            journey.headsign = "Headsign \(i)"
+            journey.headsign = "Headsign \(indexMock)"
             journey.archived = false
             journey.company = compagnies.randomElement()
             journey.startDate = generateEndDate(from: date)

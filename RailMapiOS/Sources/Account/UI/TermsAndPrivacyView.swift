@@ -35,11 +35,15 @@ struct TermsAndPrivacyView: View {
                         
                         Text("3. Propriété intellectuelle")
                             .fontWeight(.bold)
-                        Text("Tous les droits de propriété intellectuelle relatifs à l'application RailMap et son contenu appartiennent à leurs propriétaires respectifs et sont protégés par les lois applicables.")
+                        Text(
+                            "Tous les droits de propriété intellectuelle relatifs à l'application RailMap et son contenu appartiennent à leurs propriétaires respectifs et sont protégés par les lois applicables."
+                        )
                         
                         Text("4. Limitation de responsabilité")
                             .fontWeight(.bold)
-                        Text("L'application RailMap est fournie \"telle quelle\" sans garantie d'aucune sorte. Nous ne garantissons pas que l'application sera exempte d'erreurs ou disponible de façon ininterrompue.")
+                        Text(
+                            "L'application RailMap est fournie \"telle quelle\" sans garantie d'aucune sorte. Nous ne garantissons pas que l'application sera exempte d'erreurs ou disponible de façon ininterrompue."
+                        )
                     }
                     
                     Group {
@@ -54,23 +58,33 @@ struct TermsAndPrivacyView: View {
                         
                         Text("2. Données de localisation")
                             .fontWeight(.bold)
-                        Text("Si vous autorisez l'accès à votre localisation, ces données sont uniquement utilisées localement sur votre appareil pour améliorer votre expérience de navigation et ne sont jamais transmises à nos serveurs.")
+                        Text(
+                            "Si vous autorisez l'accès à votre localisation, ces données sont uniquement utilisées localement sur votre appareil pour améliorer votre expérience de navigation et ne sont jamais transmises à nos serveurs."
+                        )
                         
                         Text("3. Informations sur l'appareil")
                             .fontWeight(.bold)
-                        Text("Certaines informations techniques non personnelles (comme le modèle d'appareil et la version iOS) peuvent être collectées automatiquement pour assurer la compatibilité de l'application, mais ces données ne sont pas associées à votre identité.")
+                        Text(
+                            "Certaines informations techniques non personnelles (comme le modèle d'appareil et la version iOS) peuvent être collectées automatiquement pour assurer la compatibilité de l'application, mais ces données ne sont pas associées à votre identité."
+                        )
                         
                         Text("4. Sécurité")
                             .fontWeight(.bold)
-                        Text("Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur.")
+                        Text(
+                            "Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur."
+                        )
                         
                         Text("5. Modifications de la politique")
                             .fontWeight(.bold)
-                        Text("Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications seront publiées dans l'application et prendront effet immédiatement.")
+                        Text(
+                            "Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications seront publiées dans l'application et prendront effet immédiatement."
+                        )
                         
                         Text("6. Contact")
                             .fontWeight(.bold)
-                        Text("Pour toute question concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante: contact@railmap-app.com")
+                        Text(
+                            "Pour toute question concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante: contact@railmap-app.com"
+                        )
                     }
                     
                     Text("Dernière mise à jour: 28 février 2025")

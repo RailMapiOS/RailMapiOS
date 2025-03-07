@@ -26,7 +26,7 @@ public struct ContentView: View {
     public var body: some View {
         Group {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                iPhoneLayout(
+                LayoutiPhone(
                     isSheetPresented: $isSheetPresented,
                     sheetSize: $sheetSize,
                     router: router,
@@ -34,7 +34,7 @@ public struct ContentView: View {
                     journeys: journeys
                 )
             } else {
-                iPadLayout(
+                LayoutiPad(
                     sheetSize: $sheetSize,
                     router: router,
                     mapSettings: mapSettings,
@@ -47,7 +47,7 @@ public struct ContentView: View {
     }
 }
 
-public struct iPhoneLayout: View {
+public struct LayoutiPhone: View {
     @EnvironmentObject var dataController: DataController
     @Binding var isSheetPresented: Bool
     @Binding var sheetSize: PresentationDetent
@@ -79,8 +79,7 @@ public struct iPhoneLayout: View {
     }
 }
 
-
-public struct iPadLayout: View {
+public struct LayoutiPad: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings

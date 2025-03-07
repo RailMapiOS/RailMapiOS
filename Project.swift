@@ -4,6 +4,7 @@ let project = Project(
     name: "RailMapiOS",
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
+            .package(url: "https://github.com/realm/SwiftLint", from: "0.58.2")
         ],
     targets: [
         .target(
@@ -20,7 +21,10 @@ let project = Project(
             sources: ["RailMapiOS/Sources/**"],
             resources: ["RailMapiOS/Resources/**"],
             entitlements: "Config/RailMapiOSDebug.entitlements",
-            dependencies: [.package(product: "Helpers")],
+            dependencies: [
+                .package(product: "Helpers"),
+                .package(product: "SwiftLintBuildToolPlugin", type: .plugin)
+            ],
             settings: .settings(base: [:], configurations: [
                 .debug(name: "Debug", settings: [:]),
                 .release(name: "Release", settings: [:])
