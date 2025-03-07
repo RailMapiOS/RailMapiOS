@@ -40,8 +40,8 @@ class StationPickerViewModel: ObservableObject {
                 print("Placemark details: \(placemark)") // Affiche les détails du placemark
                 if let city = placemark.locality {
                     print("City found: \(city)")
-                    DispatchQueue.main.async {
-                        self.cityNames[stopPoint.id] = city
+                    DispatchQueue.main.async { [weak self] in
+                        self?.cityNames[stopPoint.id] = city
                     }
                 } else {
                     print("Locality not found for \(stopPoint.id), full placemark: \(placemark)")

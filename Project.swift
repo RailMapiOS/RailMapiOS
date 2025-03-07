@@ -14,11 +14,17 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen.storyboard",
+                    "NSContactsUsageDescription": "This app requires access to your contacts to display profile information."
                 ]
             ),
             sources: ["RailMapiOS/Sources/**"],
             resources: ["RailMapiOS/Resources/**"],
+            entitlements: "Config/RailMapiOSDebug.entitlements",
             dependencies: [.package(product: "Helpers")],
+            settings: .settings(base: [:], configurations: [
+                .debug(name: "Debug", settings: [:]),
+                .release(name: "Release", settings: [:])
+            ]),
             coreDataModels: [
                 .coreDataModel("CoreData/RailMap.xcdatamodeld")
             ]

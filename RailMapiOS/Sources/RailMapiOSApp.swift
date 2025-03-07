@@ -9,6 +9,7 @@ struct RailMapiOSApp: App {
             ContentView()
                 .environment(\.managedObjectContext, dataController.container.viewContext)
                 .environmentObject(dataController)
+                .preferredColorScheme(.light)
         }
     }
 }

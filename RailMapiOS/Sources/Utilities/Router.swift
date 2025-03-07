@@ -10,11 +10,7 @@ import SwiftUI
 import CoreData
 
 class Router: ObservableObject {
-    @Published var path: [Flow] = [] {
-        didSet {
-            print("Router path updated:", path)
-        }
-    }
+    @Published var path: [Flow] = []
 
     enum Flow: Hashable {
         case journeys

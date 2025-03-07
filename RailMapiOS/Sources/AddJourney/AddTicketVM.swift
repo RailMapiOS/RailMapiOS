@@ -76,8 +76,8 @@ class AddTicketVM: ObservableObject {
             let decoder = JSONDecoder()
             let decodedResponse = try decoder.decode(VehicleJourneys.self, from: data)
             
-            DispatchQueue.main.async {
-                self.vehicleJourneys = decodedResponse.vehicleJourneys
+            DispatchQueue.main.async { [weak self] in
+                self?.vehicleJourneys = decodedResponse.vehicleJourneys
             }
         } catch {
             print("Error fetching headsign data: \(error)")

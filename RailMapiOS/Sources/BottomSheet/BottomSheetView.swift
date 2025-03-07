@@ -5,14 +5,9 @@
 //  Created by Jérémie Patot on 12/07/2024.
 //
 
-//  BottomSheetView.swift
-//  RailMapiOS
-//
-//  Created by Jérémie Patot on 12/07/2024.
-//
-
 import SwiftUI
 import CoreData
+import AuthenticationServices
 
 struct BottomSheetView: View {
     @Environment(\.managedObjectContext) var moc
@@ -20,6 +15,10 @@ struct BottomSheetView: View {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]) var journeys: FetchedResults<Journey>
     @ObservedObject var router: Router
 
+    @StateObject var userStorage: UserStorage = UserStorage()
+    
+    @State var showSignIn: Bool = false
+    
     @Binding var sheetSize: PresentationDetent
     @State private var searchText = ""
     @State private var searchPresented: Bool = false {
@@ -88,29 +87,53 @@ struct BottomSheetView: View {
                         .font(.title)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if searchPresented && filteredJourneys.isEmpty {
-                        Button(action: {
-                            if journeys.isEmpty {
-                                let dataController = DataController()
-                                dataController.createMockJourneys(context: moc)
+                    Button {
+                        showSignIn.toggle()
+                            
+                    } label: {
+                        switch self.userStorage.isLoggedIn() {
+                        case true:
+                            if let user = userStorage.currentUser,
+                               let data = user.profileImage,
+                               let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 40)
+                                    .clipShape(.circle)
+                                    .padding(.horizontal, 10)
+
+                            } else {
+                                Image(systemName: "person.crop.circle.fill.badge.checkmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 30)
+                                    .padding(.horizontal, 10)
                             }
-                        }) {
-                            Text("Save")
-                                .foregroundColor(.blue)
+                        case false:
+                            Image(systemName: "person.crop.circle.fill.badge.plus")
+                                .resizable()
+                                .foregroundStyle(.gray)
+                                .scaledToFit()
+                                .frame(height: 30)
+                                .padding(.horizontal, 10)
                         }
-                    } else {
-                        Button(action: {
-                            let dataController = DataController()
-                            dataController.createMockJourneys(context: moc)
-                        }) {
-                            Image(systemName: "plus")
-                                .foregroundColor(.blue)
-                        }
+                       
                     }
                 }
             }
             .searchable(text: $searchText, isPresented: $searchPresented, placement: .navigationBarDrawer(displayMode: .always))
             .searchPresentationToolbarBehavior(.avoidHidingContent)
+            .sheet(isPresented: $showSignIn) {
+                if let user = userStorage.currentUser {
+                    AccountView(userStorage: userStorage)
+                } else {
+                    SignInView(userStorage: userStorage)
+                }
+            }
+            .onAppear {
+                userStorage.loadUser()
+            }
         }
     }
     

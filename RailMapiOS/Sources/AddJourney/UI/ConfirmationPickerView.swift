@@ -70,7 +70,7 @@ struct ConfirmationPickerView: View {
             Spacer()
         }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button("Confirmer") {
                     let newJourney = viewModel.pickedJourney.toNewJourneyModel()
                     if let newJourney = newJourney {
