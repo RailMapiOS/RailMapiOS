@@ -20,6 +20,7 @@ struct BottomSheetState: Equatable {
     /// État de l'interface utilisateur
     var sheetSize: PresentationDetent = .medium
     var showSignIn: Bool = false
+    var showAccount: Bool = false
     
     /// État des données
     var filteredJourneys: [Journey] = []
@@ -50,6 +51,8 @@ enum BottomSheetIntent {
     case searchPresentationChanged(Bool)
     case toggleSignIn
     case dismissSignIn
+    case toggleAccount
+    case dismissAccount
     case journeySelected(Journey)
     case updateJourneys([Journey])
     case loadUserData
@@ -114,6 +117,20 @@ class BottomSheetViewModel: ObservableObject {
             router.dismissSheet()
             state.showSignIn = false
             
+        case .toggleAccount:
+            LogManager.info("Bouton de profil utilisateur pressé", category: "user_action")
+            if state.showAccount {
+                router.dismissSheet()
+            } else {
+                router.presentSheet(userStorage.isLoggedIn() ? .account : .signIn)
+            }
+            state.showAccount.toggle()
+            
+        case .dismissAccount:
+            LogManager.info("Fermeture de la vue de compte", category: "user_action")
+            router.dismissSheet()
+            state.showAccount = false
+          
         case .journeySelected(let journey):
             LogManager.info("Trajet sélectionné: \(journey.headsign ?? "inconnu")", category: "navigation")
             mapSettings.updateJourneys(from: [journey])

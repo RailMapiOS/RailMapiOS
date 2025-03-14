@@ -101,11 +101,17 @@ struct BottomSheetView: View {
                                     }
                                 }
                             }
+                            .onDisappear {
+                                viewModel.processIntent(.dismissSignIn)
+                            }
                             .onAppear {
                                 LogManager.info("Affichage de la vue de connexion", category: "viewcycle")
                             }
                     case .account:
                         AccountView(userStorage: UserStorage.shared)
+                            .onDisappear {
+                                viewModel.processIntent(.dismissAccount)
+                            }
                             .onAppear {
                                 LogManager.info("Affichage de la vue de compte utilisateur", category: "viewcycle")
                             }
@@ -179,7 +185,7 @@ struct BottomSheetView: View {
         
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
-                viewModel.processIntent(.toggleSignIn)
+                viewModel.processIntent(viewModel.isUserLoggedIn ?.toggleAccount : .toggleSignIn)
             } label: {
                 userProfileImage
             }
