@@ -15,7 +15,6 @@ class MapSettings: ObservableObject {
     @Published var journeys: [Journey] = []
     @Published var trainRoutes: [TrainRoute] = []
     
-    
     public init() {}
     
     public func updateJourneys(from journeys: FetchedResults<Journey>) {

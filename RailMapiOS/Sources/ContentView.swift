@@ -19,7 +19,7 @@ public struct ContentView: View {
     
     @StateObject private var mapSettings = MapSettings()
 
-    @StateObject private var router = Router()
+    @EnvironmentObject private var router: Router
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)])
      var journeys: FetchedResults<Journey>
 
@@ -67,7 +67,8 @@ public struct LayoutiPhone: View {
                         journeys: journeys,
                         router: router,
                         mapSettings: mapSettings,
-                        sheetSize: $sheetSize
+                        sheetSize: $sheetSize,
+                        dataController: dataController
                     )
                         .padding(.top)
                         .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
@@ -80,6 +81,7 @@ public struct LayoutiPhone: View {
 }
 
 public struct LayoutiPad: View {
+    @EnvironmentObject var dataController: DataController
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings
@@ -90,7 +92,9 @@ public struct LayoutiPad: View {
             BottomSheetView(
                 journeys: journeys,
                 router: router,
-                mapSettings: mapSettings, sheetSize: $sheetSize
+                mapSettings: mapSettings,
+                sheetSize: $sheetSize,
+                dataController: dataController
             )
                 .listStyle(SidebarListStyle())
                 .frame(minWidth: 200)

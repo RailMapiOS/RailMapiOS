@@ -19,6 +19,7 @@
 		2ACFA1AA65ED4BD9CBECA344 /* JourneyTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014011F4C3CAD2CD786779EE /* JourneyTimes.swift */; };
 		302EF570C82AE06692AC5BD5 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293B08E4B735257A48FC4B68 /* DatePickerView.swift */; };
 		311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */; };
+		33493EFAE8F3CDD52EEB7A88 /* BottomSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE040958C1FAF167ABE78803 /* BottomSheetViewModel.swift */; };
 		39BE0360B1760E02615FEEFD /* TrainIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */; };
 		3D961645E4C0CF986720952D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858E5570D756DAB4C01D2D7B /* MapView.swift */; };
 		4160CE17A1ED470CAA99E83C /* EmptyListJourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7F2EEB6DC39D2D6B975517 /* EmptyListJourneyView.swift */; };
@@ -183,6 +184,7 @@
 		C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VehiculeJourneysModel-Navitia.swift"; sourceTree = "<group>"; };
 		C234D8568BDA83252BFECA78 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		C560145910235D4B33C643F0 /* StationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerViewModel.swift; sourceTree = "<group>"; };
+		CE040958C1FAF167ABE78803 /* BottomSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewModel.swift; sourceTree = "<group>"; };
 		CE29BF1855E8D788EC222B6A /* TimeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLabel.swift; sourceTree = "<group>"; };
 		D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowVMTests.swift; sourceTree = "<group>"; };
 		D96392A880A67BC4A9960D69 /* TrainTravelSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainTravelSummaryCard.swift; sourceTree = "<group>"; };
@@ -457,6 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				A251A30D989D02F4B344A856 /* BottomSheetView.swift */,
+				CE040958C1FAF167ABE78803 /* BottomSheetViewModel.swift */,
 				FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */,
 				2425E98306760391C7732ADC /* JourneyRowViewModel.swift */,
 				5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */,
@@ -734,6 +737,7 @@
 				5744539007525E8097AB401B /* DatePickerViewModel.swift in Sources */,
 				7930C44398F92A2A11185E78 /* StationPickerViewModel.swift in Sources */,
 				CFD0F9AF15EA2A65054A1B24 /* BottomSheetView.swift in Sources */,
+				33493EFAE8F3CDD52EEB7A88 /* BottomSheetViewModel.swift in Sources */,
 				A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */,
 				66D54993D3CB6EE955AFF9D3 /* JourneyRowViewModel.swift in Sources */,
 				DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */,

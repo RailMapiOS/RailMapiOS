@@ -11,6 +11,7 @@ import CoreData
 
 class Router: ObservableObject {
     @Published var path: [Flow] = []
+    @Published var activeSheet: SheetType?
 
     enum Flow: Hashable {
         case journeys
@@ -20,11 +21,22 @@ class Router: ObservableObject {
         case stationPicker(DateRow)
         case confirmation(DateRow)
     }
+    
+    enum SheetType: Identifiable {
+        case signIn
+        case account
+        
+        var id: Int {
+            switch self {
+            case .signIn: return 1
+            case .account: return 2
+            }
+        }
+    }
 
     func navigate(to flow: Flow) {
         path.append(flow)
-        print("Navigated to:", flow)
-        print("Current Path:", path)
+        LogManager.debug("Navigation vers: \(flow)", category: "navigation")
     }
 
     func navigateBack() {
@@ -34,5 +46,15 @@ class Router: ObservableObject {
 
     func navigateToRoot() {
         path.removeAll()
+    }
+    
+    func presentSheet(_ sheet: SheetType) {
+        activeSheet = sheet
+        LogManager.debug("Présentation de la sheet: \(sheet)", category: "navigation")
+    }
+    
+    func dismissSheet() {
+        activeSheet = nil
+        LogManager.debug("Fermeture de la sheet active", category: "navigation")
     }
 }
