@@ -39,11 +39,11 @@ struct DepartureStatusView: View {
         case .delayed:
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 0.4) {
-                    Text("Train retardé")
+                    Text("Train delayed")
                         .fontWeight(.bold)
                         .foregroundStyle(.orange.mix(with: .black, by: 0.07))
                     
-                    Text(", départ prévu à ")
+                    Text(", scheduled departure at")
                         .fontWeight(.semibold)
                     + Text(time.formattedTime())
                         .fontWeight(.semibold)
@@ -64,7 +64,7 @@ struct DepartureStatusView: View {
         default:
             HStack {
                 HStack {
-                    Text("Départ dans ")
+                    Text("Departure in ")
                         .fontWeight(.semibold)
                     + Text(time.timeRemainingDescription())
                         .fontWeight(.semibold)

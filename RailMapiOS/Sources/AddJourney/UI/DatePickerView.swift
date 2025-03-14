@@ -17,7 +17,7 @@ struct DatePickerView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Choose a date")
+            Text("choose_a_date")
                 .fontWeight(.bold)
                 .font(.title3)
                 .foregroundStyle(.gray)

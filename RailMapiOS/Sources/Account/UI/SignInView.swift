@@ -60,7 +60,7 @@ struct SignInView: View {
                                 .foregroundStyle(.blue)
                         }
                         
-                        Text("Un accès plus simple et sécurisé")
+                        Text("Fast and secure access")
                             .font(.title)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
@@ -76,22 +76,22 @@ struct SignInView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Synchronisation sur tous vos appareils")
+                        Text("Sync across all your devices")
                     }
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Partagez vos voyages avec vos amis")
+                        Text("Share your trips with your friends")
                     }
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Accès rapide et sécurisé")
+                        Text("Fast and secure access")
                     }
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("Personnalisation de votre expérience")
+                        Text("Personalize your experience")
                     }
                 }
                 .font(.headline)
@@ -100,7 +100,7 @@ struct SignInView: View {
                 Spacer()
                 
                 if vm.isSignedInToiCloud {
-                    Text("Vous êtes connecté à iCloud.")
+                    Text("You are signed in to iCloud.")
                         .font(.headline)
                         .foregroundColor(.green)
                 } else {
@@ -109,7 +109,7 @@ struct SignInView: View {
                             await vm.requestPermissionAndSignIn()
                         }
                     }) {
-                        Text("Se connecter à iCloud")
+                        Text("Sign in to iCloud")
                             .fontWeight(.bold)
                             .frame(height: 50)
                             .frame(maxWidth: .infinity)
@@ -128,7 +128,7 @@ struct SignInView: View {
             .presentationDetents([.large])
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Fermer") {
+                    Button("Close") {
                         dismiss()
                     }
                 }
