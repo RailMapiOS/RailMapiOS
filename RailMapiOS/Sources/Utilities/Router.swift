@@ -41,10 +41,12 @@ class Router: ObservableObject {
 
     func navigateBack() {
         guard !path.isEmpty else { return }
+        LogManager.debug("Fermeture de la page active \(path.last!)", category: "navigation")
         path.removeLast()
     }
 
     func navigateToRoot() {
+        LogManager.debug("Fermeture de toutes les pages actives \(path)", category: "navigation")
         path.removeAll()
     }
     
