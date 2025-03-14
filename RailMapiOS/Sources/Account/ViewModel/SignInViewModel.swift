@@ -36,6 +36,7 @@ class SignInViewModel: ObservableObject {
         } catch {
             DispatchQueue.main.async { [weak self] in
                 self?.errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+                LogManager.error(error.localizedDescription)
             }
         }
     }
@@ -54,6 +55,7 @@ class SignInViewModel: ObservableObject {
         } catch {
             DispatchQueue.main.async { [weak self] in
                 self?.errorMessage = "Erreur lors de la récupération de l'ID d'enregistrement : \(error.localizedDescription)"
+                LogManager.error(error.localizedDescription)
             }
         }
     }
@@ -79,6 +81,7 @@ class SignInViewModel: ObservableObject {
         } catch {
             DispatchQueue.main.async { [weak self] in
                 self?.errorMessage = "Erreur lors de la vérification du statut iCloud : \(error.localizedDescription)"
+                LogManager.error(error.localizedDescription)
             }
         }
     }
@@ -105,29 +108,31 @@ class SignInViewModel: ObservableObject {
         } catch {
             DispatchQueue.main.async { [weak self] in
                 self?.errorMessage = "Erreur lors de la découverte de l'utilisateur : \(error.localizedDescription)"
+                LogManager.error(error.localizedDescription)
             }
         }
     }
     
     private func fetchUserContactInfo(with userIdentity: CKUserIdentity) async {
-        print("Fetch the user's phone number and email if available")
+        LogManager.debug("Fetch the user's phone number and email if available")
 
         let store = CNContactStore()
         
         store.requestAccess(for: .contacts) { [weak self] granted, error in
             guard granted else {
                 self?.errorMessage = "Accès aux contacts refusé."
+                LogManager.error("Accès aux contacts refusé.")
                 return
             }
             
             let predicate: NSPredicate?
             
             if let phoneNumberString = userIdentity.lookupInfo?.phoneNumber {
-                print("Predicate uses phone number")
+                LogManager.debug("Predicate uses phone number")
                 predicate = CNContact.predicateForContacts(matching: CNPhoneNumber(stringValue: phoneNumberString))
             } else if let givenName = userIdentity.nameComponents?.givenName,
                       let familyName = userIdentity.nameComponents?.familyName {
-                print("Predicate uses name")
+                LogManager.debug("Predicate uses name")
                 predicate = CNContact.predicateForContacts(matchingName: "\(givenName) \(familyName)")
             } else {
                 return
@@ -145,7 +150,9 @@ class SignInViewModel: ObservableObject {
             do {
                 try store.enumerateContacts(with: fetchRequest) { [weak self] contact, stop in
                     if let imageData = contact.thumbnailImageData {
-                        print("User info founded: \(self?.user)")
+                        LogManager.debug("User info founded")
+                        LogManager.debug("User ID founded: \(self?.user?.userId ?? "No userId")", privacy: .private)
+                        LogManager.debug("User name founded: \(self?.user?.firstName ?? "No firstName") \(self?.user?.lastName ?? "No lastName")", privacy: .sensitive)
 
                         self?.user?.profileImage = imageData
                             if let user = self?.user {
@@ -157,6 +164,7 @@ class SignInViewModel: ObservableObject {
                 }
             } catch {
                 self?.errorMessage = "Erreur lors de la récupération des informations de contact : \(error.localizedDescription)"
+                LogManager.error(error.localizedDescription)
             }
         }
     }

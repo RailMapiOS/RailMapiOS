@@ -48,6 +48,7 @@
 		A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */; };
 		AE6BDA40B5A6F5521DEEC790 /* AddTicketVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41A6CD7E40CEADE24F4E5E1 /* AddTicketVMTests.swift */; };
 		B10BF4A10371B2C2D48AD442 /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5E65736FE585AF8F629107 /* SignInViewModel.swift */; };
+		B12A0E9B23398F084B6C98E7 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB03BDBEC2B5690745D390B /* Logger.swift */; };
 		B7342AD2417540D08BD24E4A /* JourneyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26715D26F442F91E5006F92F /* JourneyDetails.swift */; };
 		BBC8CDA168173B90C91B01F5 /* DepartureStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */; };
 		BBFBD80C7D1B491EC21EAE0D /* StationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EC15022E746D349E4C9B3D /* StationView.swift */; };
@@ -153,6 +154,7 @@
 		5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
 		5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneysListView.swift; sourceTree = "<group>"; };
 		5F964E4E8A300A519005EC01 /* StationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerView.swift; sourceTree = "<group>"; };
+		5FB03BDBEC2B5690745D390B /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		6280EF92B5B8E32B26995588 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		63D7AB4CAD6E29170460C480 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyModel.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 			isa = PBXGroup;
 			children = (
 				AFFBC10A860DC04CFF825833 /* ApiService */,
+				5FB03BDBEC2B5690745D390B /* Logger.swift */,
 				6280EF92B5B8E32B26995588 /* Router.swift */,
 				03037900CA6D40A9EF6E2AD4 /* UserStorage.swift */,
 			);
@@ -762,6 +765,7 @@
 				CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */,
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
+				B12A0E9B23398F084B6C98E7 /* Logger.swift in Sources */,
 				71E5B6844848F4C76E375904 /* Router.swift in Sources */,
 				246F1C52865EBEAE94A05233 /* UserStorage.swift in Sources */,
 				CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */,

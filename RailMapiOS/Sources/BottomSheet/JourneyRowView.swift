@@ -9,10 +9,10 @@ import CoreData
 import SwiftUI
 
 struct JourneyRowView: View {
-    @ObservedObject var viewModel: JourneyRowViewModel
+    @StateObject private var viewModel: JourneyRowViewModel
     
     init(journey: Journey) {
-        self.viewModel = JourneyRowViewModel(journey: journey)
+        self._viewModel = StateObject(wrappedValue: JourneyRowViewModel(journey: journey))
     }
     
     var body: some View {

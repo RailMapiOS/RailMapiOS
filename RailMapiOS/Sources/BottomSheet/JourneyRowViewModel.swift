@@ -10,44 +10,61 @@ import Foundation
 class JourneyRowViewModel: ObservableObject {
     private let journey: Journey
     
+    @Published private(set) var headsign: String
+    @Published private(set) var departureTime: String
+    @Published private(set) var departureDate: String
+    @Published private(set) var departureLabel: String
+    @Published private(set) var arrivalTime: String
+    @Published private(set) var arrivalDate: String
+    @Published private(set) var arrivalLabel: String
+    @Published private(set) var compagny: String
+    @Published private(set) var duration: String
+    
     init(journey: Journey) {
         self.journey = journey
+        
+        self.headsign = journey.headsign ?? "N/A"
+        self.departureTime = ""
+        self.departureDate = ""
+        self.departureLabel = ""
+        self.arrivalTime =  ""
+        self.arrivalDate =  ""
+        self.arrivalLabel = ""
+        self.compagny = ""
+        self.duration = ""
+        
+        self.departureTime = formatTime(journey.startDate)
+        self.departureDate = formatDate(journey.startDate)
+        self.departureLabel = departureStop(journey)?.stopinfo?.label ?? "N/A departureLabel"
+        self.arrivalTime = formatTime(journey.endDate)
+        self.arrivalDate = formatDate(journey.endDate)
+        self.arrivalLabel = arrivalStop(journey)?.stopinfo?.label ?? "N/A arrivalLabel"
+        self.compagny = journey.company ?? "N/A company"
+        self.duration = calculateDuration(startDate: journey.startDate, endDate: journey.endDate)
+        
+        LogManager.info("Initialisation de JourneyRowViewModel pour le trajet vers \(journey.headsign ?? "destination inconnue")")
     }
     
-    var headsign: String {
-        journey.headsign ?? "N/A"
+    // Méthodes privées pour le calcul initial
+    private func departureStop(_ journey: Journey) -> Stop? {
+        let stop = (journey.stops as? Set<Stop>)?.first { $0.status == "departure" }
+        if stop == nil {
+            LogManager.error("Arrêt de départ non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
+        }
+        return stop
     }
     
-    var departureTime: String {
-        formatTime(journey.startDate)
+    private func arrivalStop(_ journey: Journey) -> Stop? {
+        let stop = (journey.stops as? Set<Stop>)?.first { $0.status == "arrival" }
+        if stop == nil {
+            LogManager.error("Arrêt d'arrivée non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
+        }
+        return stop
     }
     
-    var departureDate: String {
-        formatDate(journey.startDate)
-    }
-    
-    var departureLabel: String {
-        departureStop?.stopinfo?.label ?? "N/A departureLabel"
-    }
-    
-    var arrivalTime: String {
-        formatTime(journey.endDate)
-    }
-    
-    var arrivalDate: String {
-        formatDate(journey.endDate)
-    }
-    
-    var arrivalLabel: String {
-        arrivalStop?.stopinfo?.label ?? "N/A arrivalLabel"
-    }
-    
-    var compagny: String {
-        journey.company ?? "N/A company"
-    }
-    
-    var duration: String {
-        guard let startDate = journey.startDate, let endDate = journey.endDate else {
+    private func calculateDuration(startDate: Date?, endDate: Date?) -> String {
+        guard let startDate = startDate, let endDate = endDate else {
+            LogManager.error("Impossible de calculer la durée: dates de début ou de fin manquantes", category: "calculations")
             return "N/A"
         }
         let interval = endDate.timeIntervalSince(startDate)
@@ -56,16 +73,9 @@ class JourneyRowViewModel: ObservableObject {
         return String(format: "%02dh%02d", hours, minutes)
     }
     
-    private var departureStop: Stop? {
-        return (journey.stops as? Set<Stop>)?.first { $0.status == "departure" }
-    }
-    
-    private var arrivalStop: Stop? {
-        return (journey.stops as? Set<Stop>)?.first { $0.status == "arrival" }
-    }
-    
     private func formatDate(_ date: Date?) -> String {
         guard let date = date else {
+            LogManager.warning("Tentative de formatage d'une date null", category: "formatting")
             return "Date non disponible"
         }
         let dateFormatter = DateFormatter()
@@ -75,6 +85,7 @@ class JourneyRowViewModel: ObservableObject {
     
     private func formatTime(_ date: Date?) -> String {
         guard let date = date else {
+            LogManager.warning("Tentative de formatage d'une heure null", category: "formatting")
             return "Heure non disponible"
         }
         let dateFormatter = DateFormatter()

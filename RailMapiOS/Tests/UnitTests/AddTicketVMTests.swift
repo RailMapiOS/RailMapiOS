@@ -229,8 +229,12 @@ class AddTicketVMTests: XCTestCase {
     }
     
     private func createMockVehicleJourneysData() -> Data {
-        let vehicleJourneys = VehicleJourneys(vehicleJourneys: createSampleVehicleJourneys())
-        return try! JSONEncoder().encode(vehicleJourneys)
+        do {
+            let vehicleJourneys = VehicleJourneys(vehicleJourneys: createSampleVehicleJourneys())
+            return try JSONEncoder().encode(vehicleJourneys)
+        } catch {
+            LogManager.error(error)
+        }
     }
 }
 
