@@ -12,6 +12,8 @@ import CoreData
 class Router: ObservableObject {
     @Published var path: [Flow] = []
     @Published var activeSheet: SheetType?
+    
+    var onNavigateBack: (() -> Void)?
 
     enum Flow: Hashable {
         case journeys
@@ -41,13 +43,15 @@ class Router: ObservableObject {
 
     func navigateBack() {
         guard !path.isEmpty else { return }
-        LogManager.debug("Fermeture de la page active \(path.last!)", category: "navigation")
         path.removeLast()
+        onNavigateBack?()
+        LogManager.debug("Fermeture de la page active \(path.last!)", category: "navigation")
     }
 
     func navigateToRoot() {
-        LogManager.debug("Fermeture de toutes les pages actives \(path)", category: "navigation")
         path.removeAll()
+        onNavigateBack?()
+        LogManager.debug("Fermeture de toutes les pages actives \(path)", category: "navigation")
     }
     
     func presentSheet(_ sheet: SheetType) {
@@ -57,6 +61,7 @@ class Router: ObservableObject {
     
     func dismissSheet() {
         activeSheet = nil
+        onNavigateBack?()
         LogManager.debug("Fermeture de la sheet active", category: "navigation")
     }
 }

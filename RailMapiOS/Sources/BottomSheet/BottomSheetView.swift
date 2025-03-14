@@ -66,6 +66,10 @@ struct BottomSheetView: View {
                 initialSheetSize: sheetSize.wrappedValue
             )
         )
+        
+        router.onNavigateBack = {
+            mapSettings.clearRouteSelection()
+        }
     }
     
     // MARK: - Corps de la vue
@@ -125,6 +129,12 @@ struct BottomSheetView: View {
                 }
                 .onChange(of: viewModel.state.sheetSize) { _, newSize in
                     sheetSize = newSize
+                }
+                .onChange(of: router.path) { oldPath, newPath in
+                    if oldPath.count > newPath.count {
+                        LogManager.debug("Retour à la vue principale détecté", category: "navigation")
+                        mapSettings.clearRouteSelection()
+                    }
                 }
         }
     }
@@ -274,6 +284,10 @@ struct BottomSheetView: View {
             JourneyDetailsV(journey: journey)
                 .onAppear {
                     LogManager.info("Navigation vers les détails du trajet: \(journey.headsign ?? "inconnu")", category: "navigation")
+                }
+                .onDisappear {
+                    LogManager.info("Sortie de la vue de détails du trajet", category: "navigation")
+                    mapSettings.clearRouteSelection()
                 }
         } else {
             Text("Journey not found")

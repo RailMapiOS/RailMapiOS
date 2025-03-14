@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreData
 import AuthenticationServices
+import MapKit
 
 // MARK: - Model (État)
 
@@ -28,7 +29,7 @@ struct BottomSheetState: Equatable {
     
     /// Détermine quel contenu afficher
     var shouldShowAddTicket: Bool {
-        isSearchPresented && filteredJourneys.isEmpty
+        isSearchPresented && (searchText.isEmpty ? false : filteredJourneys.isEmpty)
     }
     
     var shouldShowEmptyState: Bool {
@@ -71,6 +72,9 @@ class BottomSheetViewModel: ObservableObject {
     // État observable
     @Published private(set) var state: BottomSheetState = BottomSheetState()
     
+    // Trajets non filtrés
+    private var journeys: [Journey] = []
+    
     init(
         moc: NSManagedObjectContext,
         router: Router,
@@ -92,7 +96,11 @@ class BottomSheetViewModel: ObservableObject {
         switch intent {
         case .searchTextChanged(let newText):
             LogManager.debug("Texte de recherche modifié: '\(state.searchText)' -> '\(newText)'", category: "search")
-            state.searchText = newText
+            
+            if state.searchText != newText {
+                state.searchText = newText
+                filterJourneys(journeys)
+            }
             
         case .searchPresentationChanged(let isPresented):
             LogManager.debug("État de recherche modifié: \(state.isSearchPresented) -> \(isPresented)", category: "ui_state")
@@ -133,15 +141,37 @@ class BottomSheetViewModel: ObservableObject {
           
         case .journeySelected(let journey):
             LogManager.info("Trajet sélectionné: \(journey.headsign ?? "inconnu")", category: "navigation")
-            mapSettings.updateJourneys(from: [journey])
-            router.navigate(to: .journeyDetails(objectID: journey.objectID))
+              
+              // Trouver la route correspondante dans mapSettings
+              if let routeIndex = mapSettings.trainRoutes.firstIndex(where: { route in
+                  // Logique pour identifier la route correspondant au journey
+                  // Par exemple, vérifier les coordonnées de départ et d'arrivée
+                  if let stops = journey.stops as? NSSet,
+                     let stopsArray = stops.allObjects as? [Stop],
+                     let firstStop = stopsArray.first(where: { $0.status?.lowercased() == "departure" }),
+                     let lastStop = stopsArray.last(where: { $0.status?.lowercased() == "arrival" }),
+                     let firstInfo = firstStop.stopinfo,
+                     let lastInfo = lastStop.stopinfo {
+                      
+                      let firstCoord = CLLocationCoordinate2D(latitude: firstInfo.latitude, longitude: firstInfo.longitude)
+                      let lastCoord = CLLocationCoordinate2D(latitude: lastInfo.latitude, longitude: lastInfo.longitude)
+                      
+                      return route.coordinates.first == firstCoord && route.coordinates.last == lastCoord
+                  }
+                  return false
+              }) {
+                  // Sélectionner la route
+                  mapSettings.selectRoute(mapSettings.trainRoutes[routeIndex])
+              }
+              router.navigate(to: .journeyDetails(objectID: journey.objectID))
             
-        case .updateJourneys(let journeys):
-            if Set(journeys.map { $0.objectID }) != Set(state.filteredJourneys.map { $0.objectID }) {
-                filterJourneys(journeys)
-                mapSettings.updateJourneys(from: journeys)
-                LogManager.info("Mise à jour des trajets: \(journeys.count) trajets", category: "data")
-            }
+        case .updateJourneys(let newJourneys):
+            if Set(newJourneys.map { $0.objectID }) != Set(journeys.map { $0.objectID }) {
+                 LogManager.info("Mise à jour des trajets: \(newJourneys.count) trajets", category: "data")
+                 journeys = newJourneys
+                 filterJourneys(newJourneys)
+                 mapSettings.updateJourneys(from: newJourneys)
+             }
         case .loadUserData:
             LogManager.info("Chargement des données utilisateur", category: "data")
             userStorage.loadUser()
@@ -149,23 +179,28 @@ class BottomSheetViewModel: ObservableObject {
     }
     
     /// Filtre les trajets en fonction du texte de recherche
+    /// Filtre les trajets en fonction du texte de recherche
     private func filterJourneys(_ journeys: [Journey]) {
-        // Éviter de recalculer si le nombre de trajets n'a pas changé et que le texte de recherche est vide
-        if journeys.count == state.cachedJourneyCount && state.searchText.isEmpty {
-            state.filteredJourneys = journeys
-            return
+        LogManager.debug("Filtrage des trajets avec le texte: '\(state.searchText)'", category: "search")
+        
+        // Le filtrage doit toujours être effectué lorsque searchText change
+        let filtered = state.searchText.isEmpty ?
+            journeys :
+            journeys.filter { journey in
+                if let headsign = journey.headsign {
+                    return headsign.localizedCaseInsensitiveContains(state.searchText)
+                }
+                return false
+            }
+        
+        // Mettre à jour l'état seulement si les résultats ont changé
+        if filtered.map({ $0.objectID }) != state.filteredJourneys.map({ $0.objectID }) {
+            state.filteredJourneys = filtered
+            state.cachedJourneyCount = journeys.count
+            LogManager.debug("Filtrage des trajets: \(filtered.count) résultats pour '\(state.searchText)'", category: "search")
         }
-        
-        state.cachedJourneyCount = journeys.count
-        
-        let filtered = state.searchText.isEmpty ? 
-            journeys : 
-            journeys.filter { $0.headsign?.contains(state.searchText) ?? false }
-        
-        state.filteredJourneys = filtered
-        LogManager.debug("Filtrage des trajets: \(filtered.count) résultats pour '\(state.searchText)'", category: "search")
     }
-    
+
     // Accesseurs pour les dépendances
     var currentUser: User? { userStorage.currentUser }
     var isUserLoggedIn: Bool { userStorage.isLoggedIn() }
