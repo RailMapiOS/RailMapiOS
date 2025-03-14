@@ -38,7 +38,7 @@ struct JourneyHeaderView: View {
                 VStack (alignment: .leading) {
                     JourneyInfoView(headsign: headsign, departureDate: departureDate)
                     if let arrivalCity = arrivalCity, let departureCity = departureCity {
-                        Text("De \(departureCity) à \(arrivalCity)")
+                        Text("From \(departureCity) to \(arrivalCity)")
                             .font(.title3)
                             .fontWeight(.semibold)
                     }
