@@ -18,7 +18,12 @@ RailMapiOS est une application iOS conçue pour offrir une nouvelle façon de su
 - 📱 **Interface utilisateur** intuitive et moderne  
 
 ## 🖼️ Captures d’écran  
-*(Ils arrivent bientôt)*  
+<img src="https://github.com/user-attachments/assets/0319b238-a39e-4b41-888b-4335378b11c6" width="300">
+<img src="https://github.com/user-attachments/assets/9cf429e0-73b3-43f9-8d42-2fd2f0c153e4" width="300">
+<img src="https://github.com/user-attachments/assets/a48213aa-006f-4710-bd1e-cce45007d7ef" width="300">
+<img src="https://github.com/user-attachments/assets/54764255-ef45-4c90-a16e-d52b1f4afefa" width="300">
+<img src="https://github.com/user-attachments/assets/6a75a4bb-12ec-4c0c-a98f-d312f6c4071c" width="300">
+
 
 ## 🛠️ Technologies utilisées  
 - **SwiftUI** pour l’interface utilisateur  
