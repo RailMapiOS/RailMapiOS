@@ -38,11 +38,14 @@ jobs:
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
         
-      - name: Generate Xcode Project
+      - name: Generate Xcode Project with Tuist
         run: tuist generate
-
+        
+      - name: Clean Project
+        run: xcodebuild clean -project RailMapiOS.xcodeproj -scheme RailMapiOS
+        
       - name: Build Project
-        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -configuration Debug -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" SWIFT_VERSION=6.0 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO -verbose
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" -configuration Debug SWIFT_VERSION=6.0 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO -verbose
 
       - name: Run Tests
         run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination -configuration Debug
