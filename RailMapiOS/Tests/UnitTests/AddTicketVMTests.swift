@@ -17,25 +17,29 @@ final class AddTicketVMTests: XCTestCase {
     var mockDateFormatterService: MockDateFormatterService!
     var mockStringParserService: MockStringParserService!
     
-    override func setUp() async throws {
+    override nonisolated func setUp() async throws {
+        await MainActor.run {
+            mockVehicleJourneyService = MockVehicleJourneyService()
+            mockDateFormatterService = MockDateFormatterService()
+            mockStringParserService = MockStringParserService()
+            
+            viewModel = AddTicketVM(
+                vehicleJourneyService: mockVehicleJourneyService,
+                dateFormatterService: mockDateFormatterService,
+                stringParserService: mockStringParserService
+            )
+        }
         try await super.setUp()
-        mockVehicleJourneyService = MockVehicleJourneyService()
-        mockDateFormatterService = MockDateFormatterService()
-        mockStringParserService = MockStringParserService()
-        
-        viewModel = AddTicketVM(
-            vehicleJourneyService: mockVehicleJourneyService,
-            dateFormatterService: mockDateFormatterService,
-            stringParserService: mockStringParserService
-        )
     }
-    
-    override func tearDown() async throws {
-        viewModel = nil
-        mockVehicleJourneyService = nil
-        mockDateFormatterService = nil
-        mockStringParserService = nil
+
+    override nonisolated func tearDown() async throws {
         try await super.tearDown()
+        await MainActor.run {
+            viewModel = nil
+            mockVehicleJourneyService = nil
+            mockDateFormatterService = nil
+            mockStringParserService = nil
+        }
     }
     
     // MARK: - Date Formatting Tests
