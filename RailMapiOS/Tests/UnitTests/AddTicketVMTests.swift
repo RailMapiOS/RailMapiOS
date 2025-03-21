@@ -10,14 +10,15 @@ import SwiftUI
 import CoreData
 @testable import RailMapiOS
 
-class AddTicketVMTests: XCTestCase {
+@MainActor
+final class AddTicketVMTests: XCTestCase {
     var viewModel: AddTicketVM!
     var mockVehicleJourneyService: MockVehicleJourneyService!
     var mockDateFormatterService: MockDateFormatterService!
     var mockStringParserService: MockStringParserService!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         mockVehicleJourneyService = MockVehicleJourneyService()
         mockDateFormatterService = MockDateFormatterService()
         mockStringParserService = MockStringParserService()
@@ -29,12 +30,12 @@ class AddTicketVMTests: XCTestCase {
         )
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         viewModel = nil
         mockVehicleJourneyService = nil
         mockDateFormatterService = nil
         mockStringParserService = nil
-        super.tearDown()
+        try await super.tearDown()
     }
     
     // MARK: - Date Formatting Tests
@@ -124,16 +125,9 @@ class AddTicketVMTests: XCTestCase {
         await viewModel.fetchHeadsignAddTicket(headsign: "TGV")
         
         // Then
-        // Wait for the main thread to process the async update
-        let expectation = XCTestExpectation(description: "Update vehicle journeys")
-        DispatchQueue.main.async {
-            XCTAssertEqual(self.viewModel.vehicleJourneys.count, 1)
-            XCTAssertEqual(self.viewModel.vehicleJourneys.first?.id, "journey1")
-            XCTAssertTrue(self.mockVehicleJourneyService.fetchVehicleJourneysCalled)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(viewModel.vehicleJourneys.count, 1)
+        XCTAssertEqual(viewModel.vehicleJourneys.first?.id, "journey1")
+        XCTAssertTrue(mockVehicleJourneyService.fetchVehicleJourneysCalled)
     }
     
     func testFetchHeadsignAddTicket_Failure() async {
@@ -144,15 +138,8 @@ class AddTicketVMTests: XCTestCase {
         await viewModel.fetchHeadsignAddTicket(headsign: "TGV")
         
         // Then
-        // Wait for the main thread to process the async update
-        let expectation = XCTestExpectation(description: "Update vehicle journeys")
-        DispatchQueue.main.async {
-            XCTAssertEqual(self.viewModel.vehicleJourneys.count, 0)
-            XCTAssertTrue(self.mockVehicleJourneyService.fetchVehicleJourneysCalled)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(viewModel.vehicleJourneys.count, 0)
+        XCTAssertTrue(mockVehicleJourneyService.fetchVehicleJourneysCalled)
     }
     
     // MARK: - Helper Methods

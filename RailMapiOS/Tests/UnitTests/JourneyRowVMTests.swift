@@ -9,12 +9,14 @@ import CoreData
 import XCTest
 @testable import RailMapiOS
 
-class JourneyRowViewModelTests: XCTestCase {
+@MainActor
+final class JourneyRowViewModelTests: XCTestCase {
     var journey: Journey!
     var viewModel: JourneyRowViewModel!
     var mockDateFormatterService: MockDateFormatterService!
     var mockJourneyDataService: MockJourneyDataService!
     
+    @MainActor
     override func setUp() {
         super.setUp()
         
@@ -60,6 +62,7 @@ class JourneyRowViewModelTests: XCTestCase {
         )
     }
     
+    @MainActor
     override func tearDown() {
         journey = nil
         viewModel = nil
@@ -68,44 +71,53 @@ class JourneyRowViewModelTests: XCTestCase {
         super.tearDown()
     }
 
+    @MainActor
     func testHeadsign() {
         XCTAssertEqual(viewModel.headsign, "Test Train")
     }
     
+    @MainActor
     func testDepartureTime() {
         XCTAssertEqual(viewModel.departureTime, "04:30")
         XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
     
+    @MainActor
     func testDepartureDate() {
         XCTAssertEqual(viewModel.departureDate, "Thu. 01 Jan.")
         XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
     
+    @MainActor
     func testDepartureLabel() {
         XCTAssertEqual(viewModel.departureLabel, "Gare de TestVille")
         XCTAssertTrue(mockJourneyDataService.getDepartureStopCalled)
     }
     
+    @MainActor
     func testArrivalTime() {
         XCTAssertEqual(viewModel.arrivalTime, "04:30") // Utilise la même valeur mock
         XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
     
+    @MainActor
     func testArrivalDate() {
         XCTAssertEqual(viewModel.arrivalDate, "Thu. 01 Jan.") // Utilise la même valeur mock
         XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
     
+    @MainActor
     func testArrivalLabel() {
         XCTAssertEqual(viewModel.arrivalLabel, "Gare de DestinationVille")
         XCTAssertTrue(mockJourneyDataService.getArrivalStopCalled)
     }
     
+    @MainActor
     func testCompany() {
         XCTAssertEqual(viewModel.compagny, "Test Company")
     }
     
+    @MainActor
     func testDuration() {
         XCTAssertEqual(viewModel.duration, "04h30")
         XCTAssertTrue(mockDateFormatterService.calculateDurationCalled)
