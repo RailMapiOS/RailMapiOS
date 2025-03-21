@@ -22,24 +22,31 @@ jobs:
     runs-on: macos-latest
     needs: lint
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+        
       - name: Checkout Repository
         uses: actions/checkout@v3
 
       - uses: swift-actions/setup-swift@v2
         with:
-         swift-version: "6.0"
+         swift-version: "6"
 
       - name: Verify Swift Version
         run: swift --version
 
-      - name: Install Dependencies (Mise + Tuist)
+      - name: Generate Xcode Project
         uses: jdx/mise-action@v2
-
+        
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
+        
+      - name: Generate Xcode Project
+        run: tuist generate
 
       - name: Build Project
-        run: tuist build
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -configuration Debug
 
       - name: Run Tests
-        run: tuist test --test-targets RailMapiOSTests
+        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination -configuration Debug
