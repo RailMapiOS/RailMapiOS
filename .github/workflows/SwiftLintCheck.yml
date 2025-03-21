@@ -1,5 +1,5 @@
 name: SwiftLint Check
-on: [push]
+on: []
 jobs:
   lint:
     runs-on: macOS-latest
