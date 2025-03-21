@@ -33,9 +33,7 @@ jobs:
 
       - name: Setup Tuist
         run: |
-          echo "PATH: $PATH"
-          which tuist || echo "tuist not found in PATH"
-          tuist version
+          tuist --version
           tuist fetch
 
       - name: Generate Project
