@@ -7,12 +7,14 @@ import CoreData
 
 // MARK: - Mock VehicleJourneyService
 
-public class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
+public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, @unchecked Sendable {
     public var fetchVehicleJourneysResult: [VehicleJourney] = []
     public var passageDaysResult: [String: [Date]] = [:]
     public var fetchVehicleJourneysCalled = false
     public var getPassageDaysCalled = false
     public var shouldThrowError = false
+    
+    public init() {}
     
     public func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney] {
         fetchVehicleJourneysCalled = true
@@ -22,7 +24,7 @@ public class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
         return fetchVehicleJourneysResult
     }
     
-    public func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
+    public nonisolated func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
         getPassageDaysCalled = true
         return passageDaysResult
     }
@@ -30,11 +32,13 @@ public class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
 
 // MARK: - Mock JourneyDataService
 
-public class MockJourneyDataService: JourneyDataServiceProtocol {
+public final class MockJourneyDataService: JourneyDataServiceProtocol, @unchecked Sendable {
     public var departureStop: Stop?
     public var arrivalStop: Stop?
     public var getDepartureStopCalled = false
     public var getArrivalStopCalled = false
+    
+    public init() {}
     
     public func getDepartureStop(_ journey: Journey) -> Stop? {
         getDepartureStopCalled = true
@@ -49,8 +53,7 @@ public class MockJourneyDataService: JourneyDataServiceProtocol {
 
 // MARK: - Mock DateFormatterService
 
-public class MockDateFormatterService: DateFormatterServiceProtocol {
-
+public final class MockDateFormatterService: DateFormatterServiceProtocol, @unchecked Sendable {
     public var formatDateResult: String = ""
     public var formatDateLettreResult: String = ""
     public var formattedHourResult: String = ""
@@ -65,6 +68,8 @@ public class MockDateFormatterService: DateFormatterServiceProtocol {
     public var formatJourneyTimeCalled = false
     public var calculateDurationCalled = false
 
+    public init() {}
+    
     public func formatDate(_ date: Date) -> String {
         formatDateCalled = true
         return formatDateResult
@@ -98,10 +103,12 @@ public class MockDateFormatterService: DateFormatterServiceProtocol {
 
 // MARK: - Mock StringParserService
 
-public class MockStringParserService: StringParserServiceProtocol {
+public final class MockStringParserService: StringParserServiceProtocol, @unchecked Sendable {
     public var extractNameResult: String = ""
     public var extractNameCalled = false
 
+    public init() {}
+    
     public func extractName(from input: String) -> String {
         extractNameCalled = true
         return extractNameResult
