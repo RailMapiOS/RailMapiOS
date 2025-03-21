@@ -7,14 +7,14 @@ import CoreData
 
 // MARK: - Mock VehicleJourneyService
 
-class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
-    var fetchVehicleJourneysResult: [VehicleJourney] = []
-    var passageDaysResult: [String: [Date]] = [:]
-    var fetchVehicleJourneysCalled = false
-    var getPassageDaysCalled = false
-    var shouldThrowError = false
+public class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
+    public var fetchVehicleJourneysResult: [VehicleJourney] = []
+    public var passageDaysResult: [String: [Date]] = [:]
+    public var fetchVehicleJourneysCalled = false
+    public var getPassageDaysCalled = false
+    public var shouldThrowError = false
     
-    func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney] {
+    public func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney] {
         fetchVehicleJourneysCalled = true
         if shouldThrowError {
             throw ServiceError.serverError(URLResponse())
@@ -22,7 +22,7 @@ class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
         return fetchVehicleJourneysResult
     }
     
-    func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
+    public func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
         getPassageDaysCalled = true
         return passageDaysResult
     }
@@ -30,18 +30,18 @@ class MockVehicleJourneyService: VehicleJourneyServiceProtocol {
 
 // MARK: - Mock JourneyDataService
 
-class MockJourneyDataService: JourneyDataServiceProtocol {
-    var departureStop: Stop?
-    var arrivalStop: Stop?
-    var getDepartureStopCalled = false
-    var getArrivalStopCalled = false
+public class MockJourneyDataService: JourneyDataServiceProtocol {
+    public var departureStop: Stop?
+    public var arrivalStop: Stop?
+    public var getDepartureStopCalled = false
+    public var getArrivalStopCalled = false
     
-    func getDepartureStop(_ journey: Journey) -> Stop? {
+    public func getDepartureStop(_ journey: Journey) -> Stop? {
         getDepartureStopCalled = true
         return departureStop
     }
     
-    func getArrivalStop(_ journey: Journey) -> Stop? {
+    public func getArrivalStop(_ journey: Journey) -> Stop? {
         getArrivalStopCalled = true
         return arrivalStop
     }
