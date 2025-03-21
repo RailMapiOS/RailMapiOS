@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - dev
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cirruslabs/swiftlint-action@v1
+        with:
+          version: latest
+
+  build-and-test:
+    runs-on: macos-latest
+    needs: lint
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies (Mise + Tuist)
+        uses: jdx/mise-action@v2
+
+      - name: Ensure Tuist Version is Pinned
+        run: mise use --pin tuist
+
+      - name: Setup Tuist
+        run: |
+          tuist version
+          tuist fetch
+
+      - name: Generate Project
+        run: tuist generate
+
+      - name: Run Tests
+        run: tuist test --test-targets RailMapiOSTests
