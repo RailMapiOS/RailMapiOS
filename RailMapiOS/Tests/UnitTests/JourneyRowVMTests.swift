@@ -10,9 +10,10 @@ import XCTest
 @testable import RailMapiOS
 
 class JourneyRowViewModelTests: XCTestCase {
-
     var journey: Journey!
     var viewModel: JourneyRowViewModel!
+    var mockDateFormatterService: MockDateFormatterService!
+    var mockJourneyDataService: MockJourneyDataService!
     
     override func setUp() {
         super.setUp()
@@ -20,6 +21,7 @@ class JourneyRowViewModelTests: XCTestCase {
         let context = NSPersistentContainer.preview.viewContext
         journey = Journey(context: context)
         journey.headsign = "Test Train"
+        journey.company = "Test Company"
         
         let departureStop = Stop(context: context)
         departureStop.status = "departure"
@@ -40,12 +42,29 @@ class JourneyRowViewModelTests: XCTestCase {
         journey.startDate = departureStop.departureTimeUTC
         journey.endDate = arrivalStop.arrivalTimeUTC
         
-        viewModel = JourneyRowViewModel(journey: journey)
+        mockDateFormatterService = MockDateFormatterService()
+        mockJourneyDataService = MockJourneyDataService()
+        
+        // Configure les mocks
+        mockDateFormatterService.formatJourneyTimeResult = "04:30"
+        mockDateFormatterService.formatJourneyDateResult = "Thu. 01 Jan."
+        mockDateFormatterService.calculateDurationResult = "04h30"
+        
+        mockJourneyDataService.departureStop = departureStop
+        mockJourneyDataService.arrivalStop = arrivalStop
+        
+        viewModel = JourneyRowViewModel(
+            journey: journey,
+            dateFormatterService: mockDateFormatterService,
+            journeyDataService: mockJourneyDataService
+        )
     }
     
     override func tearDown() {
         journey = nil
         viewModel = nil
+        mockDateFormatterService = nil
+        mockJourneyDataService = nil
         super.tearDown()
     }
 
@@ -55,29 +74,40 @@ class JourneyRowViewModelTests: XCTestCase {
     
     func testDepartureTime() {
         XCTAssertEqual(viewModel.departureTime, "04:30")
+        XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
     
     func testDepartureDate() {
-        XCTAssertEqual(viewModel.departureDate, "01 January") // Adjust date based on your time zone
+        XCTAssertEqual(viewModel.departureDate, "Thu. 01 Jan.")
+        XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
     
     func testDepartureLabel() {
         XCTAssertEqual(viewModel.departureLabel, "Gare de TestVille")
+        XCTAssertTrue(mockJourneyDataService.getDepartureStopCalled)
     }
     
     func testArrivalTime() {
-        XCTAssertEqual(viewModel.arrivalTime, "09:00")
+        XCTAssertEqual(viewModel.arrivalTime, "04:30") // Utilise la même valeur mock
+        XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
     
     func testArrivalDate() {
-        XCTAssertEqual(viewModel.arrivalDate, "01 January") // Adjust date based on your time zone
+        XCTAssertEqual(viewModel.arrivalDate, "Thu. 01 Jan.") // Utilise la même valeur mock
+        XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
     
     func testArrivalLabel() {
         XCTAssertEqual(viewModel.arrivalLabel, "Gare de DestinationVille")
+        XCTAssertTrue(mockJourneyDataService.getArrivalStopCalled)
+    }
+    
+    func testCompany() {
+        XCTAssertEqual(viewModel.compagny, "Test Company")
     }
     
     func testDuration() {
         XCTAssertEqual(viewModel.duration, "04h30")
+        XCTAssertTrue(mockDateFormatterService.calculateDurationCalled)
     }
 }

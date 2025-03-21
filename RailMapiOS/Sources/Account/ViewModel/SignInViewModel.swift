@@ -156,7 +156,7 @@ class SignInViewModel: ObservableObject {
 
                         self?.user?.profileImage = imageData
                             if let user = self?.user {
-                                print("user info saved")
+                                LogManager.debug("user info saved")
                                 self?.userStorage.saveUser(user)
                         }
                     }
