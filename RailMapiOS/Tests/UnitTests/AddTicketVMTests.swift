@@ -18,27 +18,31 @@ final class AddTicketVMTests: XCTestCase {
     var mockStringParserService: MockStringParserService!
     
     override nonisolated func setUp() async throws {
+        let localMockVehicleJourneyService = MockVehicleJourneyService()
+        let localMockDateFormatterService = MockDateFormatterService()
+        let localMockStringParserService = MockStringParserService()
+        
         await MainActor.run {
-            mockVehicleJourneyService = MockVehicleJourneyService()
-            mockDateFormatterService = MockDateFormatterService()
-            mockStringParserService = MockStringParserService()
+            self.mockVehicleJourneyService = localMockVehicleJourneyService
+            self.mockDateFormatterService = localMockDateFormatterService
+            self.mockStringParserService = localMockStringParserService
             
-            viewModel = AddTicketVM(
-                vehicleJourneyService: mockVehicleJourneyService,
-                dateFormatterService: mockDateFormatterService,
-                stringParserService: mockStringParserService
+            self.viewModel = AddTicketVM(
+                vehicleJourneyService: self.mockVehicleJourneyService,
+                dateFormatterService: self.mockDateFormatterService,
+                stringParserService: self.mockStringParserService
             )
         }
         try await super.setUp()
     }
-
+    
     override nonisolated func tearDown() async throws {
         try await super.tearDown()
         await MainActor.run {
-            viewModel = nil
-            mockVehicleJourneyService = nil
-            mockDateFormatterService = nil
-            mockStringParserService = nil
+            self.viewModel = nil
+            self.mockVehicleJourneyService = nil
+            self.mockDateFormatterService = nil
+            self.mockStringParserService = nil
         }
     }
     
