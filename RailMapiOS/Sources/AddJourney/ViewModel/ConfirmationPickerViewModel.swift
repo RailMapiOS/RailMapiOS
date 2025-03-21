@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 final class ConfirmationPickerViewModel: ObservableObject {
     @Environment(\.managedObjectContext) var moc
