@@ -42,7 +42,7 @@ jobs:
         run: tuist generate
 
       - name: Build Project
-        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.0,name=iPhone 15 Pro" -configuration Debug
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -configuration Debug
 
       - name: Run Tests
-        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.0,name=iPhone 15 Pro" -configuration Debug
+        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination -configuration Debug
