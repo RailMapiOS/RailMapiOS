@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 /// `AddTicketViewModel` gère la logique métier liée à l'ajout de tickets, en utilisant des services pour séparer les responsabilités.
+@MainActor
 class AddTicketVM: ObservableObject {
     
     /// L'environnement contextuel de gestion des objets.
@@ -26,33 +27,41 @@ class AddTicketVM: ObservableObject {
     @Published var datePickerVehicleJourneys: [Date: String] = [:]
     
     // Services
-    private let vehicleJourneyService: VehicleJourneyServiceProtocol
-    private let dateFormatterService: DateFormatterServiceProtocol
-    private let stringParserService: StringParserServiceProtocol
+    private let vehicleJourneyService: any VehicleJourneyServiceProtocol
+    private let dateFormatterService: any DateFormatterServiceProtocol
+    private let stringParserService: any StringParserServiceProtocol
     
     init(
-        vehicleJourneyService: VehicleJourneyServiceProtocol = VehicleJourneyService(),
-        dateFormatterService: DateFormatterServiceProtocol = DateFormatterService(),
-        stringParserService: StringParserServiceProtocol = StringParserService()
+        vehicleJourneyService: any VehicleJourneyServiceProtocol = VehicleJourneyService(),
+        dateFormatterService: any DateFormatterServiceProtocol = DateFormatterService(),
+        stringParserService: any StringParserServiceProtocol = StringParserService()
     ) {
         self.vehicleJourneyService = vehicleJourneyService
         self.dateFormatterService = dateFormatterService
         self.stringParserService = stringParserService
+        
+        // Initialiser les propriétés FetchRequest
+        _journey = FetchRequest(sortDescriptors: [])
+        _stop = FetchRequest(sortDescriptors: [])
+        _stopInfo = FetchRequest(sortDescriptors: [])
     }
     
     /// Récupère les voyages en véhicule depuis une API en fonction du `headsign` spécifié.
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     func fetchHeadsignAddTicket(headsign: String) async {
         do {
-            let journeys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign)
+            let searchHeadsign = headsign
             
-            DispatchQueue.main.async { [weak self] in
-                self?.vehicleJourneys = journeys
-            }
+            let journeys = try await Task.detached {
+                return try await self.vehicleJourneyService.fetchVehicleJourneys(headsign: searchHeadsign)
+            }.value
+            
+            self.vehicleJourneys = journeys
         } catch {
             LogManager.error("Error fetching headsign data: \(error)")
         }
     }
+
     
     /// Obtient les jours de passage pour les voyages en véhicule spécifiés.
     /// - Parameter vehicleJourneys: Les voyages en véhicule à analyser.

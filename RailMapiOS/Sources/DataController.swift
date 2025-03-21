@@ -223,7 +223,7 @@ class DataController: ObservableObject {
 
 extension NSPersistentContainer {
     /// Conteneur persistant pour l'aperçu et les tests
-    static var preview: NSPersistentContainer = {
+    @MainActor static var preview: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "RailMap")
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType

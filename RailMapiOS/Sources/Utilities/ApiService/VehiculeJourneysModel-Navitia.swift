@@ -259,7 +259,7 @@ class JSONNullVJ: Codable, Hashable {
     }
 }
 
-class JSONCodingKeyVJ: CodingKey {
+class JSONCodingKeyVJ: CodingKey, @unchecked Sendable {
     let key: String
 
     required init?(intValue: Int) {
@@ -474,7 +474,7 @@ class JSONAnyVJ: Codable {
     }
 }
 
-class JSONCodingKey: CodingKey {
+class JSONCodingKey: CodingKey, @unchecked Sendable {
     let key: String
 
     required init?(intValue: Int) {

@@ -7,29 +7,14 @@
 
 import Foundation
 import Security
+import SwiftUI
+import Combine
 
 /// Gestionnaire de stockage et d'authentification des utilisateurs
 ///
 /// Cette classe gère la persistance des données utilisateur et l'état d'authentification
 /// en utilisant `UserDefaults` pour le stockage local.
-///
-/// ## Fonctionnalités
-/// - Sauvegarde et chargement du profil utilisateur
-/// - Gestion de l'état d'authentification
-/// - Notification des changements via le pattern `ObservableObject`
-///
-/// ## Exemple d'utilisation
-/// ```
-/// // Récupérer l'instance partagée
-/// let storage = UserStorage.shared
-///
-/// // Vérifier si un utilisateur est connecté
-/// if storage.isLoggedIn() {
-///     // Accéder aux données utilisateur
-///     let username = storage.currentUser?.username
-/// }
-/// ```
-public class UserStorage: ObservableObject {
+public final class UserStorage: ObservableObject, @unchecked Sendable {
     /// Instance partagée pour accéder au stockage utilisateur dans toute l'application
     public static let shared = UserStorage()
     
@@ -37,34 +22,36 @@ public class UserStorage: ObservableObject {
     private let isLoggedInKey = "isLoggedIn"
     
     /// L'utilisateur actuellement connecté, ou `nil` si aucun utilisateur n'est connecté
-    @Published var currentUser: User?
+    @Published private(set) var currentUser: User?
     
     private let userDefaults = UserDefaults.standard
+    private let queue = DispatchQueue(label: "com.railmap.userstorage", attributes: .concurrent)
     
     private init() {
         LogManager.info("Initialisation de UserStorage", category: "auth")
         loadUser()
     }
     
+    
     /// Enregistre les données d'un utilisateur et définit l'état comme connecté
     ///
     /// Cette méthode encode l'objet utilisateur en JSON et le stocke dans UserDefaults.
-    /// Elle met également à jour la propriété `currentUser` publiée.
+    /// Elle met également à jour la propriété `currentUser`.
     ///
     /// - Parameter user: L'objet utilisateur à sauvegarder
     public func saveUser(_ user: User) {
-        LogManager.info("Tentative de sauvegarde des données utilisateur", category: "auth")
-        if let encoded = try? JSONEncoder().encode(user) {
-            userDefaults.set(encoded, forKey: userDefaultsKey)
-            userDefaults.set(true, forKey: isLoggedInKey)
-            LogManager.info("Données utilisateur sauvegardées avec succès", category: "auth")
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.currentUser = user
-                LogManager.debug("État currentUser mis à jour sur le thread principal", category: "auth")
+        queue.async(flags: .barrier) { [self] in
+            LogManager.info("Tentative de sauvegarde des données utilisateur", category: "auth")
+            if let encoded = try? JSONEncoder().encode(user) {
+                userDefaults.set(encoded, forKey: userDefaultsKey)
+                userDefaults.set(true, forKey: isLoggedInKey)
+                LogManager.info("Données utilisateur sauvegardées avec succès", category: "auth")
+                
+                self.currentUser = user
+                LogManager.debug("État currentUser mis à jour", category: "auth")
+            } else {
+                LogManager.error("Échec de l'encodage des données utilisateur", category: "auth_error")
             }
-        } else {
-            LogManager.error("Échec de l'encodage des données utilisateur", category: "auth_error")
         }
     }
     
@@ -76,25 +63,28 @@ public class UserStorage: ObservableObject {
     /// - Returns: L'objet utilisateur chargé, ou `nil` si aucune donnée n'est trouvée ou si le décodage échoue
     @discardableResult
     public func loadUser() -> User? {
-        LogManager.info("Tentative de chargement des données utilisateur", category: "auth")
+        var result: User?
         
-        if let data = userDefaults.data(forKey: userDefaultsKey) {
-            do {
-                let user = try JSONDecoder().decode(User.self, from: data)
-                LogManager.info("Données utilisateur chargées avec succès", category: "auth")
-                
-                DispatchQueue.main.async { [weak self] in
-                    self?.currentUser = user
-                    LogManager.debug("État currentUser mis à jour sur le thread principal", category: "auth")
+        queue.sync {
+            LogManager.info("Tentative de chargement des données utilisateur", category: "auth")
+            
+            if let data = userDefaults.data(forKey: userDefaultsKey) {
+                do {
+                    let user = try JSONDecoder().decode(User.self, from: data)
+                    LogManager.info("Données utilisateur chargées avec succès", category: "auth")
+                    
+                    self.currentUser = user
+                    result = user
+                    LogManager.debug("État currentUser mis à jour", category: "auth")
+                } catch {
+                    LogManager.error("Échec du décodage des données utilisateur: \(error.localizedDescription)", category: "auth_error")
                 }
-                return user
-            } catch {
-                LogManager.error("Échec du décodage des données utilisateur: \(error.localizedDescription)", category: "auth_error")
+            } else {
+                LogManager.info("Aucune donnée utilisateur trouvée dans le stockage", category: "auth")
             }
-        } else {
-            LogManager.info("Aucune donnée utilisateur trouvée dans le stockage", category: "auth")
         }
-        return nil
+        
+        return result
     }
     
     /// Supprime les données utilisateur et définit l'état comme déconnecté
@@ -102,15 +92,15 @@ public class UserStorage: ObservableObject {
     /// Cette méthode efface les données utilisateur de UserDefaults et réinitialise
     /// la propriété `currentUser` à `nil`.
     public func deleteUser() {
-        LogManager.info("Suppression des données utilisateur", category: "auth")
-        userDefaults.removeObject(forKey: userDefaultsKey)
-        userDefaults.set(false, forKey: isLoggedInKey)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.currentUser = nil
-            LogManager.debug("État currentUser réinitialisé sur le thread principal", category: "auth")
+        queue.async(flags: .barrier) { [self] in
+            LogManager.info("Suppression des données utilisateur", category: "auth")
+            userDefaults.removeObject(forKey: userDefaultsKey)
+            userDefaults.set(false, forKey: isLoggedInKey)
+            
+            self.currentUser = nil
+            LogManager.debug("État currentUser réinitialisé", category: "auth")
+            LogManager.info("Données utilisateur supprimées avec succès", category: "auth")
         }
-        LogManager.info("Données utilisateur supprimées avec succès", category: "auth")
     }
     
     /// Vérifie si un utilisateur est actuellement connecté
@@ -120,17 +110,18 @@ public class UserStorage: ObservableObject {
     ///
     /// - Returns: `true` si un utilisateur est connecté, sinon `false`
     public func isLoggedIn() -> Bool {
-        let loggedIn = userDefaults.bool(forKey: isLoggedInKey)
-        LogManager.debug("Vérification de l'état de connexion: \(loggedIn)", category: "auth")
+        var loggedIn = false
         
-        if !loggedIn {
-            DispatchQueue.main.async { [weak self] in
-                self?.currentUser = nil
-                LogManager.debug("État currentUser réinitialisé sur le thread principal", category: "auth")
+        queue.sync {
+            loggedIn = userDefaults.bool(forKey: isLoggedInKey)
+            LogManager.debug("Vérification de l'état de connexion: \(loggedIn)", category: "auth")
+            
+            if !loggedIn {
+                self.currentUser = nil
+                LogManager.debug("État currentUser réinitialisé", category: "auth")
             }
-            return false
-        } else {
-            return true
         }
+        
+        return loggedIn
     }
 }

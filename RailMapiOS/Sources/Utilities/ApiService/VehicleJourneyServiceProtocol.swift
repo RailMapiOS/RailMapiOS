@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol VehicleJourneyServiceProtocol {
+protocol VehicleJourneyServiceProtocol: Sendable {
     func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney]
     func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]]
 }
 
-class VehicleJourneyService: VehicleJourneyServiceProtocol {
+actor VehicleJourneyService: VehicleJourneyServiceProtocol {
     private let baseURL: String
     
     init(baseURL: String = "http://127.0.0.1:8080") {
@@ -38,7 +38,7 @@ class VehicleJourneyService: VehicleJourneyServiceProtocol {
         return decodedResponse.vehicleJourneys
     }
     
-    func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
+    nonisolated func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
         var passageDays: [String: [Date]] = [:]
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -105,3 +105,5 @@ enum ServiceError: Error {
     case serverError(URLResponse)
     case decodingError(Error)
 }
+
+extension VehicleJourney: @unchecked Sendable {}

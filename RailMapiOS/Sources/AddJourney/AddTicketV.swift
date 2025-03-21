@@ -29,7 +29,7 @@ struct AddTicketV: View {
             } else {
                 switch currentStep {
                 case .datePicker:
-                    DatePickerView(viewModel: DatePickerViewModel(dateRows: dateRows), router: router) { selectedRow in
+                    DatePickerView(viewModel: createDatePickerViewModel(), router: router) { selectedRow in
                         router.navigate(to: .stationPicker(selectedRow))
                     }
                 case .stationPicker:
@@ -43,16 +43,19 @@ struct AddTicketV: View {
                         ConfirmationPickerView(viewModel: ConfirmationPickerViewModel(pickedJourney: pickedJourney, dataController: dataController)) {
                             router.navigateToRoot()
                         }
-
                     }
                 }
             }
         }
         .onChange(of: searchText) { newValue in
-            Task {
+            Task { @MainActor in
                 await viewModel.fetchHeadsignAddTicket(headsign: newValue)
             }
         }
+    }
+    
+    private func createDatePickerViewModel() -> DatePickerViewModel {
+        DatePickerViewModel(dateRows: dateRows)
     }
     
     var dateRows: [DateRow] {

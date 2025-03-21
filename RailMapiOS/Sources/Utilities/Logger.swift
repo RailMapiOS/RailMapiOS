@@ -8,155 +8,39 @@
 import OSLog
 
 /// Un système de journalisation unifié pour RailMapiOS
-///
-/// `LogManager` fournit une interface simple et cohérente pour journaliser des messages
-/// avec différents niveaux de sévérité et de confidentialité.
-///
-/// ## Exemple d'utilisation
-/// ```
-/// // Journaliser un message d'information
-/// LogManager.info("Application démarrée")
-///
-/// // Journaliser une erreur avec des données privées
-/// LogManager.error("Échec de connexion pour l'utilisateur", privacy: .private)
-///
-/// // Journaliser un message de débogage avec une catégorie spécifique
-/// LogManager.debug("Valeur calculée: 42", category: "calculations")
-/// ```
 struct LogManager {
     // MARK: - Propriétés privées
     
     /// Identifiant du sous-système pour la journalisation
     private static let subsystem = Bundle.main.bundleIdentifier ?? "com.railmap.ios"
     
+    // Cache de loggers pour éviter de créer de nouvelles instances à chaque appel
+    @MainActor private static var loggerCache: [String: Logger] = [:]
+    
     // MARK: - Types internes
     
     /// Définit les niveaux de confidentialité pour les messages journalisés
-    ///
-    /// Ces niveaux correspondent aux options de confidentialité d'OSLog
-    /// et permettent de contrôler comment les données sensibles sont traitées.
     enum Privacy {
-        /// Données publiques visibles dans les journaux
         case `public`
-        /// Données privées masquées dans les journaux publics
         case `private`
-        /// Données sensibles fortement protégées
         case sensitive
-        /// Confidentialité déterminée automatiquement
         case auto
-        /// Adresse email (masquée automatiquement)
     }
     
     // MARK: - Méthodes privées
     
-    /// Journalise un message avec le niveau et la confidentialité spécifiés
-    ///
-    /// - Parameters:
-    ///   - level: Niveau de journalisation (debug, info, warning, error, fault)
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message
-    ///   - privacy: Niveau de confidentialité du message
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
-    ///   - emoji: Emoji préfixant le message pour une identification visuelle
-    private static func log(
-        level: OSLogType,
-        message: String,
-        category: String,
-        file: String,
-        line: Int,
-        function: String
-    ) {
-        let logger = Logger(subsystem: subsystem, category: category)
-        let fileInfo = "(\(file):\(line) - \(function))"
-        let levelString = levelName(for: level)
-        let formattedMessage: String
-        switch level {
-        case .debug:
-            formattedMessage = "🔍 [\(levelString)] \(fileInfo) \(message)"
-            logger.debug("\(formattedMessage, privacy: .auto)")
-        case .info:
-            formattedMessage = "ℹ️ [\(levelString)] \(fileInfo) \(message)"
-                logger.info("\(formattedMessage, privacy: .auto)")
-        case .error:
-            formattedMessage = "🔥 [\(levelString)] \(fileInfo) \(message)"
-                logger.error("\(formattedMessage, privacy: .auto)")
-        case .fault:
-            formattedMessage = "🚨 [\(levelString)] \(fileInfo) \(message)"
-                logger.fault("\(formattedMessage, privacy: .auto)")
-        default:
-            formattedMessage = "⚠️ [\(levelString)] \(fileInfo) \(message)"
-                logger.warning("\(formattedMessage, privacy: .auto)")
+    /// Obtient un logger pour une catégorie spécifique
+    @MainActor private static func getLogger(for category: String) -> Logger {
+        if let cachedLogger = loggerCache[category] {
+            return cachedLogger
         }
-    }
-    
-    private static func logPrivate(
-        level: OSLogType,
-        message: String,
-        category: String,
-        file: String,
-        line: Int,
-        function: String
-    ) {
+        
         let logger = Logger(subsystem: subsystem, category: category)
-        let fileInfo = "(\(file):\(line) - \(function))"
-        let levelString = levelName(for: level)
-        let formattedMessage: String
-        switch level {
-        case .debug:
-            formattedMessage = "🔍 [\(levelString)] \(fileInfo) \(message)"
-            logger.debug("\(formattedMessage, privacy: .private)")
-        case .info:
-            formattedMessage = "ℹ️ [\(levelString)] \(fileInfo) \(message)"
-            logger.info("\(formattedMessage, privacy: .private)")
-        case .error:
-            formattedMessage = "🔥 [\(levelString)] \(fileInfo) \(message)"
-            logger.error("\(formattedMessage, privacy: .private)")
-        case .fault:
-            formattedMessage = "🚨 [\(levelString)] \(fileInfo) \(message)"
-            logger.fault("\(formattedMessage, privacy: .private)")
-        default:
-            formattedMessage = "⚠️ [\(levelString)] \(fileInfo) \(message)"
-            logger.warning("\(formattedMessage, privacy: .private)")
-        }
-    }
-    
-    private static func logSensitive(
-        level: OSLogType,
-        message: String,
-        category: String,
-        file: String,
-        line: Int,
-        function: String
-    ) {
-        let logger = Logger(subsystem: subsystem, category: category)
-        let fileInfo = "(\(file):\(line) - \(function))"
-        let levelString = levelName(for: level)
-        let formattedMessage: String
-        switch level {
-        case .debug:
-            formattedMessage = "🔍 [\(levelString)] \(fileInfo) \(message)"
-            logger.debug("\(formattedMessage, privacy: .sensitive)")
-        case .info:
-            formattedMessage = "ℹ️ [\(levelString)] \(fileInfo) \(message)"
-            logger.info("\(formattedMessage, privacy: .sensitive)")
-        case .error:
-            formattedMessage = "🔥 [\(levelString)] \(fileInfo) \(message)"
-            logger.error("\(formattedMessage, privacy: .sensitive)")
-        case .fault:
-            formattedMessage = "🚨 [\(levelString)] \(fileInfo) \(message)"
-            logger.fault("\(formattedMessage, privacy: .sensitive)")
-        default:
-            formattedMessage = "⚠️ [\(levelString)] \(fileInfo) \(message)"
-            logger.warning("\(formattedMessage, privacy: .sensitive)")
-        }
+        loggerCache[category] = logger
+        return logger
     }
     
     /// Retourne le nom du niveau de journalisation
-    ///
-    /// - Parameter level: Niveau de journalisation OSLogType
-    /// - Returns: Nom du niveau sous forme de chaîne
     private static func levelName(for level: OSLogType) -> String {
         switch level {
         case .debug: return "DEBUG"
@@ -167,20 +51,90 @@ struct LogManager {
         }
     }
     
+    /// Prépare le message formaté
+    private static func formatMessage(
+        level: OSLogType,
+        message: String,
+        file: String,
+        line: Int,
+        function: String
+    ) -> String {
+        let fileInfo = "(\(file):\(line) - \(function))"
+        let levelString = levelName(for: level)
+        
+        let emoji: String
+        switch level {
+        case .debug: emoji = "🔍"
+        case .info: emoji = "ℹ️"
+        case .error: emoji = "🔥"
+        case .fault: emoji = "🚨"
+        default: emoji = "⚠️"
+        }
+        
+        return "\(emoji) [\(levelString)] \(fileInfo) \(message)"
+    }
+    
+    /// Journalise un message avec le niveau et la confidentialité spécifiés
+    private static func logMessage(
+        level: OSLogType,
+        message: String,
+        category: String,
+        privacy: Privacy,
+        file: String,
+        line: Int,
+        function: String
+    ) async {
+        let formattedMessage = formatMessage(
+            level: level,
+            message: message,
+            file: file,
+            line: line,
+            function: function
+        )
+        
+        let logger = await getLogger(for: category)
+        
+        switch (level, privacy) {
+        case (.debug, .public), (.debug, .auto):
+            logger.debug("\(formattedMessage, privacy: .auto)")
+        case (.debug, .private):
+            logger.debug("\(formattedMessage, privacy: .private)")
+        case (.debug, .sensitive):
+            logger.debug("\(formattedMessage, privacy: .sensitive)")
+            
+        case (.info, .public), (.info, .auto):
+            logger.info("\(formattedMessage, privacy: .auto)")
+        case (.info, .private):
+            logger.info("\(formattedMessage, privacy: .private)")
+        case (.info, .sensitive):
+            logger.info("\(formattedMessage, privacy: .sensitive)")
+            
+        case (.error, .public), (.error, .auto):
+            logger.error("\(formattedMessage, privacy: .auto)")
+        case (.error, .private):
+            logger.error("\(formattedMessage, privacy: .private)")
+        case (.error, .sensitive):
+            logger.error("\(formattedMessage, privacy: .sensitive)")
+            
+        case (.fault, .public), (.fault, .auto):
+            logger.fault("\(formattedMessage, privacy: .auto)")
+        case (.fault, .private):
+            logger.fault("\(formattedMessage, privacy: .private)")
+        case (.fault, .sensitive):
+            logger.fault("\(formattedMessage, privacy: .sensitive)")
+            
+        case (_, .public), (_, .auto):
+            logger.warning("\(formattedMessage, privacy: .auto)")
+        case (_, .private):
+            logger.warning("\(formattedMessage, privacy: .private)")
+        case (_, .sensitive):
+            logger.warning("\(formattedMessage, privacy: .sensitive)")
+        }
+    }
+    
     // MARK: - API publique
     
     /// Journalise un message de débogage
-    ///
-    /// Les messages de débogage sont utilisés pour le développement et le diagnostic.
-    /// Ils ne devraient pas apparaître dans les versions de production.
-    ///
-    /// - Parameters:
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message (défaut: "debug")
-    ///   - privacy: Niveau de confidentialité (défaut: .public)
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
     static func debug(
         _ message: String,
         category: String = "debug",
@@ -189,28 +143,20 @@ struct LogManager {
         line: Int = #line,
         function: String = #function
     ) {
-        switch privacy {
-        case .public, .auto:
-            log(level: .debug, message: message, category: category, file: file, line: line, function: function)
-        case .private :
-            logPrivate(level: .debug, message: message, category: category, file: file, line: line, function: function)
-        case .sensitive:
-            logSensitive(level: .debug, message: message, category: category, file: file, line: line, function: function)
-
+        Task {
+            await logMessage(
+                level: .debug,
+                message: message,
+                category: category,
+                privacy: privacy,
+                file: file,
+                line: line,
+                function: function
+            )
         }
     }
     
     /// Journalise un message d'information
-    ///
-    /// Les messages d'information indiquent des événements normaux du cycle de vie de l'application.
-    ///
-    /// - Parameters:
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message (défaut: "info")
-    ///   - privacy: Niveau de confidentialité (défaut: .public)
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
     static func info(
         _ message: String,
         category: String = "info",
@@ -219,27 +165,20 @@ struct LogManager {
         line: Int = #line,
         function: String = #function
     ) {
-        switch privacy {
-        case .public, .auto:
-            log(level: .info, message: message, category: category, file: file, line: line, function: function)
-        case .private:
-            logPrivate(level: .info, message: message, category: category, file: file, line: line, function: function)
-        case .sensitive:
-            logSensitive(level: .info, message: message, category: category, file: file, line: line, function: function)
+        Task {
+            await logMessage(
+                level: .info,
+                message: message,
+                category: category,
+                privacy: privacy,
+                file: file,
+                line: line,
+                function: function
+            )
         }
     }
     
     /// Journalise un message d'avertissement
-    ///
-    /// Les avertissements indiquent des problèmes potentiels qui ne bloquent pas le fonctionnement.
-    ///
-    /// - Parameters:
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message (défaut: "warning")
-    ///   - privacy: Niveau de confidentialité (défaut: .public)
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
     static func warning(
         _ message: String,
         category: String = "warning",
@@ -248,27 +187,20 @@ struct LogManager {
         line: Int = #line,
         function: String = #function
     ) {
-        switch privacy {
-        case .public, .auto:
-            log(level: .default, message: message, category: category, file: file, line: line, function: function)
-        case .private:
-            logPrivate(level: .default, message: message, category: category, file: file, line: line, function: function)
-        case .sensitive:
-            logSensitive(level: .default, message: message, category: category, file: file, line: line, function: function)
+        Task {
+            await logMessage(
+                level: .default,
+                message: message,
+                category: category,
+                privacy: privacy,
+                file: file,
+                line: line,
+                function: function
+            )
         }
     }
     
     /// Journalise un message d'erreur
-    ///
-    /// Les erreurs indiquent des problèmes qui empêchent certaines fonctionnalités de l'application.
-    ///
-    /// - Parameters:
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message (défaut: "error")
-    ///   - privacy: Niveau de confidentialité (défaut: .private)
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
     static func error(
         _ message: String,
         category: String = "error",
@@ -277,27 +209,20 @@ struct LogManager {
         line: Int = #line,
         function: String = #function
     ) {
-        switch privacy {
-        case .public, .auto:
-            log(level: .error, message: message, category: category, file: file, line: line, function: function)
-        case .private:
-            logPrivate(level: .error, message: message, category: category, file: file, line: line, function: function)
-        case .sensitive:
-            logSensitive(level: .error, message: message, category: category, file: file, line: line, function: function)
+        Task {
+            await logMessage(
+                level: .error,
+                message: message,
+                category: category,
+                privacy: privacy,
+                file: file,
+                line: line,
+                function: function
+            )
         }
     }
     
     /// Journalise un message critique
-    ///
-    /// Les messages critiques indiquent des problèmes graves qui compromettent l'application.
-    ///
-    /// - Parameters:
-    ///   - message: Message à journaliser
-    ///   - category: Catégorie du message (défaut: "critical")
-    ///   - privacy: Niveau de confidentialité (défaut: .sensitive)
-    ///   - file: Fichier source (automatique)
-    ///   - line: Numéro de ligne (automatique)
-    ///   - function: Fonction appelante (automatique)
     static func fault(
         _ message: String,
         category: String = "critical",
@@ -306,13 +231,16 @@ struct LogManager {
         line: Int = #line,
         function: String = #function
     ) {
-        switch privacy {
-        case .public, .auto:
-            log(level: .fault, message: message, category: category, file: file, line: line, function: function)
-        case .private:
-            logPrivate(level: .fault, message: message, category: category, file: file, line: line, function: function)
-        case .sensitive:
-            logSensitive(level: .fault, message: message, category: category, file: file, line: line, function: function)
+        Task {
+            await logMessage(
+                level: .fault,
+                message: message,
+                category: category,
+                privacy: privacy,
+                file: file,
+                line: line,
+                function: function
+            )
         }
     }
 }
@@ -320,7 +248,7 @@ struct LogManager {
 /// Extension pour les loggers prédéfinis
 extension Logger {
     /// Identifiant du sous-système pour la journalisation
-    private static var subsystem = Bundle.main.bundleIdentifier ?? "com.railmap.ios"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.railmap.ios"
     
     /// Logger pour les événements du cycle de vie des vues
     static let viewCycle = Logger(subsystem: subsystem, category: "viewcycle")
