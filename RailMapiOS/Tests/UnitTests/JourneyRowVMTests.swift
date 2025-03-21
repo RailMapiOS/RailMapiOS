@@ -16,7 +16,7 @@ final class JourneyRowViewModelTests: XCTestCase {
     var mockDateFormatterService: MockDateFormatterService!
     var mockJourneyDataService: MockJourneyDataService!
     
-    nonisolated override func setUp() {
+    nonisolated override func setUp() async throws {
         try await super.setUp()
         
         Task { @MainActor in
@@ -63,7 +63,7 @@ final class JourneyRowViewModelTests: XCTestCase {
         }
     }
     
-    nonisolated override func tearDown() {
+    nonisolated override func tearDown() async throws {
         Task { @MainActor in
             journey = nil
             viewModel = nil
