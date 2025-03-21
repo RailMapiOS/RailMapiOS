@@ -27,7 +27,13 @@ let project = Project(
                 else
                   echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
                 fi
-                """, name: "Run SwiftLint")
+                """, name: "Run SwiftLint"),
+                .pre(script: """
+                mkdir -p "${SRCROOT}/RailMapiOS/Sources/Generated"
+                if [ ! -f "${SRCROOT}/RailMapiOS/Sources/Generated/Strings.swift" ]; then
+                  echo "// Generated file\nimport Foundation\n\n// Add your string extensions here" > "${SRCROOT}/RailMapiOS/Sources/Generated/Strings.swift"
+                fi
+                """, name: "Create Generated Directory")
             ], dependencies: [
                 .package(product: "Helpers"),
             ],
