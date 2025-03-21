@@ -17,7 +17,7 @@ final class JourneyRowViewModelTests: XCTestCase {
     var mockJourneyDataService: MockJourneyDataService!
     
     nonisolated override func setUp() {
-        super.setUp()
+        try await super.setUp()
         
         Task { @MainActor in
             let context = NSPersistentContainer.preview.viewContext
@@ -70,7 +70,7 @@ final class JourneyRowViewModelTests: XCTestCase {
             mockDateFormatterService = nil
             mockJourneyDataService = nil
         }
-        super.tearDown()
+        try await super.tearDown()
     }
 
     @MainActor
