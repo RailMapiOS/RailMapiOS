@@ -38,9 +38,6 @@ jobs:
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
 
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
       - name: Build Project
         run: tuist build | xcbeautify --verbose --renderer github-actions
 
