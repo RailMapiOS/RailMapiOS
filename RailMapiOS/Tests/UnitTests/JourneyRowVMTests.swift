@@ -16,6 +16,7 @@ final class JourneyRowViewModelTests: XCTestCase {
     var mockDateFormatterService: MockDateFormatterService!
     var mockJourneyDataService: MockJourneyDataService!
     
+    @MainActor
     override func setUp() {
         super.setUp()
         
@@ -61,6 +62,7 @@ final class JourneyRowViewModelTests: XCTestCase {
         )
     }
     
+    @MainActor
     override func tearDown() {
         journey = nil
         viewModel = nil
