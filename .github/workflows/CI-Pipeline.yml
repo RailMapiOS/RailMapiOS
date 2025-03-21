@@ -25,6 +25,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - uses: swift-actions/setup-swift@v2
+        with:
+         swift-version: "6.0"
+
       - name: Verify Swift Version
         run: swift --version
 
@@ -34,8 +38,11 @@ jobs:
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
 
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
       - name: Build Project
-        run: tuist build | xcbeautify -renderer github-actions
+        run: tuist build | xcbeautify --renderer github-actions
 
       - name: Run Tests
         run: tuist test --test-targets RailMapiOSTests | xcbeautify --renderer github-actions
