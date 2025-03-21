@@ -22,6 +22,10 @@ jobs:
     runs-on: macos-latest
     needs: lint
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+        
       - name: Checkout Repository
         uses: actions/checkout@v3
 
