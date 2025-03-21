@@ -39,7 +39,7 @@ jobs:
         run: mise use --pin tuist
 
       - name: Build Project
-        run: tuist build
+        run: tuist build --platform ios --os 18.0
 
       - name: Run Tests
-        run: tuist test --test-targets RailMapiOSTests
+        run: tuist test --test-targets RailMapiOSTests --platform ios --os 18.0
