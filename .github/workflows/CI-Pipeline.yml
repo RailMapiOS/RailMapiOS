@@ -42,7 +42,7 @@ jobs:
         run: brew install xcbeautify
 
       - name: Build Project
-        run: tuist build | xcbeautify --renderer github-actions
+        run: tuist build | xcbeautify --verbose --renderer github-actions
 
       - name: Run Tests
-        run: tuist test --test-targets RailMapiOSTests | xcbeautify --renderer github-actions
+        run: tuist test --test-targets RailMapiOSTests | xcbeautify --verbose --renderer github-actions
