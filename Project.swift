@@ -11,6 +11,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.railmap.RailMapiOS",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen.storyboard",
@@ -23,7 +24,9 @@ let project = Project(
             dependencies: [
                 .package(product: "Helpers"),
             ],
-            settings: .settings(base: [:], configurations: [
+            settings: .settings(base: [
+                "SWIFT_VERSION": "6.0"
+            ], configurations: [
                 .debug(name: "Debug", settings: [:]),
                 .release(name: "Release", settings: [:])
             ]),
