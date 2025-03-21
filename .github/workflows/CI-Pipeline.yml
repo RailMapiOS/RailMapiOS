@@ -32,14 +32,17 @@ jobs:
       - name: Verify Swift Version
         run: swift --version
 
-      - name: Install Dependencies (Mise + Tuist)
+      - name: Generate Xcode Project
         uses: jdx/mise-action@v2
-
+        
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
+        
+      - name: Generate Xcode Project
+        run: tuist generate
 
       - name: Build Project
-        run: tuist build --platform ios --os 18
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.0,name=iPhone 15 Pro" -configuration Debug
 
       - name: Run Tests
-        run: tuist test --test-targets RailMapiOSTests --platform ios --os 18
+        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.0,name=iPhone 15 Pro" -configuration Debug
