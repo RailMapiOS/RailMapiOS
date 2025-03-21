@@ -1,3 +1,18 @@
+analyzer_rules:
+  - unused_declaration
+  - unused_import
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - id
+    - vm
+    - vc
+
+included:
+  - RailMapiOS/Sources
+  - RailMapiOS/Tests
+
 disabled_rules:
 - trailing_whitespace
 
