@@ -47,6 +47,7 @@
 		A7A7E6302D8DD48200F3F766 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A7E62F2D8DD48200F3F766 /* MockServices.swift */; };
 		A7A7E6322D8DE05800F3F766 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7A7E6312D8DE05800F3F766 /* UIKit.framework */; };
 		A7A7E6342D8DE05F00F3F766 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7A7E6332D8DE05F00F3F766 /* XCTest.framework */; };
+		A7A7E6352D8DEB1300F3F766 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A7E62F2D8DD48200F3F766 /* MockServices.swift */; };
 		A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F070D96178C8D25D6AF725D7 /* ClockIcon.swift */; };
 		A8E1686DE707CE11A8D68B01 /* TuistAssets+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */; };
 		A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */; };
@@ -716,6 +717,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				028A0B993A10C75AB0B9C5B9 /* AddJourneyUITests.swift in Sources */,
+				A7A7E6352D8DEB1300F3F766 /* MockServices.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
