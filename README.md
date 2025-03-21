@@ -1,5 +1,5 @@
 # RailMapiOS  
-![CI](https://github.com/RailMapiOS/RailMapiOS/actions/workflows/AllPR-Build-Tests.yml/badge.svg)  
+![CI](https://github.com/RailMapiOS/RailMapiOS/actions/workflows/Ci-Pipeline.yml/badge.svg)  
 
 ## 🚄 Description  
 RailMapiOS est une application iOS conçue pour offrir une nouvelle façon de suivre les voyages en train. Développée entièrement en **SwiftUI**, cette application permet aux utilisateurs de voyager sans stress, de prévoir les **retards** et d’obtenir des **mises à jour instantanées** sur leurs trajets ferroviaires.  
