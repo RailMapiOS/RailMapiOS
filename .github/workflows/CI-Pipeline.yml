@@ -42,7 +42,7 @@ jobs:
         run: tuist generate
 
       - name: Build Project
-        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -configuration Debug
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -configuration Debug SWIFT_VERSION=6.0 CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
       - name: Run Tests
         run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination -configuration Debug
