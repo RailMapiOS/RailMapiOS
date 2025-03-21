@@ -31,13 +31,8 @@ jobs:
       - name: Ensure Tuist Version is Pinned
         run: mise use --pin tuist
 
-      - name: Setup Tuist
-        run: |
-          tuist --version
-          tuist fetch
-
-      - name: Generate Project
-        run: tuist generate
+      - name: Build Project
+        run: tuist build
 
       - name: Run Tests
         run: tuist test --test-targets RailMapiOSTests
