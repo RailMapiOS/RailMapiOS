@@ -7,7 +7,8 @@ import CoreData
 
 // MARK: - Mock VehicleJourneyService
 
-public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, @unchecked Sendable {
+@MainActor
+public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, Sendable {
     public var fetchVehicleJourneysResult: [VehicleJourney] = []
     public var passageDaysResult: [String: [Date]] = [:]
     public var fetchVehicleJourneysCalled = false
@@ -24,7 +25,7 @@ public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, @un
         return fetchVehicleJourneysResult
     }
     
-    public nonisolated func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
+    public func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
         getPassageDaysCalled = true
         return passageDaysResult
     }
@@ -32,7 +33,8 @@ public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, @un
 
 // MARK: - Mock JourneyDataService
 
-public final class MockJourneyDataService: JourneyDataServiceProtocol, @unchecked Sendable {
+@MainActor
+public final class MockJourneyDataService: JourneyDataServiceProtocol, Sendable {
     public var departureStop: Stop?
     public var arrivalStop: Stop?
     public var getDepartureStopCalled = false
@@ -53,7 +55,8 @@ public final class MockJourneyDataService: JourneyDataServiceProtocol, @unchecke
 
 // MARK: - Mock DateFormatterService
 
-public final class MockDateFormatterService: DateFormatterServiceProtocol, @unchecked Sendable {
+@MainActor
+public final class MockDateFormatterService: DateFormatterServiceProtocol, Sendable {
     public var formatDateResult: String = ""
     public var formatDateLettreResult: String = ""
     public var formattedHourResult: String = ""
@@ -103,7 +106,8 @@ public final class MockDateFormatterService: DateFormatterServiceProtocol, @unch
 
 // MARK: - Mock StringParserService
 
-public final class MockStringParserService: StringParserServiceProtocol, @unchecked Sendable {
+@MainActor
+public final class MockStringParserService: StringParserServiceProtocol, Sendable {
     public var extractNameResult: String = ""
     public var extractNameCalled = false
 

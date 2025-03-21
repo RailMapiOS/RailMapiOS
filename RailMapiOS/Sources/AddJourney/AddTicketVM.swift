@@ -10,7 +10,7 @@ import SwiftUI
 
 /// `AddTicketViewModel` gère la logique métier liée à l'ajout de tickets, en utilisant des services pour séparer les responsabilités.
 @MainActor
-class AddTicketVM: ObservableObject {
+final class AddTicketVM: ObservableObject {
     
     /// L'environnement contextuel de gestion des objets.
     @Environment(\.managedObjectContext) var moc
@@ -50,18 +50,12 @@ class AddTicketVM: ObservableObject {
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     func fetchHeadsignAddTicket(headsign: String) async {
         do {
-            let searchHeadsign = headsign
-            
-            let journeys = try await Task.detached {
-                return try await self.vehicleJourneyService.fetchVehicleJourneys(headsign: searchHeadsign)
-            }.value
-            
+            let journeys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign)
             self.vehicleJourneys = journeys
         } catch {
             LogManager.error("Error fetching headsign data: \(error)")
         }
     }
-
     
     /// Obtient les jours de passage pour les voyages en véhicule spécifiés.
     /// - Parameter vehicleJourneys: Les voyages en véhicule à analyser.

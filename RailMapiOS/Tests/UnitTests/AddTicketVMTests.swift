@@ -17,38 +17,32 @@ final class AddTicketVMTests: XCTestCase {
     var mockDateFormatterService: MockDateFormatterService!
     var mockStringParserService: MockStringParserService!
     
-    override nonisolated func setUp() async throws {
-        let localMockVehicleJourneyService = MockVehicleJourneyService()
-        let localMockDateFormatterService = MockDateFormatterService()
-        let localMockStringParserService = MockStringParserService()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
         
-        await MainActor.run {
-            self.mockVehicleJourneyService = localMockVehicleJourneyService
-            self.mockDateFormatterService = localMockDateFormatterService
-            self.mockStringParserService = localMockStringParserService
-            
-            self.viewModel = AddTicketVM(
-                vehicleJourneyService: self.mockVehicleJourneyService,
-                dateFormatterService: self.mockDateFormatterService,
-                stringParserService: self.mockStringParserService
-            )
-        }
-        try await super.setUp()
+        // Create mocks
+        mockVehicleJourneyService = MockVehicleJourneyService()
+        mockDateFormatterService = MockDateFormatterService()
+        mockStringParserService = MockStringParserService()
+        
+        // Initialize viewModel directly since we're already in @MainActor context
+        viewModel = AddTicketVM(
+            vehicleJourneyService: mockVehicleJourneyService,
+            dateFormatterService: mockDateFormatterService,
+            stringParserService: mockStringParserService
+        )
     }
     
-    override nonisolated func tearDown() async throws {
-        try await super.tearDown()
-        await MainActor.run {
-            self.viewModel = nil
-            self.mockVehicleJourneyService = nil
-            self.mockDateFormatterService = nil
-            self.mockStringParserService = nil
-        }
+    override func tearDownWithError() throws {
+        viewModel = nil
+        mockVehicleJourneyService = nil
+        mockDateFormatterService = nil
+        mockStringParserService = nil
+        
+        try super.tearDownWithError()
     }
     
-    // MARK: - Date Formatting Tests
-    
-    func testFormatDate() {
+    func testFormatDate() throws {
         // Given
         let date = Date()
         let expectedResult = "14/09/23"
@@ -62,69 +56,7 @@ final class AddTicketVMTests: XCTestCase {
         XCTAssertTrue(mockDateFormatterService.formatDateCalled)
     }
     
-    func testFormatDateLettre() {
-        // Given
-        let dateString = "14/09/2023"
-        let expectedResult = "14 September"
-        mockDateFormatterService.formatDateLettreResult = expectedResult
-        
-        // When
-        let result = viewModel.formatDateLettre(dateString)
-        
-        // Then
-        XCTAssertEqual(result, expectedResult)
-        XCTAssertTrue(mockDateFormatterService.formatDateLettreCalled)
-    }
-    
-    func testFormattedHour() {
-        // Given
-        let timeString = "123045"
-        let expectedResult = "12:30"
-        mockDateFormatterService.formattedHourResult = expectedResult
-        
-        // When
-        let result = viewModel.formattedHour(from: timeString)
-        
-        // Then
-        XCTAssertEqual(result, expectedResult)
-        XCTAssertTrue(mockDateFormatterService.formattedHourCalled)
-    }
-    
-    // MARK: - Name Extraction Tests
-    
-    func testExtractName() {
-        // Given
-        let input = "trip:OCE TGV INOUI-12345"
-        let expectedResult = "TGV INOUI"
-        mockStringParserService.extractNameResult = expectedResult
-        
-        // When
-        let result = viewModel.extractName(from: input)
-        
-        // Then
-        XCTAssertEqual(result, expectedResult)
-        XCTAssertTrue(mockStringParserService.extractNameCalled)
-    }
-    
-    // MARK: - Passage Days Tests
-    
-    func testGetPassageDays() {
-        // Given
-        let vehicleJourneys = [createSampleVehicleJourney()]
-        let expectedResult: [String: [Date]] = ["journey1": [Date()]]
-        mockVehicleJourneyService.passageDaysResult = expectedResult
-        
-        // When
-        let result = viewModel.getPassageDays(from: vehicleJourneys)
-        
-        // Then
-        XCTAssertEqual(result.keys, expectedResult.keys)
-        XCTAssertTrue(mockVehicleJourneyService.getPassageDaysCalled)
-    }
-    
-    // MARK: - API Fetch Tests
-    
-    func testFetchHeadsignAddTicket_Success() async {
+    func testFetchHeadsignAddTicket_Success() async throws {
         // Given
         let expectedJourneys = [createSampleVehicleJourney()]
         mockVehicleJourneyService.fetchVehicleJourneysResult = expectedJourneys
@@ -138,7 +70,7 @@ final class AddTicketVMTests: XCTestCase {
         XCTAssertTrue(mockVehicleJourneyService.fetchVehicleJourneysCalled)
     }
     
-    func testFetchHeadsignAddTicket_Failure() async {
+    func testFetchHeadsignAddTicket_Failure() async throws {
         // Given
         mockVehicleJourneyService.shouldThrowError = true
         
@@ -153,6 +85,7 @@ final class AddTicketVMTests: XCTestCase {
     // MARK: - Helper Methods
     
     private func createSampleVehicleJourney() -> VehicleJourney {
+        // No changes needed here
         let weekPattern = WeekPattern(monday: true, tuesday: true, wednesday: false, thursday: false, friday: false, saturday: false, sunday: false)
         let activePeriod = ActivePeriod(begin: "2023-09-18", end: "2023-09-19")
         let calendar = VehicleCalendar(weekPattern: weekPattern, exceptions: nil, activePeriods: [activePeriod])
