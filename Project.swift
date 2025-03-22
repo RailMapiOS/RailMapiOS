@@ -25,7 +25,7 @@ let project = Project(
                 .package(product: "Helpers"),
             ],
             settings: .settings(base: [
-                "SWIFT_VERSION": "6"
+                "SWIFT_VERSION": "5"
             ], configurations: [
                 .debug(name: "Debug", settings: [:]),
                 .release(name: "Release", settings: [:])
