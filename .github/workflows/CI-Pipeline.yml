@@ -45,7 +45,7 @@ jobs:
         run: xcodebuild clean -project RailMapiOS.xcodeproj -scheme RailMapiOS
         
       - name: Build Project
-        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" -configuration Debug SWIFT_VERSION=6.0 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO -verbose
+        run: xcodebuild build -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" -configuration Debug SWIFT_VERSION=5.5 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO -verbose
 
       - name: Run Tests
-        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" -configuration Debug SWIFT_VERSION=6.0 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO SWIFT_STRICT_CONCURRENCY=minimal -verbose
+        run: xcodebuild test -project RailMapiOS.xcodeproj -scheme RailMapiOS -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" -configuration Debug SWIFT_VERSION=5.5 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= CODE_SIGNING_ALLOWED=NO -verbose
