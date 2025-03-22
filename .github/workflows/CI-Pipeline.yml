@@ -22,7 +22,7 @@ jobs:
       derived-data: ${{ steps.set-derived-data.outputs.path }}
     steps:
       - name: Configuration Xcode
-        uses: maxim-lobanov/setup-xcode@v1.6.0 # Version corrigée
+        uses: maxim-lobanov/setup-xcode@v1.6.0
         id: xcode
         with:
           xcode-version: '16.2'
@@ -83,7 +83,7 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY=- \
             PROVISIONING_PROFILE_SPECIFIER= \
-            CODE_SIGNING_ALLOWED=NO | xcbeautify --render github-actions
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
             
   ui-tests:
     runs-on: macos-latest
@@ -108,4 +108,4 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY=- \
             PROVISIONING_PROFILE_SPECIFIER= \
-            CODE_SIGNING_ALLOWED=NO | xcbeautify --render github-actions
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
