@@ -56,8 +56,7 @@ let project = Project(
 //            resources: [],
             dependencies: [
                 .target(name: "RailMapiOS"),
-                .package(product: "Helpers"),
-                .sdk(name: "XCTest.framework", type: .framework)
+                .package(product: "Helpers")
             ]
         )
 
