@@ -21,7 +21,7 @@ jobs:
     outputs:
       derived-data: ${{ steps.set-derived-data.outputs.path }}
     steps:
-      - uses: maxim-lobanov/setup-xcode@v2
+      - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
       
@@ -41,6 +41,9 @@ jobs:
             -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
             -configuration Debug \
             SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
             CODE_SIGNING_ALLOWED=NO | xcbeautify
 
       - name: Stockage des artefacts
@@ -67,6 +70,9 @@ jobs:
             -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
             -configuration Debug \
             SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
             CODE_SIGNING_ALLOWED=NO | xcbeautify --render github-actions
 
   ui-tests:
@@ -89,4 +95,7 @@ jobs:
             -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
             -configuration Debug \
             SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
             CODE_SIGNING_ALLOWED=NO | xcbeautify --render github-actions
