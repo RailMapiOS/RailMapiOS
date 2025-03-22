@@ -24,16 +24,4 @@ final class AddJourneyUITests: XCTestCase {
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
-
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                Task {
-                    await MainActor.run {
-                        XCUIApplication().launch()
-                    }
-                }
-            }
-        }
-    }
 }
