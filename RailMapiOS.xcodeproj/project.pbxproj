@@ -66,7 +66,7 @@
 		CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A82A1FC146174A33FF7C58A8 /* RailMap.xcdatamodeld */; };
 		CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6764A3CC64853FD871B8AD /* JourneyRowHeader.swift */; };
 		CFD0F9AF15EA2A65054A1B24 /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A251A30D989D02F4B344A856 /* BottomSheetView.swift */; };
-		D2749560307665A2BC8FA911 /* VehicleJourneyServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1700D7F8BE626FE1FFBCB86A /* VehicleJourneyServiceProtocol.swift */; };
+		D2749560307665A2BC8FA911 /* VehicleJourneyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1700D7F8BE626FE1FFBCB86A /* VehicleJourneyService.swift */; };
 		D55ABE8F7E48A0485E5171B1 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94505A9346DF3789939EA951 /* DataController.swift */; };
 		DA1DA446D8EFC0C2820BDE4D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C234D8568BDA83252BFECA78 /* User.swift */; };
 		DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */; };
@@ -138,7 +138,7 @@
 		1117EFD27DBA0F054974A4B3 /* DashedDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashedDivider.swift; sourceTree = "<group>"; };
 		13E6452F78524BAC3C458949 /* JourneyUIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyUIModel.swift; sourceTree = "<group>"; };
 		13EF88BEFA80670F2558853A /* RailMapiOSUITests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "RailMapiOSUITests-Info.plist"; sourceTree = "<group>"; };
-		1700D7F8BE626FE1FFBCB86A /* VehicleJourneyServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleJourneyServiceProtocol.swift; sourceTree = "<group>"; };
+		1700D7F8BE626FE1FFBCB86A /* VehicleJourneyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleJourneyService.swift; sourceTree = "<group>"; };
 		1922A944C075DACE8E00EBA2 /* XCTest.framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/XCTest.framework.framework; sourceTree = DEVELOPER_DIR; };
 		2425E98306760391C7732ADC /* JourneyRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowViewModel.swift; sourceTree = "<group>"; };
 		26715D26F442F91E5006F92F /* JourneyDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetails.swift; sourceTree = "<group>"; };
@@ -435,7 +435,7 @@
 		AFFBC10A860DC04CFF825833 /* ApiService */ = {
 			isa = PBXGroup;
 			children = (
-				1700D7F8BE626FE1FFBCB86A /* VehicleJourneyServiceProtocol.swift */,
+				1700D7F8BE626FE1FFBCB86A /* VehicleJourneyService.swift */,
 				C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */,
 			);
 			path = ApiService;
@@ -771,7 +771,7 @@
 				0F6ECAA6B6E28B05F847D77B /* JourneyRowFooter.swift in Sources */,
 				CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */,
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
-				D2749560307665A2BC8FA911 /* VehicleJourneyServiceProtocol.swift in Sources */,
+				D2749560307665A2BC8FA911 /* VehicleJourneyService.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
 				FF35DA25E3DB0292F19D0603 /* DateFormatterService.swift in Sources */,
 				2EEBB21135D20AB5FDF5DD19 /* JourneyDataService.swift in Sources */,

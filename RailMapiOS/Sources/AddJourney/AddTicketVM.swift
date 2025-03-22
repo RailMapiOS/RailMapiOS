@@ -27,12 +27,12 @@ final class AddTicketVM: ObservableObject {
     @Published var datePickerVehicleJourneys: [Date: String] = [:]
     
     // Services
-    private let vehicleJourneyService: any VehicleJourneyServiceProtocol
+    private let vehicleJourneyService: any VehicleJourneyServiceProtocol & Sendable
     private let dateFormatterService: any DateFormatterServiceProtocol
     private let stringParserService: any StringParserServiceProtocol
     
     init(
-        vehicleJourneyService: any VehicleJourneyServiceProtocol = VehicleJourneyService(),
+        vehicleJourneyService: any VehicleJourneyServiceProtocol & Sendable = VehicleJourneyService(),
         dateFormatterService: any DateFormatterServiceProtocol = DateFormatterService(),
         stringParserService: any StringParserServiceProtocol = StringParserService()
     ) {
@@ -50,16 +50,10 @@ final class AddTicketVM: ObservableObject {
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     func fetchHeadsignAddTicket(headsign: String) async {
         do {
-            let service = self.vehicleJourneyService as! any VehicleJourneyServiceProtocol & Sendable
-            
-            let journeys = try await Task.detached { [service] in
-                try await service.fetchVehicleJourneys(headsign: headsign)
-            }.value
-            
+            let journeys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign)
             self.vehicleJourneys = journeys
-            
         } catch {
-            LogManager.error("Error fetching headsign data: \(error)")
+            LogManager.error("Error: \(error)")
         }
     }
     

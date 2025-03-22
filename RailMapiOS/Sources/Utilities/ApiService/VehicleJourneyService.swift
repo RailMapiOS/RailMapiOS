@@ -1,5 +1,5 @@
 //
-//  VehicleJourneyServiceProtocol.swift
+//  VehicleJourneyService.swift
 //  RailMapiOS
 //
 //  Created by Jérémie Patot on 21/03/2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @preconcurrency
-protocol VehicleJourneyServiceProtocol {
+protocol VehicleJourneyServiceProtocol: Sendable {
     func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney]
     func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]]
 }
