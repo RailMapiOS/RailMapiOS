@@ -26,6 +26,9 @@ jobs:
           xcode-version: latest-stable
       
       - uses: actions/checkout@v4
+
+      - name: Configuration Mise
+        uses: jdx/mise-action@v2
       
       - name: Configuration environnement
         run: |
