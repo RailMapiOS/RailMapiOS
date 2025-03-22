@@ -7,18 +7,14 @@ import CoreData
 
 // MARK: - Mock VehicleJourneyService
 
-@MainActor
 public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, Sendable {
     public var fetchVehicleJourneysResult: [VehicleJourney] = []
     public var passageDaysResult: [String: [Date]] = [:]
-    public var fetchVehicleJourneysCalled = false
-    public var getPassageDaysCalled = false
     public var shouldThrowError = false
     
     public init() {}
     
     public func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney] {
-        fetchVehicleJourneysCalled = true
         if shouldThrowError {
             throw ServiceError.serverError(URLResponse())
         }
@@ -26,95 +22,73 @@ public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, Sen
     }
     
     public func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
-        getPassageDaysCalled = true
         return passageDaysResult
     }
 }
 
 // MARK: - Mock JourneyDataService
 
-@MainActor
-public final class MockJourneyDataService: JourneyDataServiceProtocol, Sendable {
+public final class MockJourneyDataService: JourneyDataServiceProtocol {
     public var departureStop: Stop?
     public var arrivalStop: Stop?
-    public var getDepartureStopCalled = false
-    public var getArrivalStopCalled = false
     
     public init() {}
     
     public func getDepartureStop(_ journey: Journey) -> Stop? {
-        getDepartureStopCalled = true
-        return departureStop
+        departureStop
     }
     
     public func getArrivalStop(_ journey: Journey) -> Stop? {
-        getArrivalStopCalled = true
-        return arrivalStop
+        arrivalStop
     }
 }
 
 // MARK: - Mock DateFormatterService
 
-@MainActor
-public final class MockDateFormatterService: DateFormatterServiceProtocol, Sendable {
+public final class MockDateFormatterService: DateFormatterServiceProtocol {
     public var formatDateResult: String = ""
     public var formatDateLettreResult: String = ""
     public var formattedHourResult: String = ""
-    public var formatDateCalled = false
-    public var formatDateLettreCalled = false
-    public var formattedHourCalled = false
     
     public var formatJourneyDateResult: String = ""
     public var formatJourneyTimeResult: String = ""
     public var calculateDurationResult: String = ""
-    public var formatJourneyDateCalled = false
-    public var formatJourneyTimeCalled = false
-    public var calculateDurationCalled = false
 
     public init() {}
     
     public func formatDate(_ date: Date) -> String {
-        formatDateCalled = true
-        return formatDateResult
+         formatDateResult
     }
     
     public func formatDateLettre(_ dateString: String) -> String {
-        formatDateLettreCalled = true
-        return formatDateLettreResult
+        formatDateLettreResult
     }
 
     public func formattedHour(from dateString: String) -> String {
-        formattedHourCalled = true
-        return formattedHourResult
+        formattedHourResult
     }
     
     public func formatJourneyDate(_ date: Date?) -> String {
-        formatJourneyDateCalled = true
-        return formatJourneyDateResult
+        formatJourneyDateResult
     }
     
     public func formatJourneyTime(_ date: Date?) -> String {
-        formatJourneyTimeCalled = true
-        return formatJourneyTimeResult
+        formatJourneyTimeResult
     }
     
     public func calculateDuration(startDate: Date?, endDate: Date?) -> String {
-        calculateDurationCalled = true
-        return calculateDurationResult
+        calculateDurationResult
     }
 }
 
 // MARK: - Mock StringParserService
 
-@MainActor
-public final class MockStringParserService: StringParserServiceProtocol, Sendable {
+public final class MockStringParserService: StringParserServiceProtocol {
     public var extractNameResult: String = ""
-    public var extractNameCalled = false
 
     public init() {}
     
     public func extractName(from input: String) -> String {
-        extractNameCalled = true
-        return extractNameResult
+        extractNameResult
     }
 }

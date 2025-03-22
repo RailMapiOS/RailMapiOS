@@ -7,6 +7,7 @@
 
 import Foundation
 
+@preconcurrency
 protocol DateFormatterServiceProtocol {
     func formatDate(_ date: Date) -> String
     func formatDateLettre(_ dateString: String) -> String

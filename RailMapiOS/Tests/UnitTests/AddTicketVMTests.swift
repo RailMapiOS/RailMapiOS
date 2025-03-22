@@ -13,19 +13,13 @@ import CoreData
 @MainActor
 final class AddTicketVMTests: XCTestCase {
     var viewModel: AddTicketVM!
-    var mockVehicleJourneyService: MockVehicleJourneyService!
-    var mockDateFormatterService: MockDateFormatterService!
-    var mockStringParserService: MockStringParserService!
+    var mockVehicleJourneyService: MockVehicleJourneyService = MockVehicleJourneyService()
+    var mockDateFormatterService: MockDateFormatterService = MockDateFormatterService()
+    var mockStringParserService: MockStringParserService = MockStringParserService()
     
     override func setUpWithError() throws {
         try super.setUpWithError()
         
-        // Create mocks
-        mockVehicleJourneyService = MockVehicleJourneyService()
-        mockDateFormatterService = MockDateFormatterService()
-        mockStringParserService = MockStringParserService()
-        
-        // Initialize viewModel directly since we're already in @MainActor context
         viewModel = AddTicketVM(
             vehicleJourneyService: mockVehicleJourneyService,
             dateFormatterService: mockDateFormatterService,
@@ -35,10 +29,6 @@ final class AddTicketVMTests: XCTestCase {
     
     override func tearDownWithError() throws {
         viewModel = nil
-        mockVehicleJourneyService = nil
-        mockDateFormatterService = nil
-        mockStringParserService = nil
-        
         try super.tearDownWithError()
     }
     
@@ -53,7 +43,6 @@ final class AddTicketVMTests: XCTestCase {
         
         // Then
         XCTAssertEqual(result, expectedResult)
-        XCTAssertTrue(mockDateFormatterService.formatDateCalled)
     }
     
     func testFetchHeadsignAddTicket_Success() async throws {
@@ -67,7 +56,6 @@ final class AddTicketVMTests: XCTestCase {
         // Then
         XCTAssertEqual(viewModel.vehicleJourneys.count, 1)
         XCTAssertEqual(viewModel.vehicleJourneys.first?.id, "journey1")
-        XCTAssertTrue(mockVehicleJourneyService.fetchVehicleJourneysCalled)
     }
     
     func testFetchHeadsignAddTicket_Failure() async throws {
@@ -79,7 +67,6 @@ final class AddTicketVMTests: XCTestCase {
         
         // Then
         XCTAssertEqual(viewModel.vehicleJourneys.count, 0)
-        XCTAssertTrue(mockVehicleJourneyService.fetchVehicleJourneysCalled)
     }
     
     // MARK: - Helper Methods

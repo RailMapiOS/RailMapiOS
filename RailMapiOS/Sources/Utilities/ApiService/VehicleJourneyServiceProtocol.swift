@@ -7,7 +7,8 @@
 
 import Foundation
 
-protocol VehicleJourneyServiceProtocol: Sendable {
+@preconcurrency
+protocol VehicleJourneyServiceProtocol {
     func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney]
     func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]]
 }

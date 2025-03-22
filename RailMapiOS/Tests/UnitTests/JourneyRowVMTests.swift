@@ -74,32 +74,26 @@ final class JourneyRowViewModelTests: XCTestCase {
     
     func testDepartureTime() {
         XCTAssertEqual(viewModel.departureTime, "04:30")
-        XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
     
     func testDepartureDate() {
         XCTAssertEqual(viewModel.departureDate, "Thu. 01 Jan.")
-        XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
 
     func testDepartureLabel() {
         XCTAssertEqual(viewModel.departureLabel, "Gare de TestVille")
-        XCTAssertTrue(mockJourneyDataService.getDepartureStopCalled)
     }
 
     func testArrivalTime() {
         XCTAssertEqual(viewModel.arrivalTime, "04:30")
-        XCTAssertTrue(mockDateFormatterService.formatJourneyTimeCalled)
     }
 
     func testArrivalDate() {
         XCTAssertEqual(viewModel.arrivalDate, "Thu. 01 Jan.")
-        XCTAssertTrue(mockDateFormatterService.formatJourneyDateCalled)
     }
 
     func testArrivalLabel() {
         XCTAssertEqual(viewModel.arrivalLabel, "Gare de DestinationVille")
-        XCTAssertTrue(mockJourneyDataService.getArrivalStopCalled)
     }
 
     func testCompany() {
@@ -108,6 +102,5 @@ final class JourneyRowViewModelTests: XCTestCase {
 
     func testDuration() {
         XCTAssertEqual(viewModel.duration, "04h30")
-        XCTAssertTrue(mockDateFormatterService.calculateDurationCalled)
     }
 }

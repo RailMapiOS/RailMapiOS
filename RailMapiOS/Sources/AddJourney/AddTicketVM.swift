@@ -50,8 +50,14 @@ final class AddTicketVM: ObservableObject {
     /// - Parameter headsign: Le signe de tête du voyage à rechercher.
     func fetchHeadsignAddTicket(headsign: String) async {
         do {
-            let journeys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign)
+            let service = self.vehicleJourneyService as! any VehicleJourneyServiceProtocol & Sendable
+            
+            let journeys = try await Task.detached { [service] in
+                try await service.fetchVehicleJourneys(headsign: headsign)
+            }.value
+            
             self.vehicleJourneys = journeys
+            
         } catch {
             LogManager.error("Error fetching headsign data: \(error)")
         }

@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+@preconcurrency
 protocol JourneyDataServiceProtocol {
     func getDepartureStop(_ journey: Journey) -> Stop?
     func getArrivalStop(_ journey: Journey) -> Stop?
