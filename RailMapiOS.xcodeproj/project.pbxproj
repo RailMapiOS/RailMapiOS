@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -44,9 +44,9 @@
 		956484FB7654E4A65F124B11 /* MapSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 392C239C0CDDCE4442F9C320 /* MapSettings.swift */; };
 		97F18F0E3ADE8BE87904DF94 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55BCD0205832989CB2C111FF /* Preview Assets.xcassets */; };
 		A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
-		A7C085172D969A2400825548 /* AccessibilityID.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C085162D969A1B00825548 /* AccessibilityID.swift */; };
 		A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F070D96178C8D25D6AF725D7 /* ClockIcon.swift */; };
 		A8E1686DE707CE11A8D68B01 /* TuistAssets+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51DC45BC97059A0A15F558D /* TuistAssets+RailMapiOS.swift */; };
+		A92C1FA5A4069FD96AE06571 /* AccessibilityID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDD54364A911CA48E54C8AF /* AccessibilityID.swift */; };
 		A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */; };
 		AE6BDA40B5A6F5521DEEC790 /* AddTicketVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41A6CD7E40CEADE24F4E5E1 /* AddTicketVMTests.swift */; };
 		B10BF4A10371B2C2D48AD442 /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5E65736FE585AF8F629107 /* SignInViewModel.swift */; };
@@ -57,7 +57,6 @@
 		BC053432A6F5BC9030133FCF /* CompanyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48EC3E26A96904215273AE /* CompanyLogo.swift */; };
 		BC9E0ED1A9936EF751EA8C82 /* ConfirmationPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */; };
 		BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
-		C17B6DBC47EDE3BCEA901D87 /* AddTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF9703A6F41169A2DD4FE18 /* AddTicketView.swift */; };
 		C2BDE32EEF44592AD9B66BD2 /* StationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F964E4E8A300A519005EC01 /* StationPickerView.swift */; };
 		CAC6F2C9B8CD31137390C2DB /* TuistBundle+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */; };
 		CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */; };
@@ -67,8 +66,10 @@
 		D55ABE8F7E48A0485E5171B1 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94505A9346DF3789939EA951 /* DataController.swift */; };
 		DA1DA446D8EFC0C2820BDE4D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C234D8568BDA83252BFECA78 /* User.swift */; };
 		DB3A445763BC03CD646F3404 /* JourneysListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC1137C3CB4F54F579A86D1 /* JourneysListView.swift */; };
+		DE7653AE17F4AA670173AF0A /* AddTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF9E0A5805CCFC4487E85E7 /* AddTicketView.swift */; };
 		E2817C280EC2C4C0DD597661 /* ClipRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52C182521BB95AE0F7460D /* ClipRow.swift */; };
 		E2949156950476F554346A1D /* VehicleJourneyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334FBF3813011E3F15CE57B4 /* VehicleJourneyService.swift */; };
+		EC5039B27C29972495A750F4 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31B38C97ED8F2587F97D29 /* OHHTTPStubs */; };
 		F2EE9A5A94367F5874B254AE /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D70A37468480C1CF29289 /* SignInView.swift */; };
 		F677B53EB7E39133483C6D8E /* JourneyRowVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */; };
 		F69769B0D54780CD3FBC2BE0 /* ConfirmationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */; };
@@ -154,6 +155,7 @@
 		56796761952ADD4497666BFA /* AddJourneyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddJourneyUITests.swift; sourceTree = "<group>"; };
 		57FC04CFBA4BC91665526466 /* DateFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterService.swift; sourceTree = "<group>"; };
 		58E5DCB89A6A9966D527DF79 /* RailMapiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailMapiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AF9E0A5805CCFC4487E85E7 /* AddTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketView.swift; sourceTree = "<group>"; };
 		5C48EC3E26A96904215273AE /* CompanyLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogo.swift; sourceTree = "<group>"; };
 		5D04B6A9073CA60ABA169781 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		5D88E1964741F83ACC9CD3E4 /* DepartureStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureStatusView.swift; sourceTree = "<group>"; };
@@ -164,7 +166,7 @@
 		675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewJourneyModel.swift; sourceTree = "<group>"; };
 		6C205D0243AB6E3D5E2B5FBB /* RailMapiOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "RailMapiOSTests-Info.plist"; sourceTree = "<group>"; };
 		6C643AC3FC441F02712D6F9C /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
-		6EF9703A6F41169A2DD4FE18 /* AddTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketView.swift; sourceTree = "<group>"; };
+		6FDD54364A911CA48E54C8AF /* AccessibilityID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityID.swift; sourceTree = "<group>"; };
 		7477574B27CBCBD23083BD46 /* RailMapiOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5E65736FE585AF8F629107 /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+RailMapiOS.swift"; sourceTree = "<group>"; };
@@ -181,12 +183,11 @@
 		9EEE6200DC53F18D0BD76946 /* AddTicketDateV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketDateV.swift; sourceTree = "<group>"; };
 		9F209F1298594FCC032126DE /* RailMapiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailMapiOSApp.swift; sourceTree = "<group>"; };
 		A251A30D989D02F4B344A856 /* BottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView.swift; sourceTree = "<group>"; };
-		A7C085162D969A1B00825548 /* AccessibilityID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityID.swift; sourceTree = "<group>"; };
 		ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainIcon.swift; sourceTree = "<group>"; };
 		AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTimeline.swift; sourceTree = "<group>"; };
 		B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPickerViewModel.swift; sourceTree = "<group>"; };
-		BA04FA190F4ABC19689F8E0C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		BA04FA190F4ABC19689F8E0C /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VehiculeJourneysModel-Navitia.swift"; sourceTree = "<group>"; };
 		C234D8568BDA83252BFECA78 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		C560145910235D4B33C643F0 /* StationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerViewModel.swift; sourceTree = "<group>"; };
@@ -219,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				758AE03336AFEE14034A2DB4 /* Helpers in Frameworks */,
+				EC5039B27C29972495A750F4 /* OHHTTPStubs in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +259,7 @@
 				596C5990219E52D35C1A852E /* UI */,
 				9A9D84C9F80EE4B6A4860F26 /* ViewModel */,
 				9EEE6200DC53F18D0BD76946 /* AddTicketDateV.swift */,
-				6EF9703A6F41169A2DD4FE18 /* AddTicketView.swift */,
+				5AF9E0A5805CCFC4487E85E7 /* AddTicketView.swift */,
 				414F625900B341A1C4D48679 /* AddTicketVM.swift */,
 				675C1A10B0CD9858D003D650 /* NewJourneyModel.swift */,
 			);
@@ -360,8 +362,8 @@
 		775DBB749C97A4BAB5D6DBA2 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				A7C085162D969A1B00825548 /* AccessibilityID.swift */,
 				AFFBC10A860DC04CFF825833 /* ApiService */,
+				6FDD54364A911CA48E54C8AF /* AccessibilityID.swift */,
 				57FC04CFBA4BC91665526466 /* DateFormatterService.swift */,
 				9AAD488764A0AB5D6C86C3CF /* JourneyDataService.swift */,
 				5FB03BDBEC2B5690745D390B /* Logger.swift */,
@@ -624,6 +626,7 @@
 			name = RailMapiOSUITests;
 			packageProductDependencies = (
 				7E251E8B71E7059433E27B04 /* Helpers */,
+				8B31B38C97ED8F2587F97D29 /* OHHTTPStubs */,
 			);
 			productName = RailMapiOSUITests;
 			productReference = 7477574B27CBCBD23083BD46 /* RailMapiOSUITests.xctest */;
@@ -654,6 +657,9 @@
 				en,
 			);
 			mainGroup = CF1E7906C8878DA5FB2F9A1B;
+			packageReferences = (
+				43A44A60A3D5E814333415B4 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
+			);
 			productRefGroup = BCADE8619646559D8AB08D21 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -714,8 +720,8 @@
 				FEC52261390F89EA6F5E9E9E /* TrainTravelSummaryCard.swift in Sources */,
 				B10BF4A10371B2C2D48AD442 /* SignInViewModel.swift in Sources */,
 				5DFC33C145F10C3D01FC53EF /* AddTicketDateV.swift in Sources */,
-				C17B6DBC47EDE3BCEA901D87 /* AddTicketView.swift in Sources */,
 				6C1ED2E5EAA19154400E7F22 /* AddTicketVM.swift in Sources */,
+				DE7653AE17F4AA670173AF0A /* AddTicketView.swift in Sources */,
 				A9A5E031B1B244C15DB85BDF /* NewJourneyModel.swift in Sources */,
 				F69769B0D54780CD3FBC2BE0 /* ConfirmationPickerView.swift in Sources */,
 				302EF570C82AE06692AC5BD5 /* DatePickerView.swift in Sources */,
@@ -754,12 +760,12 @@
 				0F6ECAA6B6E28B05F847D77B /* JourneyRowFooter.swift in Sources */,
 				CE2DAEDA73DBF04628AB829F /* JourneyRowHeader.swift in Sources */,
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
+				A92C1FA5A4069FD96AE06571 /* AccessibilityID.swift in Sources */,
 				E2949156950476F554346A1D /* VehicleJourneyService.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
 				FF35DA25E3DB0292F19D0603 /* DateFormatterService.swift in Sources */,
 				2EEBB21135D20AB5FDF5DD19 /* JourneyDataService.swift in Sources */,
 				B12A0E9B23398F084B6C98E7 /* Logger.swift in Sources */,
-				A7C085172D969A2400825548 /* AccessibilityID.swift in Sources */,
 				71E5B6844848F4C76E375904 /* Router.swift in Sources */,
 				703500EA4AC4E2EB99226221 /* StringParserService.swift in Sources */,
 				246F1C52865EBEAE94A05233 /* UserStorage.swift in Sources */,
@@ -814,7 +820,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5;
@@ -951,7 +960,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1031,7 +1043,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1107,6 +1122,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		43A44A60A3D5E814333415B4 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/OHHTTPStubs";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		2BA524F6EF416B27CCA98329 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1115,6 +1141,10 @@
 		7E251E8B71E7059433E27B04 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Helpers;
+		};
+		8B31B38C97ED8F2587F97D29 /* OHHTTPStubs */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OHHTTPStubs;
 		};
 		B84FBECDF06B2687B7C68274 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
