@@ -78,25 +78,3 @@ struct AccountView: View {
         }
     }
 }
-
-//struct SheetPreview: View {
-//    @State private var isPresented = true
-//
-//    var body: some View {
-//        Text("Main Content")
-//            .sheet(isPresented: $isPresented) {
-//                AccountView(user: User(userId: "test123", firstName: "Jeremie", lastName: "Patot", email: "exemple@exemple.com", profileImage: nil))
-//                    .padding(.top)
-//                    .presentationDetents([.fraction(0.3), .medium, .large])
-//                    .presentationBackgroundInteraction(.enabled)
-//                    .interactiveDismissDisabled()
-//                    .ignoresSafeArea()
-//            }
-//           
-//    }
-//}
-//
-//
-//#Preview {
-//    SheetPreview()
-//}

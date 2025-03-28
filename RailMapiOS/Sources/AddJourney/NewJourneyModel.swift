@@ -40,11 +40,13 @@ struct NewStop {
     var stopInfo: NewStopInfo?
     
     
-    init(id: UUID = UUID(),
-         arrivalTimeUTC: Date,
-         departureTimeUTC: Date,
-         status: String,
-         stopInfo:NewStopInfo) {
+    init(
+        id: UUID = UUID(),
+        arrivalTimeUTC: Date,
+        departureTimeUTC: Date,
+        status: String,
+        stopInfo: NewStopInfo
+    ) {
         self.arrivalTimeUTC = arrivalTimeUTC
         self.departureTimeUTC = departureTimeUTC
         self.status = status
@@ -63,14 +65,15 @@ struct NewStopInfo {
     let skippedStop: Bool
     
     
-    init(id: String,
-         label: String,
-         latitude: Double,
-         longitude: Double,
-         adress: String,
-         pickUpAllowed: Bool,
-         dropOffAllowed: Bool,
-         skippedStop: Bool
+    init(
+        id: String,
+        label: String,
+        latitude: Double,
+        longitude: Double,
+        adress: String,
+        pickUpAllowed: Bool,
+        dropOffAllowed: Bool,
+        skippedStop: Bool
     ) {
         self.id = id
         self.label = label

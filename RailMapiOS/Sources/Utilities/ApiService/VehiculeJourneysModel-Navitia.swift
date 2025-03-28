@@ -93,6 +93,44 @@ struct VehicleJourney: Codable, Identifiable, Hashable {
         hasher.combine(name)
         hasher.combine(headsign)
     }
+    
+    public init(
+        id: String,
+        name: String,
+        journeyPattern: JourneyPattern,
+        stopTimes: [StopTime],
+        codes: [Code],
+        validityPattern: ValidityPattern,
+        calendars: [VehicleCalendar],
+        trip: JourneyPattern,
+        disruptions: [JSONAnyVJ],
+        headsign: String
+    ) {
+        self.id = id
+        self.name = name
+        self.journeyPattern = journeyPattern
+        self.stopTimes = stopTimes
+        self.codes = codes
+        self.validityPattern = validityPattern
+        self.calendars = calendars
+        self.trip = trip
+        self.disruptions = disruptions
+        self.headsign = headsign
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.journeyPattern = try container.decode(JourneyPattern.self, forKey: .journeyPattern)
+        self.stopTimes = try container.decode([StopTime].self, forKey: .stopTimes)
+        self.codes = try container.decode([Code].self, forKey: .codes)
+        self.validityPattern = try container.decode(ValidityPattern.self, forKey: .validityPattern)
+        self.calendars = try container.decode([VehicleCalendar].self, forKey: .calendars)
+        self.trip = try container.decode(JourneyPattern.self, forKey: .trip)
+        self.disruptions = try container.decode([JSONAnyVJ].self, forKey: .disruptions)
+        self.headsign = try container.decode(String.self, forKey: .headsign)
+    }
 }
 
 // MARK: - Calendar
@@ -221,7 +259,7 @@ class JSONNullVJ: Codable, Hashable {
     }
 }
 
-class JSONCodingKeyVJ: CodingKey {
+class JSONCodingKeyVJ: CodingKey, @unchecked Sendable {
     let key: String
 
     required init?(intValue: Int) {
@@ -436,7 +474,7 @@ class JSONAnyVJ: Codable {
     }
 }
 
-class JSONCodingKey: CodingKey {
+class JSONCodingKey: CodingKey, @unchecked Sendable {
     let key: String
 
     required init?(intValue: Int) {

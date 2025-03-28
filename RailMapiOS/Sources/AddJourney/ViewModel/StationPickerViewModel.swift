@@ -9,58 +9,86 @@ import Foundation
 import CoreLocation
 import MapKit
 
+@MainActor
 class StationPickerViewModel: ObservableObject {
     @Published var pickedJourney: DateRow
     @Published var cityNames: [String: String] = [:]
     
     private let geocoder = CLGeocoder()
+    private var geocodingTasks: [String: Task<Void, Never>] = [:]
     
     init(pickedJourney: DateRow) {
         self.pickedJourney = pickedJourney
     }
     
     func fetchCityName(for stopPoint: StopPoint) {
+        geocodingTasks[stopPoint.id]?.cancel()
         
-        guard let lat = convertToDouble(from: stopPoint.coord.lat) else { return }
-        guard let lon = convertToDouble(from: stopPoint.coord.lon) else { return }
-        let location = CLLocation(latitude: lat , longitude: lon)
-        print("Fetching city for StopPoint \(stopPoint.id) at coordinates: \(lat), \(lon)")
-
-        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
-            guard let self = self else {
-                print("erreur: guard let self = self else ")
-                return
-            }
-            if let error = error {
-                print("Geocoding error: \(error)")
+        let localGeocoder = geocoder
+        let stopPointId = stopPoint.id
+        
+        let task = Task { [weak self] in
+            guard let self = self else { return }
+            
+            guard let lat = self.convertToDouble(from: stopPoint.coord.lat),
+                  let lon = self.convertToDouble(from: stopPoint.coord.lon) else {
+                LogManager.error("Invalid coordinates for StopPoint \(stopPointId)")
                 return
             }
             
-            if let placemark = placemarks?.first {
-                print("Placemark details: \(placemark)") // Affiche les détails du placemark
-                if let city = placemark.locality {
-                    print("City found: \(city)")
-                    DispatchQueue.main.async { [weak self] in
-                        self?.cityNames[stopPoint.id] = city
+            let location = CLLocation(latitude: lat, longitude: lon)
+            LogManager.debug("Fetching city for StopPoint \(stopPointId) at coordinates: \(lat), \(lon)")
+            
+            do {
+                let placemarks = try await localGeocoder.reverseGeocodeLocation(location)
+                
+                if Task.isCancelled { return }
+                
+                if let placemark = placemarks.first {
+                    LogManager.debug("Placemark details: \(placemark)")
+                    if let city = placemark.locality {
+                        LogManager.debug("City found: \(city)")
+                        await MainActor.run {
+                            self.cityNames[stopPointId] = city
+                        }
+                    } else {
+                        LogManager.error("Locality not found for \(stopPointId), full placemark: \(placemark)")
                     }
                 } else {
-                    print("Locality not found for \(stopPoint.id), full placemark: \(placemark)")
+                    LogManager.error("No placemarks found")
                 }
-            } else {
-                print("placemarks details: \(placemarks)")
+            } catch {
+                LogManager.error("Geocoding error: \(error)")
             }
         }
+        
+        geocodingTasks[stopPoint.id] = task
+    }
+
+    
+    func cancelAllGeocoding() {
+        for task in geocodingTasks.values {
+            task.cancel()
+        }
+        geocodingTasks.removeAll()
+    }
+    
+    deinit {
+        for task in geocodingTasks.values {
+            task.cancel()
+        }
+        geocodingTasks.removeAll()
     }
     
     private func convertToDouble(from string: String) -> Double? {
         let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: "fr_FR") // Utilise le format français
+        formatter.locale = Locale(identifier: "fr_FR")
         formatter.numberStyle = .decimal
         
         if let number = formatter.number(from: string) {
             return number.doubleValue
         } else {
-            print("Conversion failed for string: \(string)")
+            LogManager.error("Conversion failed for string: \(string)")
             return nil
         }
     }

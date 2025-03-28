@@ -6,79 +6,64 @@
 //
 
 import Foundation
+import SwiftData
 
-class JourneyRowViewModel: ObservableObject {
+@MainActor
+final class JourneyRowViewModel: ObservableObject {
     private let journey: Journey
+    private let dateFormatterService: DateFormatterServiceProtocol
+    private let journeyDataService: JourneyDataServiceProtocol
     
-    init(journey: Journey) {
+    @Published private(set) var headsign: String
+    @Published private(set) var departureTime: String
+    @Published private(set) var departureDate: String
+    @Published private(set) var departureLabel: String
+    @Published private(set) var arrivalTime: String
+    @Published private(set) var arrivalDate: String
+    @Published private(set) var arrivalLabel: String
+    @Published private(set) var compagny: String
+    @Published private(set) var duration: String
+    
+    init(
+        journey: Journey,
+        dateFormatterService: DateFormatterServiceProtocol = DateFormatterService(),
+        journeyDataService: JourneyDataServiceProtocol = JourneyDataService()
+    ) {
         self.journey = journey
+        self.dateFormatterService = dateFormatterService
+        self.journeyDataService = journeyDataService
+        
+        self.headsign = journey.headsign ?? "N/A"
+        self.departureTime = ""
+        self.departureDate = ""
+        self.departureLabel = ""
+        self.arrivalTime = ""
+        self.arrivalDate = ""
+        self.arrivalLabel = ""
+        self.compagny = ""
+        self.duration = ""
+        
+        self.loadJourneyData()
+        
+        LogManager.info("Initialisation de JourneyRowViewModel pour le trajet vers \(journey.headsign ?? "destination inconnue")")
     }
     
-    var headsign: String {
-        journey.headsign ?? "N/A"
-    }
-    
-    var departureTime: String {
-        formatTime(journey.startDate)
-    }
-    
-    var departureDate: String {
-        formatDate(journey.startDate)
-    }
-    
-    var departureLabel: String {
-        departureStop?.stopinfo?.label ?? "N/A departureLabel"
-    }
-    
-    var arrivalTime: String {
-        formatTime(journey.endDate)
-    }
-    
-    var arrivalDate: String {
-        formatDate(journey.endDate)
-    }
-    
-    var arrivalLabel: String {
-        arrivalStop?.stopinfo?.label ?? "N/A arrivalLabel"
-    }
-    
-    var compagny: String {
-        journey.company ?? "N/A company"
-    }
-    
-    var duration: String {
-        guard let startDate = journey.startDate, let endDate = journey.endDate else {
-            return "N/A"
-        }
-        let interval = endDate.timeIntervalSince(startDate)
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        return String(format: "%02dh%02d", hours, minutes)
-    }
-    
-    private var departureStop: Stop? {
-        return (journey.stops as? Set<Stop>)?.first { $0.status == "departure" }
-    }
-    
-    private var arrivalStop: Stop? {
-        return (journey.stops as? Set<Stop>)?.first { $0.status == "arrival" }
-    }
-    
-    private func formatDate(_ date: Date?) -> String {
-        guard let date = date else {
-            return "Date non disponible"
-        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EE. dd MMM."
-        return dateFormatter.string(from: date)
-    }
-    
-    private func formatTime(_ date: Date?) -> String {
-        guard let date = date else {
-            return "Heure non disponible"
-        }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        return dateFormatter.string(from: date)
+    private func loadJourneyData() {
+        let departureStop = journeyDataService.getDepartureStop(journey)
+        let arrivalStop = journeyDataService.getArrivalStop(journey)
+        
+        self.departureTime = dateFormatterService.formatJourneyTime(journey.startDate)
+        self.departureDate = dateFormatterService.formatJourneyDate(journey.startDate)
+        self.departureLabel = departureStop?.stopinfo?.label ?? "N/A"
+        
+        self.arrivalTime = dateFormatterService.formatJourneyTime(journey.endDate)
+        self.arrivalDate = dateFormatterService.formatJourneyDate(journey.endDate)
+        self.arrivalLabel = arrivalStop?.stopinfo?.label ?? "N/A"
+        
+        self.compagny = journey.company ?? "N/A"
+        self.duration = dateFormatterService.calculateDuration(
+            startDate: journey.startDate,
+            endDate: journey.endDate
+        )
     }
 }

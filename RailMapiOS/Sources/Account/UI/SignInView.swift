@@ -12,10 +12,11 @@ struct SignInView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var userStorage: UserStorage
-    @ObservedObject var vm: SignInViewModel
+    @EnvironmentObject var router: Router
+    @ObservedObject var viewModel: SignInViewModel
     
-    public init(userStorage: UserStorage) {
-        self.vm = SignInViewModel(userStorage: userStorage)
+    public init(userStorage: UserStorage = UserStorage.shared) {
+        self.viewModel = SignInViewModel(userStorage: userStorage)
     }
     
     var body: some View {
@@ -26,7 +27,7 @@ struct SignInView: View {
                 
                 VStack(spacing: 10) {
                     
-                    if let errorMessage = vm.errorMessage {
+                    if let errorMessage = viewModel.errorMessage {
                         Image(systemName: "exclamationmark.icloud")
                             .resizable()
                             .scaledToFit()
@@ -45,7 +46,7 @@ struct SignInView: View {
                             .multilineTextAlignment(.center)
                         
                     } else {
-                        if vm.isSignedInToiCloud {
+                        if viewModel.isSignedInToiCloud {
                             Image(systemName: "checkmark.icloud")
                                 .resizable()
                                 .scaledToFit()
@@ -99,14 +100,14 @@ struct SignInView: View {
                 
                 Spacer()
                 
-                if vm.isSignedInToiCloud {
+                if viewModel.isSignedInToiCloud {
                     Text("You are signed in to iCloud.")
                         .font(.headline)
                         .foregroundColor(.green)
                 } else {
                     Button(action: {
                         Task {
-                            await vm.requestPermissionAndSignIn()
+                            await viewModel.requestPermissionAndSignIn()
                         }
                     }) {
                         Text("Sign in to iCloud")
@@ -129,7 +130,7 @@ struct SignInView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
-                        dismiss()
+                        router.dismissSheet()
                     }
                 }
             }

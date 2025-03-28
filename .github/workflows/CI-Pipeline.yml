@@ -1,0 +1,111 @@
+name: CI Pipeline Optimisée
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev, main]
+
+jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cirruslabs/swiftlint-action@v1
+        with:
+          version: latest
+
+  build:
+    runs-on: macos-latest
+    needs: lint
+    outputs:
+      derived-data: ${{ steps.set-derived-data.outputs.path }}
+    steps:
+      - name: Configuration Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        id: xcode
+        with:
+          xcode-version: '16.2'
+          stable: true
+
+      - name: Vérification installation
+        run: |
+          echo "Chemin Xcode: ${{ steps.xcode.outputs.path }}"
+          echo "Version: ${{ steps.xcode.outputs.version }}"
+      
+      - uses: actions/checkout@v4
+
+      - name: Configuration Mise
+        uses: jdx/mise-action@v2
+      
+      - name: Configuration environnement
+        run: |
+          mise use --pin tuist
+          tuist generate
+          
+      - name: Build commune
+        run: |
+          xcodebuild build \
+            -project RailMapiOS.xcodeproj \
+            -scheme RailMapiOS \
+            -derivedDataPath ${{ runner.temp }}/derived \
+            -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
+            -configuration Debug \
+            SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify
+      - name: Stockage des artefacts
+        id: set-derived-data
+        run: echo "path=${{ runner.temp }}/derived" >> $GITHUB_OUTPUT
+
+  unit-tests:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Exécution tests unitaires
+        run: |
+          xcodebuild test \
+            -project RailMapiOS.xcodeproj \
+            -scheme RailMapiOS \
+            -only-testing:RailMapiOSTests \
+            -derivedDataPath ${{ needs.build.outputs.derived-data }} \
+            -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
+            -configuration Debug \
+            SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions
+            
+  ui-tests:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Exécution tests UI
+        run: |
+          xcodebuild test \
+            -project RailMapiOS.xcodeproj \
+            -scheme RailMapiOS \
+            -only-testing:RailMapiOSUITests \
+            -derivedDataPath ${{ needs.build.outputs.derived-data }} \
+            -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
+            -configuration Debug \
+            SWIFT_VERSION=5.5 \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- \
+            PROVISIONING_PROFILE_SPECIFIER= \
+            CODE_SIGNING_ALLOWED=NO | xcbeautify --renderer github-actions

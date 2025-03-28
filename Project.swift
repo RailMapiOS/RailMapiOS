@@ -4,7 +4,6 @@ let project = Project(
     name: "RailMapiOS",
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
-            .package(url: "https://github.com/realm/SwiftLint", from: "0.58.2")
         ],
     targets: [
         .target(
@@ -12,6 +11,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.railmap.RailMapiOS",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen.storyboard",
@@ -23,9 +23,10 @@ let project = Project(
             entitlements: "Config/RailMapiOSDebug.entitlements",
             dependencies: [
                 .package(product: "Helpers"),
-                .package(product: "SwiftLintBuildToolPlugin", type: .plugin)
             ],
-            settings: .settings(base: [:], configurations: [
+            settings: .settings(base: [
+                "SWIFT_VERSION": "5"
+            ], configurations: [
                 .debug(name: "Debug", settings: [:]),
                 .release(name: "Release", settings: [:])
             ]),
@@ -38,6 +39,7 @@ let project = Project(
             destinations: .iOS,
             product: .unitTests,
             bundleId: "com.railmap.RailMapiOSTests",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .default,
             sources: ["RailMapiOS/Tests/UnitTests/**"],
             resources: [],
@@ -48,14 +50,13 @@ let project = Project(
             destinations: .iOS,
             product: .uiTests,
             bundleId: "com.railmap.RailMapiOSUITests",
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .default,
             sources: ["RailMapiOS/Tests/UITests/**"],
 //            resources: [],
             dependencies: [
                 .target(name: "RailMapiOS"),
-                .package(product: "Helpers"),
-                .sdk(name: "XCTest.framework", type: .framework),
-                .sdk(name: "UIKit.framework", type: .framework),
+                .package(product: "Helpers")
             ]
         )
 

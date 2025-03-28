@@ -16,12 +16,13 @@ struct JourneyHeaderView: View {
     let arrivalCity: String?
     let departureDate: Date?
     
-    public init(company: String? = nil,
-                headsign: String? = nil,
-                departureCity: String? = nil,
-                arrivalCity: String? = nil,
-                departureDate: Date? = nil,
-                size: CGSize? = nil
+    public init(
+        company: String? = nil,
+        headsign: String? = nil,
+        departureCity: String? = nil,
+        arrivalCity: String? = nil,
+        departureDate: Date? = nil,
+        size: CGSize? = nil
     ) {
         self.company = company
         self.headsign = headsign
