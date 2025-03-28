@@ -22,6 +22,7 @@ struct DatePickerView: View {
                 .font(.title3)
                 .foregroundStyle(.gray)
                 .padding(.horizontal)
+                .accessibilityIdentifier(AccessibilityID.DatePickerView.title)
             
             List(viewModel.dateRows) { row in
                 HStack {
@@ -41,11 +42,13 @@ struct DatePickerView: View {
                     Text(row.formattedDate)
                         .font(.title)
                 }
+                .accessibilityIdentifier(AccessibilityID.DatePickerView.dateRow(for: row.date))
                 .padding(.vertical, 4)
                 .onTapGesture {
                     onNext(row)
                 }
             }
+            .accessibilityIdentifier(AccessibilityID.DatePickerView.title)
             .listStyle(.plain)
         }
     }
