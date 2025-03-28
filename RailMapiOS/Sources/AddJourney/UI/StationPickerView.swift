@@ -27,6 +27,7 @@ struct StationPickerView: View {
                     isSelected: isStationSelected(stopTime),
                     isSelectable: isStationSelectable(stopTime)
                 )
+                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.stationRow(id: stopTime.stopPoint.id))
                 .onTapGesture {
                     if isStationSelectable(stopTime) {
                         toggleStationSelection(stopTime)
@@ -34,6 +35,7 @@ struct StationPickerView: View {
                 }
             }
         }
+        .accessibilityIdentifier(AccessibilityID.StationPickerView.list)
         .listStyle(.plain)
         .navigationTitle(Text(pickerMode == .pickUpDeparture ? "Pick a starting station" : "Pick an ending station"))
         .toolbar {
@@ -45,6 +47,7 @@ struct StationPickerView: View {
                         resolvedPickedJourney.arrivalStationID = arrivalStation
                         onNext(resolvedPickedJourney)
                     }
+                    .accessibilityIdentifier(AccessibilityID.StationPickerView.confirmButton)
                     .font(.headline)
                 }
             }
@@ -109,6 +112,7 @@ struct StationRow: View {
             VStack(alignment: .leading) {
                 Text(stopTime.stopPoint.name)
                     .font(.headline)
+                    .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.name(id: stopTime.stopPoint.id))
                 HStack {
                     if let cityName = cityName {
                         Text(cityName)
@@ -118,12 +122,14 @@ struct StationRow: View {
                     Text(stopTime.arrivalTime)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                        .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.time(id: stopTime.stopPoint.id))
                 }
             }
             Spacer()
             if isSelected {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.blue)
+                    .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.checkmark(id: stopTime.stopPoint.id))
             }
         }
         .opacity(isSelectable ? 1 : 0.5)
