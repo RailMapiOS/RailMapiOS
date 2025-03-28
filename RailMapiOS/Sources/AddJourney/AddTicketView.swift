@@ -1,5 +1,5 @@
 //
-//  AddTicketV.swift
+//  AddTicketView.swift
 //  RailMapiOS
 //
 //  Created by Jérémie Patot on 19/07/2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddTicketV: View {
+struct AddTicketView: View {
     @StateObject var viewModel = AddTicketVM()
     @ObservedObject var router: Router
     
@@ -47,6 +47,7 @@ struct AddTicketV: View {
                 }
             }
         }
+        .accessibilityIdentifier(AccessibilityID.AddTicketView.vStack)
         .onChange(of: searchText) { newValue in
             Task { @MainActor in
                 await viewModel.fetchHeadsignAddTicket(headsign: newValue)
