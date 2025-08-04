@@ -73,8 +73,8 @@ public struct LayoutiPhone: View {
                         .padding(.top)
                         .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
                         .presentationBackgroundInteraction(.enabled(upThrough: .large))
+                        .presentationBackground(.ultraThickMaterial)
                         .interactiveDismissDisabled()
-                        .ignoresSafeArea()
                 }
         }
     }

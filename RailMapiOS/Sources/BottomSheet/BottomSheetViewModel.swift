@@ -204,5 +204,10 @@ class BottomSheetViewModel: ObservableObject {
     // Accesseurs pour les dépendances
     var currentUser: User? { userStorage.currentUser }
     var isUserLoggedIn: Bool { userStorage.isLoggedIn() }
+    var profileUIImage: UIImage? {
+          guard let user = self.currentUser,
+                let data = user.profileImage else { return nil }
+          return UIImage(data: data)
+      }
 }
 

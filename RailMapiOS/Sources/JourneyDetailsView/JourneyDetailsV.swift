@@ -90,10 +90,12 @@ struct JourneyDetailsV: View {
 //                            }
                 Spacer()
             }
+            .ignoresSafeArea()
             .padding(.top, -15)
             .padding(.vertical)
             Spacer()
         }
+        .ignoresSafeArea(.container, edges: .vertical)
     }
 }
 

@@ -13,7 +13,7 @@ import Foundation
 /// Cette classe gère le chargement, la sauvegarde et la manipulation des données
 /// persistantes de l'application, notamment les trajets (journeys).
 class DataController: ObservableObject {
-    let container = NSPersistentContainer(name: "RailMap")
+    var container = NSPersistentContainer(name: "RailMap")
     
     @Published var journeys: [Journey] = []
     

@@ -24,6 +24,8 @@ let project = Project(
             entitlements: "Config/RailMapiOSDebug.entitlements",
             dependencies: [
                 .package(product: "Helpers"),
+                .package(product: "OHHTTPStubs"),
+                .package(product: "OHHTTPStubsSwift")
             ],
             settings: .settings(base: [
                 "SWIFT_VERSION": "5"
@@ -58,7 +60,8 @@ let project = Project(
             dependencies: [
                 .target(name: "RailMapiOS"),
                 .package(product: "Helpers"),
-                .package(product: "OHHTTPStubs")
+                .package(product: "OHHTTPStubs"),
+                .package(product: "OHHTTPStubsSwift")
             ]
         )
 

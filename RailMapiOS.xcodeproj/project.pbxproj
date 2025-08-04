@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,7 @@
 		11911C194CFF42A388892C28 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29DCC8711A5AFE25FCDDD699 /* Assets.xcassets */; };
 		13DA546FDB3E371D5730AA43 /* TimeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE29BF1855E8D788EC222B6A /* TimeLabel.swift */; };
 		14A3D815C090E86CB8DFC0F8 /* DashedDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1117EFD27DBA0F054974A4B3 /* DashedDivider.swift */; };
+		1EA777D47D96F85EDAA8C246 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E6FB2C5FFD7C2900CF0A7C74 /* OHHTTPStubsSwift */; };
 		21991ED9C3521272CDBA4E13 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0031F231D734849B7FFD67C8 /* LaunchScreen.storyboard */; };
 		246F1C52865EBEAE94A05233 /* UserStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03037900CA6D40A9EF6E2AD4 /* UserStorage.swift */; };
 		2ACFA1AA65ED4BD9CBECA344 /* JourneyTimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014011F4C3CAD2CD786779EE /* JourneyTimes.swift */; };
@@ -21,8 +22,10 @@
 		311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */; };
 		33493EFAE8F3CDD52EEB7A88 /* BottomSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE040958C1FAF167ABE78803 /* BottomSheetViewModel.swift */; };
 		39BE0360B1760E02615FEEFD /* TrainIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */; };
+		3B4F92AA54D715F9C93D7244 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */; };
 		3D961645E4C0CF986720952D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858E5570D756DAB4C01D2D7B /* MapView.swift */; };
 		4160CE17A1ED470CAA99E83C /* EmptyListJourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7F2EEB6DC39D2D6B975517 /* EmptyListJourneyView.swift */; };
+		523C35C99390C21127C16665 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = AC4CAFD81B22DE5528812781 /* OHHTTPStubs */; };
 		56C554474444AD1F8FA637BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81A693990B0026E7D87826ED /* ContentView.swift */; };
 		5744539007525E8097AB401B /* DatePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084D181652C6E036DAE9EDB /* DatePickerViewModel.swift */; };
 		5865B45D633451C9EF3B8A1A /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D04B6A9073CA60ABA169781 /* AccountView.swift */; };
@@ -58,6 +61,7 @@
 		BC9E0ED1A9936EF751EA8C82 /* ConfirmationPickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */; };
 		BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
 		C2BDE32EEF44592AD9B66BD2 /* StationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F964E4E8A300A519005EC01 /* StationPickerView.swift */; };
+		C897B47FD1FB5FBC44EFCF60 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97B2B546459EE152FEF9B0BA /* AppDelegate.swift */; };
 		CAC6F2C9B8CD31137390C2DB /* TuistBundle+RailMapiOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806E82B6AA4AEEE8C08CA124 /* TuistBundle+RailMapiOS.swift */; };
 		CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */; };
 		CD0F8C270D619FBB0B457EB4 /* RailMap.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A82A1FC146174A33FF7C58A8 /* RailMap.xcdatamodeld */; };
@@ -178,6 +182,7 @@
 		92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPickerView.swift; sourceTree = "<group>"; };
 		94505A9346DF3789939EA951 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		97A09DBFF61D413960ACAD42 /* DurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationView.swift; sourceTree = "<group>"; };
+		97B2B546459EE152FEF9B0BA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9AAD488764A0AB5D6C86C3CF /* JourneyDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDataService.swift; sourceTree = "<group>"; };
 		9C1D70A37468480C1CF29289 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		9EEE6200DC53F18D0BD76946 /* AddTicketDateV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTicketDateV.swift; sourceTree = "<group>"; };
@@ -187,7 +192,7 @@
 		AD3DDA694ECAF3FC1A023451 /* VerticalTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTimeline.swift; sourceTree = "<group>"; };
 		B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailMapiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B649F7FA6783116F746C3108 /* ConfirmationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPickerViewModel.swift; sourceTree = "<group>"; };
-		BA04FA190F4ABC19689F8E0C /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		BA04FA190F4ABC19689F8E0C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VehiculeJourneysModel-Navitia.swift"; sourceTree = "<group>"; };
 		C234D8568BDA83252BFECA78 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		C560145910235D4B33C643F0 /* StationPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerViewModel.swift; sourceTree = "<group>"; };
@@ -206,6 +211,10 @@
 		FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A734F2A72E40F7A10060DD12 /* SwiftData */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SwiftData; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		6C2A791C9B933FD35FBAC54E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -221,6 +230,7 @@
 			files = (
 				758AE03336AFEE14034A2DB4 /* Helpers in Frameworks */,
 				EC5039B27C29972495A750F4 /* OHHTTPStubs in Frameworks */,
+				1EA777D47D96F85EDAA8C246 /* OHHTTPStubsSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +239,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */,
+				523C35C99390C21127C16665 /* OHHTTPStubs in Frameworks */,
+				3B4F92AA54D715F9C93D7244 /* OHHTTPStubsSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +406,7 @@
 				CC83AC0DA7D80AC200D2FB9C /* Models */,
 				5CB41C62801C8DAAC91C2E7C /* UIComponents */,
 				775DBB749C97A4BAB5D6DBA2 /* Utilities */,
+				97B2B546459EE152FEF9B0BA /* AppDelegate.swift */,
 				81A693990B0026E7D87826ED /* ContentView.swift */,
 				94505A9346DF3789939EA951 /* DataController.swift */,
 				9F209F1298594FCC032126DE /* RailMapiOSApp.swift */,
@@ -450,6 +463,7 @@
 		B36CDB855BCE2FB0D7116ADA /* Project */ = {
 			isa = PBXGroup;
 			children = (
+				A734F2A72E40F7A10060DD12 /* SwiftData */,
 				FB3CCB11F09D60D93AEDFC13 /* Config */,
 				63DF9ED49E4B05BFB90CB39D /* CoreData */,
 				B1BB9ADDA5FF417C1E75A65D /* Derived */,
@@ -579,9 +593,14 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				A734F2A72E40F7A10060DD12 /* SwiftData */,
+			);
 			name = RailMapiOS;
 			packageProductDependencies = (
 				2BA524F6EF416B27CCA98329 /* Helpers */,
+				AC4CAFD81B22DE5528812781 /* OHHTTPStubs */,
+				56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */,
 			);
 			productName = RailMapiOS;
 			productReference = 58E5DCB89A6A9966D527DF79 /* RailMapiOS.app */;
@@ -627,6 +646,7 @@
 			packageProductDependencies = (
 				7E251E8B71E7059433E27B04 /* Helpers */,
 				8B31B38C97ED8F2587F97D29 /* OHHTTPStubs */,
+				E6FB2C5FFD7C2900CF0A7C74 /* OHHTTPStubsSwift */,
 			);
 			productName = RailMapiOSUITests;
 			productReference = 7477574B27CBCBD23083BD46 /* RailMapiOSUITests.xctest */;
@@ -729,6 +749,7 @@
 				BC9E0ED1A9936EF751EA8C82 /* ConfirmationPickerViewModel.swift in Sources */,
 				5744539007525E8097AB401B /* DatePickerViewModel.swift in Sources */,
 				7930C44398F92A2A11185E78 /* StationPickerViewModel.swift in Sources */,
+				C897B47FD1FB5FBC44EFCF60 /* AppDelegate.swift in Sources */,
 				CFD0F9AF15EA2A65054A1B24 /* BottomSheetView.swift in Sources */,
 				33493EFAE8F3CDD52EEB7A88 /* BottomSheetViewModel.swift in Sources */,
 				A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */,
@@ -820,10 +841,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-					DEBUG,
-				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5;
@@ -922,7 +940,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Derived/InfoPlists/RailMapiOSUITests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -960,10 +978,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-					DEBUG,
-				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1031,7 +1046,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Derived/InfoPlists/RailMapiOSUITests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1043,10 +1058,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-					DEBUG,
-				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1138,6 +1150,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Helpers;
 		};
+		56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OHHTTPStubsSwift;
+		};
 		7E251E8B71E7059433E27B04 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Helpers;
@@ -1146,9 +1162,17 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = OHHTTPStubs;
 		};
+		AC4CAFD81B22DE5528812781 /* OHHTTPStubs */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OHHTTPStubs;
+		};
 		B84FBECDF06B2687B7C68274 /* Helpers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Helpers;
+		};
+		E6FB2C5FFD7C2900CF0A7C74 /* OHHTTPStubsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OHHTTPStubsSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 
