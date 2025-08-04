@@ -5,13 +5,13 @@
 //  Created by Jérémie Patot on 12/07/2024.
 //
 
+import SwiftData
 import SwiftUI
 import MapKit
 
 public struct ContentView: View {
     public init() {}
     
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
     
     @State private var isSheetPresented = true
@@ -20,8 +20,7 @@ public struct ContentView: View {
     @StateObject private var mapSettings = MapSettings()
 
     @EnvironmentObject private var router: Router
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)])
-     var journeys: FetchedResults<Journey>
+    @Query(sort: \Journey.startDate) var journeys: [Journey]
 
     public var body: some View {
         Group {
@@ -43,7 +42,8 @@ public struct ContentView: View {
             }
         }
         .onAppear() {
-            dataController.connectMapSettings(mapSettings)        }
+            dataController.connectMapSettings(mapSettings)
+        }
     }
 }
 
@@ -53,7 +53,7 @@ public struct LayoutiPhone: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings
-    let journeys: FetchedResults<Journey>
+    let journeys: [Journey]
 
     public var body: some View {
         ZStack {
@@ -73,8 +73,8 @@ public struct LayoutiPhone: View {
                         .padding(.top)
                         .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
                         .presentationBackgroundInteraction(.enabled(upThrough: .large))
+                        .presentationBackground(.ultraThickMaterial)
                         .interactiveDismissDisabled()
-                        .ignoresSafeArea()
                 }
         }
     }
@@ -85,7 +85,7 @@ public struct LayoutiPad: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings
-    let journeys: FetchedResults<Journey>
+    let journeys: [Journey]
 
     public var body: some View {
         NavigationSplitView {

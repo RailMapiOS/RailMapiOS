@@ -44,7 +44,6 @@ final class JourneyRowViewModel: ObservableObject {
         self.duration = ""
         
         self.loadJourneyData()
-        
         LogManager.info("Initialisation de JourneyRowViewModel pour le trajet vers \(journey.headsign ?? "destination inconnue")")
     }
     

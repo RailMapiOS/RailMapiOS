@@ -1,57 +1,63 @@
 //
-//  Router.swift
-//  RailMapiOS
+// Router.swift
+// RailMapiOS
 //
-//  Created by Jérémie Patot on 19/01/2025.
+// Created by Jérémie Patot on 19/01/2025.
 //
 
-import Foundation
 import SwiftUI
-import CoreData
+import Foundation
 
 class Router: ObservableObject {
+    // Chemin de navigation
     @Published var path: [Flow] = []
+    
+    // Feuilles modales
     @Published var activeSheet: SheetType?
     
+    // Call-back déclenché lors d’un retour arrière
     var onNavigateBack: (() -> Void)?
-
+    
+    // MARK: - Routes
     enum Flow: Hashable {
         case journeys
         case addTicket(searchText: String?)
-        case journeyDetails(objectID: NSManagedObjectID)
+        case journeyDetails(id: UUID)
         case datePicker(dateRows: [DateRow])
         case stationPicker(DateRow)
         case confirmation(DateRow)
     }
     
+    // MARK: - Sheets
     enum SheetType: Identifiable {
         case signIn
         case account
         
         var id: Int {
             switch self {
-            case .signIn: return 1
-            case .account: return 2
+            case .signIn:   1
+            case .account:  2
             }
         }
     }
-
+    
+    // MARK: - Helpers
     func navigate(to flow: Flow) {
         path.append(flow)
         LogManager.debug("Navigation vers: \(flow)", category: "navigation")
     }
-
+    
     func navigateBack() {
         guard !path.isEmpty else { return }
         path.removeLast()
         onNavigateBack?()
-        LogManager.debug("Fermeture de la page active \(path.last!)", category: "navigation")
+        LogManager.debug("Retour arrière", category: "navigation")
     }
-
+    
     func navigateToRoot() {
         path.removeAll()
         onNavigateBack?()
-        LogManager.debug("Fermeture de toutes les pages actives \(path)", category: "navigation")
+        LogManager.debug("Retour à la racine", category: "navigation")
     }
     
     func presentSheet(_ sheet: SheetType) {

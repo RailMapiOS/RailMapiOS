@@ -1,109 +1,108 @@
 //
-//  DataController.swift
-//  RailMapiOS
+// DataController.swift
+// RailMapiOS
 //
-//  Created by Jérémie Patot on 12/07/2024.
+// Created by Jérémie Patot on 12/07/2024.
 //
 
-import CoreData
+import SwiftData
 import Foundation
 
-/// Contrôleur de données responsable de la gestion des opérations CoreData
-///
-/// Cette classe gère le chargement, la sauvegarde et la manipulation des données
-/// persistantes de l'application, notamment les trajets (journeys).
+/// Contrôleur de données responsable de la gestion des opérations SwiftData
+@MainActor
 class DataController: ObservableObject {
-    let container = NSPersistentContainer(name: "RailMap")
+    let modelContainer: ModelContainer
+    private let modelContext: ModelContext
     
     @Published var journeys: [Journey] = []
-    
     private var mapSettings: MapSettings?
     
     init() {
-        LogManager.info("Initialisation du DataController", category: "core_data")
-        container.loadPersistentStores { description, error in
-            if let error = error {
-                LogManager.error("Échec du chargement de Core Data: \(error.localizedDescription)", category: "core_data_error")
-            } else {
-                LogManager.info("Core Data chargé avec succès", category: "core_data")
-            }
+        LogManager.info("Initialisation du DataController avec SwiftData", category: "swift_data")
+        
+        do {
+            modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self, CoordinatesSD.self)
+            modelContext = ModelContext(modelContainer)
+            LogManager.info("SwiftData initialisé avec succès", category: "swift_data")
+        } catch {
+            LogManager.error("Échec de l'initialisation de SwiftData: \(error.localizedDescription)", category: "swift_data_error")
+            fatalError("Impossible d'initialiser SwiftData: \(error)")
         }
         
         loadJourneys()
     }
     
     /// Connecte les paramètres de carte au contrôleur de données
-    /// - Parameter mapSettings: L'instance de MapSettings à connecter
     func connectMapSettings(_ mapSettings: MapSettings) {
-        LogManager.debug("Connexion des paramètres de carte au DataController", category: "core_data")
+        LogManager.debug("Connexion des paramètres de carte au DataController", category: "swift_data")
         self.mapSettings = mapSettings
         updateMapSettings()
     }
     
-    /// Charge tous les trajets depuis CoreData
+    /// Charge tous les trajets depuis SwiftData
     func loadJourneys() {
-        LogManager.info("Chargement des trajets depuis CoreData", category: "core_data")
-        let request: NSFetchRequest<Journey> = Journey.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Journey.startDate, ascending: true)]
+        LogManager.info("Chargement des trajets depuis SwiftData", category: "swift_data")
         
-        let context = container.viewContext
+        let descriptor = FetchDescriptor<Journey>(
+            sortBy: [SortDescriptor(\.startDate, order: .forward)]
+        )
         
         do {
-            journeys = try context.fetch(request)
-            LogManager.info("\(journeys.count) trajets chargés avec succès", category: "core_data")
+            journeys = try modelContext.fetch(descriptor)
+            LogManager.info("\(journeys.count) trajets chargés avec succès", category: "swift_data")
+            updateMapSettings()
         } catch {
-            LogManager.error("Échec du chargement des trajets: \(error.localizedDescription)", category: "core_data_error")
+            LogManager.error("Échec du chargement des trajets: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
     
     /// Met à jour les paramètres de carte avec les trajets actuels
     private func updateMapSettings() {
         guard let mapSettings = mapSettings else {
-            LogManager.warning("Tentative de mise à jour des paramètres de carte sans connexion établie", category: "core_data")
+            LogManager.warning("Tentative de mise à jour des paramètres de carte sans connexion établie", category: "swift_data")
             return
         }
-        LogManager.debug("Mise à jour des paramètres de carte avec \(journeys.count) trajets", category: "core_data")
+        
+        LogManager.debug("Mise à jour des paramètres de carte avec \(journeys.count) trajets", category: "swift_data")
         mapSettings.updateJourneys(from: self.journeys)
     }
     
-    /// Sauvegarde le contexte CoreData si des modifications ont été effectuées
+    /// Sauvegarde le contexte SwiftData si des modifications ont été effectuées
     func saveContext() {
-        let context = container.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-                LogManager.info("Données sauvegardées dans CoreData", category: "core_data")
-                loadJourneys()
-            } catch {
-                LogManager.error("Échec de la sauvegarde des données: \(error.localizedDescription)", category: "core_data_error")
-            }
-        } else {
-            LogManager.debug("Aucune modification à sauvegarder dans CoreData", category: "core_data")
+        do {
+            try modelContext.save()
+            LogManager.info("Données sauvegardées dans SwiftData", category: "swift_data")
+            loadJourneys()
+        } catch {
+            LogManager.error("Échec de la sauvegarde des données: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
     
-    /// Sauvegarde un nouveau trajet dans CoreData
-    /// - Parameter newJourney: Le modèle du nouveau trajet à sauvegarder
+    /// Sauvegarde un nouveau trajet dans SwiftData
     func saveJourney(newJourney: NewJourneyModel) {
-        LogManager.info("Sauvegarde d'un nouveau trajet: \(newJourney.headsign ?? "sans destination")", category: "core_data")
-        let context = container.viewContext
+        LogManager.info("Sauvegarde d'un nouveau trajet: \(newJourney.headsign)", category: "swift_data")
         
-        let journey = Journey(context: context)
+        let journey = Journey()
+        journey.id = UUID()
         journey.startDate = newJourney.startDate
         journey.endDate = newJourney.endDate
         journey.headsign = newJourney.headsign
         journey.idVehiculeJourney = newJourney.idVehicleJourney
         journey.company = newJourney.company
+        journey.archived = false
+        journey.stops = []
         
-        LogManager.debug("Création de \(newJourney.stops.count) arrêts pour le trajet", category: "core_data")
+        LogManager.debug("Création de \(newJourney.stops.count) arrêts pour le trajet", category: "swift_data")
+        
         for newStop in newJourney.stops {
-            let stop = Stop(context: context)
+            let stop = Stop()
             stop.arrivalTimeUTC = newStop.arrivalTimeUTC
             stop.departureTimeUTC = newStop.departureTimeUTC
             stop.status = newStop.status
+            stop.journey = journey
             
             if let newStopInfo = newStop.stopInfo {
-                let stopInfo = StopInfo(context: context)
+                let stopInfo = StopInfos()
                 stopInfo.id = newStopInfo.id
                 stopInfo.label = newStopInfo.label
                 stopInfo.latitude = newStopInfo.latitude
@@ -112,130 +111,121 @@ class DataController: ObservableObject {
                 stopInfo.pickUpAllowed = newStopInfo.pickUpAllowed
                 stopInfo.dropOffAllowed = newStopInfo.dropOffAllowed
                 stopInfo.skippedStop = newStopInfo.skippedStop
+                stopInfo.stop = stop
                 
                 stop.stopinfo = stopInfo
-                LogManager.debug("Arrêt créé: \(newStopInfo.label ?? "sans nom")", category: "core_data")
+                modelContext.insert(stopInfo)
+                LogManager.debug("Arrêt créé: \(newStopInfo.label)", category: "swift_data")
             }
             
-            journey.addToStops(stop)
+            journey.stops?.append(stop)
+            modelContext.insert(stop)
         }
         
+        modelContext.insert(journey)
         saveContext()
     }
     
     /// Crée des trajets fictifs pour les tests et le développement
-    /// - Parameter context: Le contexte CoreData dans lequel créer les trajets
-    func createMockJourneys(context: NSManagedObjectContext) {
-        LogManager.info("Création de trajets fictifs pour les tests", category: "core_data")
+    func createMockJourneys() {
+        LogManager.info("Création de trajets fictifs pour les tests", category: "swift_data")
+        
         let compagnies = ["Deutsche Bahn", "SNCF", "Eurostar", "TER", "Trenitalia", "Renfe"]
         var date = Date()
         
         for indexMock in 1...5 {
-            let journey = Journey(context: context)
+            let startDate = generateEndDate(from: date)
+            let endDate = generateEndDate(from: startDate)
+            
+            let journey = Journey()
             journey.id = UUID()
-            journey.idVehiculeJourney = "\(journey.id?.uuidString ?? UUID().uuidString)_idVehiculeJourney"
+            journey.startDate = startDate
+            journey.endDate = endDate
             journey.headsign = "Headsign \(indexMock)"
+            journey.idVehiculeJourney = "\(UUID().uuidString)_idVehiculeJourney"
+            journey.company = compagnies.randomElement() ?? "SNCF"
             journey.archived = false
-            journey.company = compagnies.randomElement()
-            journey.startDate = generateEndDate(from: date)
-            journey.endDate = generateEndDate(from: journey.startDate!)
+            journey.stops = []
             
-            LogManager.debug("Création du trajet fictif #\(indexMock): \(journey.headsign ?? "")", category: "core_data")
+            LogManager.debug("Création du trajet fictif #\(indexMock): \(journey.headsign ?? "")", category: "swift_data")
             
-            // Créer les objets Stop
-            let departureStop = Stop(context: context)
-            departureStop.arrivalTimeUTC = journey.startDate
-            departureStop.departureTimeUTC = journey.startDate
-            departureStop.status = "departure"
-            
-            let departureStopInfo = StopInfo(context: context)
+            // Créer l'arrêt de départ
+            let departureStopInfo = StopInfos()
+            departureStopInfo.id = UUID().uuidString
             departureStopInfo.label = "Gare de Lyon"
-            departureStopInfo.dropOffAllowed = true
+            departureStopInfo.latitude = 48.8444
+            departureStopInfo.longitude = 2.3732
+            departureStopInfo.adress = "Place Louis Armand, 75012 Paris"
             departureStopInfo.pickUpAllowed = true
+            departureStopInfo.dropOffAllowed = true
             departureStopInfo.skippedStop = false
+            
+            let departureStop = Stop()
+            departureStop.arrivalTimeUTC = startDate
+            departureStop.departureTimeUTC = startDate
+            departureStop.status = "departure"
+            departureStop.journey = journey
             departureStop.stopinfo = departureStopInfo
+            departureStopInfo.stop = departureStop
             
-            let arrivalStop = Stop(context: context)
-            arrivalStop.arrivalTimeUTC = journey.endDate
-            arrivalStop.departureTimeUTC = journey.endDate
-            arrivalStop.status = "arrival"
-            
-            let arrivalStopInfo = StopInfo(context: context)
+            // Créer l'arrêt d'arrivée
+            let arrivalStopInfo = StopInfos()
+            arrivalStopInfo.id = UUID().uuidString
             arrivalStopInfo.label = "Gare de Perpignan"
-            arrivalStopInfo.dropOffAllowed = true
+            arrivalStopInfo.latitude = 42.6975
+            arrivalStopInfo.longitude = 2.8808
+            arrivalStopInfo.adress = "Boulevard Saint-Assiscle, 66000 Perpignan"
             arrivalStopInfo.pickUpAllowed = true
+            arrivalStopInfo.dropOffAllowed = true
             arrivalStopInfo.skippedStop = false
+            
+            let arrivalStop = Stop()
+            arrivalStop.arrivalTimeUTC = endDate
+            arrivalStop.departureTimeUTC = endDate
+            arrivalStop.status = "arrival"
+            arrivalStop.journey = journey
             arrivalStop.stopinfo = arrivalStopInfo
+            arrivalStopInfo.stop = arrivalStop
             
-            // Ajouter les arrêts au voyage
-            journey.addToStops(departureStop)
-            journey.addToStops(arrivalStop)
+            journey.stops = [departureStop, arrivalStop]
             
-            LogManager.debug("Arrêts ajoutés au trajet fictif #\(indexMock)", category: "core_data")
+            // Insérer tous les objets dans le contexte
+            modelContext.insert(journey)
+            modelContext.insert(departureStop)
+            modelContext.insert(arrivalStop)
+            modelContext.insert(departureStopInfo)
+            modelContext.insert(arrivalStopInfo)
+            
+            LogManager.debug("Arrêts ajoutés au trajet fictif #\(indexMock)", category: "swift_data")
+            date = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? Date()
         }
-        do {
-            try context.save()
-            LogManager.info("5 trajets fictifs créés et sauvegardés avec succès", category: "core_data")
-        } catch {
-            LogManager.error("Échec de la sauvegarde des données fictives: \(error.localizedDescription)", category: "core_data_error")
-        }
+        
+        saveContext()
+        LogManager.info("5 trajets fictifs créés et sauvegardés avec succès", category: "swift_data")
     }
     
     /// Génère une date de fin aléatoire à partir d'une date de début
-    /// - Parameter startDate: La date de début
-    /// - Returns: Une date de fin générée aléatoirement
     func generateEndDate(from startDate: Date) -> Date {
         let calendar = Calendar.current
-        
-        // Définir les intervalles de temps
-        let minInterval: TimeInterval = 30 * 60  // 30 minutes en secondes
-        let maxInterval: TimeInterval = 5 * 3600  // 5 heures en secondes
-        
-        // Générer un intervalle aléatoire entre minInterval et maxInterval
+        let minInterval: TimeInterval = 30 * 60 // 30 minutes
+        let maxInterval: TimeInterval = 5 * 3600 // 5 heures
         let randomInterval = TimeInterval.random(in: minInterval...maxInterval)
-        
-        // Calculer la date de fin
         let endDate = calendar.date(byAdding: .second, value: Int(randomInterval), to: startDate)!
         
-        LogManager.debug("Date de fin générée: \(endDate) (intervalle: \(Int(randomInterval/60)) minutes)", category: "core_data")
+        LogManager.debug("Date de fin générée: \(endDate) (intervalle: \(Int(randomInterval/60)) minutes)", category: "swift_data")
         return endDate
     }
     
-    /// Supprime tous les objets d'une entité spécifiée
-    /// - Parameters:
-    ///   - entityName: Le nom de l'entité à supprimer
-    ///   - context: Le contexte CoreData dans lequel effectuer la suppression
-    func deleteAllObjects(of entityName: String, context: NSManagedObjectContext) {
-        LogManager.warning("Suppression de tous les objets de l'entité \(entityName)", category: "core_data")
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+    /// Supprime tous les trajets
+    func deleteAllJourneys() {
+        LogManager.warning("Suppression de tous les trajets", category: "swift_data")
         
         do {
-            try context.execute(deleteRequest)
-            try context.save()
-            LogManager.info("Tous les objets de l'entité \(entityName) ont été supprimés", category: "core_data")
-            loadJourneys()
+            try modelContext.delete(model: Journey.self)
+            saveContext()
+            LogManager.info("Tous les trajets ont été supprimés", category: "swift_data")
         } catch {
-            LogManager.error("Échec de la suppression des objets: \(error.localizedDescription)", category: "core_data_error")
+            LogManager.error("Échec de la suppression des trajets: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
-}
-
-extension NSPersistentContainer {
-    /// Conteneur persistant pour l'aperçu et les tests
-    @MainActor static var preview: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "RailMap")
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores { (storeDescription, error) in
-            if let error = error as NSError? {
-                LogManager.error("Erreur non résolue lors du chargement du conteneur de prévisualisation: \(error), \(error.userInfo)", category: "core_data_error")
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            } else {
-                LogManager.debug("Conteneur de prévisualisation chargé avec succès", category: "core_data")
-            }
-        }
-        return container
-    }()
 }

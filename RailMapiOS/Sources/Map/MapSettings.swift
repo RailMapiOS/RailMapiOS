@@ -41,53 +41,62 @@ class MapSettings: ObservableObject {
     
     /// Met à jour les trajets à partir d'une collection FetchedResults
     /// - Parameter journeys: Les trajets à afficher
-    public func updateJourneys(from journeys: FetchedResults<Journey>) {
-        LogManager.info("Mise à jour des trajets depuis FetchedResults (\(journeys.count) trajets)", category: "map")
-        self.journeys = Array(journeys).sorted { $0.startDate! > $1.startDate! }
-        generateTrainRoutes()
-    }
-    
-    /// Met à jour les trajets à partir d'un tableau de Journey
-    /// - Parameter journeys: Les trajets à afficher
     public func updateJourneys(from journeys: [Journey]) {
-        LogManager.info("Mise à jour des trajets depuis un tableau (\(journeys.count) trajets)", category: "map")
-        self.journeys = journeys
+        LogManager.info("Mise à jour des trajets depuis SwiftData (\(journeys.count) trajets)", category: "map")
+        
+        // Trier les trajets par date de départ (gestion des optionnels)
+        self.journeys = journeys.sorted { journey1, journey2 in
+            guard let date1 = journey1.startDate, let date2 = journey2.startDate else {
+                return false
+            }
+            return date1 > date2
+        }
+        
         generateTrainRoutes()
     }
     
     /// Génère les routes de train à partir des trajets
     private func generateTrainRoutes() {
         LogManager.debug("Génération des routes de train pour \(journeys.count) trajets", category: "map")
-        
         let previousRouteCount = self.trainRoutes.count
         
         self.trainRoutes = journeys.compactMap { journey -> TrainRoute? in
-            guard let stopSet = journey.stops as? NSSet,
-                  var stops = stopSet.allObjects as? [Stop] else {
-                LogManager.warning("Impossible d'extraire les arrêts pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
+            guard let stops = journey.stops, !stops.isEmpty else {
+                LogManager.warning("Aucun arrêt trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
             
-            stops.sort(by: { ($0.departureTimeUTC ?? $0.arrivalTimeUTC)! < ($1.departureTimeUTC ?? $1.arrivalTimeUTC)! })
+            // Trier les arrêts par heure de départ/arrivée
+            let sortedStops = stops.sorted { stop1, stop2 in
+                let time1 = stop1.departureTimeUTC ?? stop1.arrivalTimeUTC ?? Date.distantPast
+                let time2 = stop2.departureTimeUTC ?? stop2.arrivalTimeUTC ?? Date.distantPast
+                return time1 < time2
+            }
             
-            guard let departureIndex = stops.firstIndex(where: { $0.status?.lowercased() == "departure" }),
-                  let arrivalIndex = stops.lastIndex(where: { $0.status?.lowercased() == "arrival" }),
-                  departureIndex < arrivalIndex else {
+            // Trouver les indices de départ et d'arrivée
+            guard let departureIndex = sortedStops.firstIndex(where: { $0.status?.lowercased() == "departure" }),
+                  let arrivalIndex = sortedStops.lastIndex(where: { $0.status?.lowercased() == "arrival" }),
+                  departureIndex <= arrivalIndex else {
                 LogManager.warning("Structure d'arrêts invalide pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
             
-            let routeStops = Array(stops[departureIndex...arrivalIndex])
+            // Extraire les arrêts de la route
+            let routeStops = Array(sortedStops[departureIndex...arrivalIndex])
             
+            // Convertir en coordonnées
             let coordinates = routeStops.compactMap { stop -> CLLocationCoordinate2D? in
-                guard let info = stop.stopinfo else {
-                    LogManager.warning("Information d'arrêt manquante pour un arrêt du trajet \(journey.headsign ?? "inconnu")", category: "map")
+                guard let stopInfo = stop.stopinfo,
+                      let latitude = stopInfo.latitude,
+                      let longitude = stopInfo.longitude else {
+                    LogManager.warning("Information de géolocalisation manquante pour un arrêt du trajet \(journey.headsign ?? "inconnu")", category: "map")
                     return nil
                 }
-                return CLLocationCoordinate2D(latitude: info.latitude, longitude: info.longitude)
+                
+                return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             }
             
-            if coordinates.count < 2 {
+            guard coordinates.count >= 2 else {
                 LogManager.warning("Pas assez de coordonnées pour créer une route pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
@@ -129,22 +138,20 @@ class MapSettings: ObservableObject {
     
     /// Met à jour la position de la caméra pour montrer toutes les routes
     func updateCameraToShowAllRoutes() {
-        if !trainRoutes.isEmpty {
-            LogManager.debug("Mise à jour de la position de la caméra pour montrer toutes les routes", category: "map")
-            
-            let allCoordinates = trainRoutes.flatMap { $0.coordinates }
-            
-            if !allCoordinates.isEmpty {
-                withAnimation(.easeInOut(duration: 1.5)) {
-                    cameraPosition = .region(MKCoordinateRegion(
-                        coordinates: allCoordinates,
-                        padding: 150
-                    ))
-                }
-            }
+        guard !trainRoutes.isEmpty else { return }
+        
+        LogManager.debug("Mise à jour de la position de la caméra pour montrer toutes les routes", category: "map")
+        let allCoordinates = trainRoutes.flatMap { $0.coordinates }
+        
+        guard !allCoordinates.isEmpty else { return }
+        
+        withAnimation(.easeInOut(duration: 1.5)) {
+            cameraPosition = .region(MKCoordinateRegion(
+                coordinates: allCoordinates,
+                padding: 150
+            ))
         }
     }
-
 }
 
 /// Représente une route de train sur la carte
@@ -161,8 +168,8 @@ public struct TrainRoute: Identifiable, Equatable {
     
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         return lhs.id == rhs.id &&
-               lhs.coordinates.first == rhs.coordinates.first &&
-               lhs.coordinates.last == rhs.coordinates.last
+        lhs.coordinates.first == rhs.coordinates.first &&
+        lhs.coordinates.last == rhs.coordinates.last
     }
 }
 

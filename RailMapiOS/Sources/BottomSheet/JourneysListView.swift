@@ -7,22 +7,9 @@
 
 import SwiftUI
 
-/// Une vue qui affiche une liste de trajets ferroviaires
-///
-/// Cette vue gère deux états principaux :
-/// - Une liste de trajets lorsque des données sont disponibles
-/// - Un message d'état vide avec une action lorsqu'aucun trajet n'est disponible
-///
-/// ## Exemple d'utilisation
-/// ```
-/// JourneysListView(
-///     journeys: fetchedJourneys,
-///     path: navigationPath
-/// )
-/// ```
+/// Une vue qui affiche une liste de trajets ferroviaires SwiftData
 struct JourneysListView: View {
     // MARK: - Propriétés
-    
     /// Collection de trajets à afficher
     private let journeys: [Journey]
     
@@ -30,7 +17,6 @@ struct JourneysListView: View {
     @State private var path: NavigationPath
     
     // MARK: - Initialisation
-    
     /// Crée une nouvelle vue de liste de trajets
     /// - Parameters:
     ///   - journeys: Les trajets à afficher
@@ -42,7 +28,6 @@ struct JourneysListView: View {
     }
     
     // MARK: - Corps de la vue
-    
     var body: some View {
         Group {
             if journeys.isEmpty {
@@ -54,7 +39,6 @@ struct JourneysListView: View {
     }
     
     // MARK: - Vues composantes
-    
     /// Vue affichée lorsqu'aucun trajet n'est disponible
     private var emptyStateView: some View {
         VStack(spacing: 12) {
@@ -80,11 +64,13 @@ struct JourneysListView: View {
     
     /// Vue affichant la liste des trajets disponibles
     private var journeyListView: some View {
-        List(journeys, id: \.self) { journey in
+        List(journeys, id: \.id) { journey in
             JourneyRowView(journey: journey)
                 .onTapGesture {
                     LogManager.info("Trajet sélectionné: \(journey.headsign ?? "inconnu")", category: "navigation")
-                    path.append(journey)
+                    if let journeyID = journey.id {
+                        path.append(journeyID)
+                    }
                 }
         }
         .listStyle(.plain)
@@ -95,5 +81,9 @@ struct JourneysListView: View {
 }
 
 #Preview {
-    JourneysListView(journeys: [Journey()], path: NavigationPath())
+    let journey = Journey()
+    journey.headsign = "Test Journey"
+    journey.company = "SNCF"
+    
+    return JourneysListView(journeys: [journey], path: NavigationPath())
 }

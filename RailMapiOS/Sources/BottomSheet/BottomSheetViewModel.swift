@@ -6,12 +6,11 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftData
 import AuthenticationServices
 import MapKit
 
 // MARK: - Model (État)
-
 /// Représente l'état complet de la vue BottomSheet
 struct BottomSheetState: Equatable {
     /// État de la recherche
@@ -45,7 +44,6 @@ struct BottomSheetState: Equatable {
 }
 
 // MARK: - Intent (Actions)
-
 /// Représente toutes les intentions/actions possibles dans la vue
 enum BottomSheetIntent {
     case searchTextChanged(String)
@@ -60,11 +58,10 @@ enum BottomSheetIntent {
 }
 
 // MARK: - ViewModel
-
 /// ViewModel qui implémente le pattern MVI pour BottomSheetView
+@MainActor
 class BottomSheetViewModel: ObservableObject {
     // Dépendances
-    private let moc: NSManagedObjectContext
     private let router: Router
     private let mapSettings: MapSettings
     private let userStorage: UserStorage
@@ -76,13 +73,11 @@ class BottomSheetViewModel: ObservableObject {
     private var journeys: [Journey] = []
     
     init(
-        moc: NSManagedObjectContext,
         router: Router,
         mapSettings: MapSettings,
         userStorage: UserStorage = UserStorage.shared,
         initialSheetSize: PresentationDetent
     ) {
-        self.moc = moc
         self.router = router
         self.mapSettings = mapSettings
         self.userStorage = userStorage
@@ -96,21 +91,19 @@ class BottomSheetViewModel: ObservableObject {
         switch intent {
         case .searchTextChanged(let newText):
             LogManager.debug("Texte de recherche modifié: '\(state.searchText)' -> '\(newText)'", category: "search")
-            
             if state.searchText != newText {
                 state.searchText = newText
                 filterJourneys(journeys)
             }
-            
+        
         case .searchPresentationChanged(let isPresented):
             LogManager.debug("État de recherche modifié: \(state.isSearchPresented) -> \(isPresented)", category: "ui_state")
             state.isSearchPresented = isPresented
-            
             if isPresented {
                 state.sheetSize = .large
                 LogManager.debug("Recherche présentée, changement de taille du sheet à large", category: "ui_state")
             }
-            
+        
         case .toggleSignIn:
             LogManager.info("Bouton de profil utilisateur pressé", category: "user_action")
             if state.showSignIn {
@@ -138,40 +131,46 @@ class BottomSheetViewModel: ObservableObject {
             LogManager.info("Fermeture de la vue de compte", category: "user_action")
             router.dismissSheet()
             state.showAccount = false
-          
+            
         case .journeySelected(let journey):
             LogManager.info("Trajet sélectionné: \(journey.headsign ?? "inconnu")", category: "navigation")
-              
-              // Trouver la route correspondante dans mapSettings
-              if let routeIndex = mapSettings.trainRoutes.firstIndex(where: { route in
-                  // Logique pour identifier la route correspondant au journey
-                  // Par exemple, vérifier les coordonnées de départ et d'arrivée
-                  if let stops = journey.stops as? NSSet,
-                     let stopsArray = stops.allObjects as? [Stop],
-                     let firstStop = stopsArray.first(where: { $0.status?.lowercased() == "departure" }),
-                     let lastStop = stopsArray.last(where: { $0.status?.lowercased() == "arrival" }),
-                     let firstInfo = firstStop.stopinfo,
-                     let lastInfo = lastStop.stopinfo {
-                      
-                      let firstCoord = CLLocationCoordinate2D(latitude: firstInfo.latitude, longitude: firstInfo.longitude)
-                      let lastCoord = CLLocationCoordinate2D(latitude: lastInfo.latitude, longitude: lastInfo.longitude)
-                      
-                      return route.coordinates.first == firstCoord && route.coordinates.last == lastCoord
-                  }
-                  return false
-              }) {
-                  // Sélectionner la route
-                  mapSettings.selectRoute(mapSettings.trainRoutes[routeIndex])
-              }
-              router.navigate(to: .journeyDetails(objectID: journey.objectID))
+            
+            // Trouver la route correspondante dans mapSettings
+            if let routeIndex = mapSettings.trainRoutes.firstIndex(where: { route in
+                // Logique pour identifier la route correspondant au journey
+                if let stops = journey.stops,
+                   let firstStop = stops.first(where: { $0.status?.lowercased() == "departure" }),
+                   let lastStop = stops.last(where: { $0.status?.lowercased() == "arrival" }),
+                   let firstInfo = firstStop.stopinfo,
+                   let lastInfo = lastStop.stopinfo,
+                   let firstLat = firstInfo.latitude,
+                   let firstLon = firstInfo.longitude,
+                   let lastLat = lastInfo.latitude,
+                   let lastLon = lastInfo.longitude {
+                    
+                    let firstCoord = CLLocationCoordinate2D(latitude: firstLat, longitude: firstLon)
+                    let lastCoord = CLLocationCoordinate2D(latitude: lastLat, longitude: lastLon)
+                    
+                    return route.coordinates.first == firstCoord && route.coordinates.last == lastCoord
+                }
+                return false
+            }) {
+                // Sélectionner la route
+                mapSettings.selectRoute(mapSettings.trainRoutes[routeIndex])
+            }
+            
+            if let journeyID = journey.id {
+                router.navigate(to: .journeyDetails(id: journeyID))
+            }
             
         case .updateJourneys(let newJourneys):
-            if Set(newJourneys.map { $0.objectID }) != Set(journeys.map { $0.objectID }) {
-                 LogManager.info("Mise à jour des trajets: \(newJourneys.count) trajets", category: "data")
-                 journeys = newJourneys
-                 filterJourneys(newJourneys)
-                 mapSettings.updateJourneys(from: newJourneys)
-             }
+            if Set(newJourneys.compactMap { $0.id }) != Set(journeys.compactMap { $0.id }) {
+                LogManager.info("Mise à jour des trajets: \(newJourneys.count) trajets", category: "data")
+                journeys = newJourneys
+                filterJourneys(newJourneys)
+                mapSettings.updateJourneys(from: newJourneys)
+            }
+        
         case .loadUserData:
             LogManager.info("Chargement des données utilisateur", category: "data")
             userStorage.loadUser()
@@ -179,11 +178,9 @@ class BottomSheetViewModel: ObservableObject {
     }
     
     /// Filtre les trajets en fonction du texte de recherche
-    /// Filtre les trajets en fonction du texte de recherche
     private func filterJourneys(_ journeys: [Journey]) {
         LogManager.debug("Filtrage des trajets avec le texte: '\(state.searchText)'", category: "search")
         
-        // Le filtrage doit toujours être effectué lorsque searchText change
         let filtered = state.searchText.isEmpty ?
             journeys :
             journeys.filter { journey in
@@ -194,15 +191,19 @@ class BottomSheetViewModel: ObservableObject {
             }
         
         // Mettre à jour l'état seulement si les résultats ont changé
-        if filtered.map({ $0.objectID }) != state.filteredJourneys.map({ $0.objectID }) {
+        if filtered.compactMap({ $0.id }) != state.filteredJourneys.compactMap({ $0.id }) {
             state.filteredJourneys = filtered
             state.cachedJourneyCount = journeys.count
             LogManager.debug("Filtrage des trajets: \(filtered.count) résultats pour '\(state.searchText)'", category: "search")
         }
     }
-
+    
     // Accesseurs pour les dépendances
     var currentUser: User? { userStorage.currentUser }
     var isUserLoggedIn: Bool { userStorage.isLoggedIn() }
+    var profileUIImage: UIImage? {
+        guard let user = self.currentUser,
+              let data = user.profileImage else { return nil }
+        return UIImage(data: data)
+    }
 }
-

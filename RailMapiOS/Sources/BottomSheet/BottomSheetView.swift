@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftData
 import AuthenticationServices
 
 /// Une vue de feuille inférieure (bottom sheet) qui affiche les trajets et permet la navigation
@@ -23,14 +23,12 @@ import AuthenticationServices
 /// - Gestion du profil utilisateur
 struct BottomSheetView: View {
     // MARK: - Environnement et dépendances
-    
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
     
     // MARK: - Propriétés
     
     /// Résultats de la requête pour les trajets
-    let journeys: FetchedResults<Journey>
+    let journeys: [Journey]
     
     /// Routeur pour gérer la navigation
     @ObservedObject var router: Router
@@ -44,10 +42,12 @@ struct BottomSheetView: View {
     /// Binding pour la taille de la feuille
     @Binding var sheetSize: PresentationDetent
     
+    @FocusState private var isSearchFocused: Bool
+    
     // MARK: - Initialisation
     
     init(
-        journeys: FetchedResults<Journey>,
+        journeys: [Journey],
         router: Router,
         mapSettings: MapSettings,
         sheetSize: Binding<PresentationDetent>,
@@ -60,7 +60,6 @@ struct BottomSheetView: View {
         
         self._viewModel = StateObject(
             wrappedValue: BottomSheetViewModel(
-                moc: dataController.container.viewContext,
                 router: router,
                 mapSettings: mapSettings,
                 initialSheetSize: sheetSize.wrappedValue
@@ -78,20 +77,6 @@ struct BottomSheetView: View {
         NavigationStack(path: $router.path) {
             contentView
                 .navigationDestination(for: Router.Flow.self, destination: navigationDestination)
-                .toolbar { toolbarContent }
-                .searchable(
-                    text: Binding(
-                        get: { viewModel.state.searchText },
-                        set: { viewModel.processIntent(.searchTextChanged($0)) }
-                    ),
-                    isPresented: Binding(
-                        get: { viewModel.state.isSearchPresented },
-                        set: { viewModel.processIntent(.searchPresentationChanged($0)) }
-                    ),
-                    placement: .navigationBarDrawer(displayMode: .always)
-                )
-                .accessibilityIdentifier(AccessibilityID.BottomSheetView.searchBar)
-                .searchPresentationToolbarBehavior(.avoidHidingContent)
                 .sheet(
                     item: $router.activeSheet
                 ) { sheetType in
@@ -146,38 +131,101 @@ struct BottomSheetView: View {
     
     /// Contenu principal de la vue
     private var contentView: some View {
-        VStack {
-            if viewModel.state.shouldShowAddTicket {
-                AddTicketView(
-                    router: router,
-                    searchText: Binding(
-                        get: { viewModel.state.searchText },
-                        set: { viewModel.processIntent(.searchTextChanged($0)) }
-                    )
-                )
-                .padding(.top)
-                .onAppear {
-                    LogManager.info("Affichage de la vue d'ajout de ticket (recherche: '\(viewModel.state.searchText)')", category: "viewcycle")
-                }
-            } else if viewModel.state.shouldShowEmptyState {
-                EmptyListJourneyView()
-                    .onAppear {
-                        LogManager.info("Affichage de la vue de liste vide", category: "viewcycle")
+        VStack(spacing: 0) {
+            if isOnRoot {
+                HStack(spacing: 12) {
+                    if !(viewModel.state.isSearchPresented || isSearchFocused) {
+                        Text(viewModel.state.shouldShowAddTicket ? "Add a Journey" : "My Journeys")
+                            .font(.title2.bold())
+                            .foregroundStyle(.primary)
+                            .layoutPriority(1)
                     }
-            } else {
-                journeyListView
+                    CustomSearchBar(
+                        text: Binding(
+                            get: { viewModel.state.searchText },
+                            set: { viewModel.processIntent(.searchTextChanged($0)) }
+                        ),
+                        isFocused: $isSearchFocused,
+                        onFocusChange: handleSearchFocus
+                    )
+                    .frame(maxWidth: (viewModel.state.isSearchPresented || isSearchFocused) ? .infinity : 280, minHeight: 38)
+                    .onTapGesture {
+                        isSearchFocused = true
+                    }
+                    if viewModel.state.isSearchPresented || isSearchFocused {
+                        Button(action: {
+                            viewModel.processIntent(.searchTextChanged(""))
+                            isSearchFocused = false
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        Button(action: {
+                            viewModel.processIntent(viewModel.isUserLoggedIn ? .toggleAccount : .toggleSignIn)
+                        }) {
+                            userProfileImage
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 12)
+                .padding(.bottom, 6)
+                Divider()
+            }
+            
+            Group {
+                if viewModel.state.shouldShowAddTicket {
+                    AddTicketView(
+                        router: router,
+                        searchText: Binding(
+                            get: { viewModel.state.searchText },
+                            set: { viewModel.processIntent(.searchTextChanged($0)) }
+                        )
+                    )
+                    .padding(.top)
+                    .onAppear {
+                        LogManager.info("Affichage de la vue d'ajout de ticket (recherche: '\(viewModel.state.searchText)')", category: "viewcycle")
+                    }
+                } else if viewModel.state.shouldShowEmptyState {
+                    EmptyListJourneyView()
+                        .onAppear {
+                            LogManager.info("Affichage de la vue de liste vide", category: "viewcycle")
+                        }
+                } else {
+                    journeyListView
+                }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear() {
             LogManager.info("BottomSheetView apparaît", category: "viewcycle")
+        }
+        .onChange(of: isSearchFocused) { newValue in handleSearchFocus(newValue) }
+        .onChange(of: router.path) { old, new in
+            if !isOnRoot {
+                // Réinitialiser la recherche quand on quitte la racine
+                isSearchFocused = false
+                viewModel.processIntent(.searchPresentationChanged(false))
+                viewModel.processIntent(.searchTextChanged(""))
+            }
+        }
+    }
+    
+    /// Synchronisation du focus de la searchbar avec l'état du ViewModel
+    private func handleSearchFocus(_ focused: Bool) {
+        if focused != viewModel.state.isSearchPresented {
+            viewModel.processIntent(.searchPresentationChanged(focused))
         }
     }
     
     /// Liste des trajets filtrés
     private var journeyListView: some View {
-        List(viewModel.state.filteredJourneys, id: \.objectID) { journey in
+        List(viewModel.state.filteredJourneys, id: \.id) { journey in
             JourneyRowView(journey: journey)
-                .accessibilityIdentifier(AccessibilityID.BottomSheetView.JourneyRow.base(for: journey.objectID))
+                .accessibilityIdentifier(AccessibilityID.BottomSheetView.JourneyRow.base(for: journey.id ?? UUID()))
                 .onTapGesture {
                     viewModel.processIntent(.journeySelected(journey))
                 }
@@ -189,31 +237,11 @@ struct BottomSheetView: View {
         }
     }
     
-    /// Contenu de la barre d'outils
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Text(viewModel.state.shouldShowAddTicket ? "Add a Journey" : "My Journeys")
-                .fontWeight(.bold)
-                .font(.title)
-        }
-        
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                viewModel.processIntent(viewModel.isUserLoggedIn ?.toggleAccount : .toggleSignIn)
-            } label: {
-                userProfileImage
-            }
-        }
-    }
-    
     /// Image de profil utilisateur
     private var userProfileImage: some View {
         Group {
             if viewModel.isUserLoggedIn {
-                if let user = viewModel.currentUser,
-                   let data = user.profileImage,
-                   let uiImage = UIImage(data: data) {
+                if let uiImage = viewModel.profileUIImage {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFit()
@@ -286,8 +314,8 @@ struct BottomSheetView: View {
     
     /// Vue de détails d'un trajet
     @ViewBuilder
-    private func journeyDetailsView(for objectID: NSManagedObjectID) -> some View {
-        if let journey = moc.object(with: objectID) as? Journey {
+    private func journeyDetailsView(for journeyID: UUID) -> some View {
+        if let journey = journeys.first(where: { $0.id == journeyID }) {
             JourneyDetailsV(journey: journey)
                 .onAppear {
                     LogManager.info("Navigation vers les détails du trajet: \(journey.headsign ?? "inconnu")", category: "navigation")
@@ -299,11 +327,10 @@ struct BottomSheetView: View {
         } else {
             Text("Journey not found")
                 .onAppear {
-                    LogManager.error("Tentative d'accès à un trajet inexistant (ObjectID: \(objectID))", category: "data_error")
+                    LogManager.error("Tentative d'accès à un trajet inexistant (ID: \(journeyID))", category: "data_error")
                 }
         }
     }
-    
     /// Vue de sélection de station
     private func stationPickerView(for selectedDateRow: DateRow) -> some View {
         StationPickerView(viewModel: StationPickerViewModel(pickedJourney: selectedDateRow)) { pickedJourney in
@@ -335,5 +362,32 @@ struct BottomSheetView: View {
         .onAppear {
             LogManager.info("Navigation vers le sélecteur de date avec \(dateRows.count) options", category: "navigation")
         }
+    }
+    
+    private var isOnRoot: Bool {
+        router.path.isEmpty || (router.path.last as? Router.Flow) == .journeys
+    }
+}
+
+struct CustomSearchBar: View {
+    @Binding var text: String
+    @FocusState.Binding var isFocused: Bool
+    var onFocusChange: (Bool) -> Void = { _ in }
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            TextField("Search…", text: $text)
+                .textFieldStyle(.plain)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .font(.subheadline)
+                .focused($isFocused)
+                .onChange(of: isFocused) { newValue in onFocusChange(newValue) }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
     }
 }

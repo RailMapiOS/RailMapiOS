@@ -12,10 +12,9 @@ struct AddTicketView: View {
     @ObservedObject var router: Router
     
     @Environment(\.dismiss) var dismiss
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
-    
     @Binding var searchText: String
+    
     @State private var currentStep: TicketStep = .datePicker
     @State private var selectedDateRow: DateRow?
     @State private var pickedJourney: DateRow?
@@ -54,7 +53,7 @@ struct AddTicketView: View {
         }
         .accessibilityIdentifier(AccessibilityID.AddTicketView.vStack)
         .onChange(of: searchText) { newValue in
-            Task { @MainActor in
+            Task {
                 await viewModel.fetchHeadsignAddTicket(headsign: newValue)
             }
         }

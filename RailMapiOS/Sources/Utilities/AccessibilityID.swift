@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 public enum AccessibilityID {
     public enum BottomSheetView {
@@ -18,8 +17,8 @@ public enum AccessibilityID {
         static let emptyState = "railmapapp.bottomsheetview.empty_state"
         
         public enum JourneyRow {
-            static func base(for journeyID: NSManagedObjectID) -> String {
-                "railmapapp.bottomsheetview.journeyrow.\(journeyID.uriRepresentation().lastPathComponent)"
+            static func base(for journeyID: UUID) -> String {
+                "railmapapp.bottomsheetview.journeyrow.\(journeyID)"
             }
         }
         

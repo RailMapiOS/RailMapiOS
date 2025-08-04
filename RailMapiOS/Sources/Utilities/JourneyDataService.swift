@@ -7,7 +7,6 @@
 
 
 import Foundation
-import CoreData
 
 @preconcurrency
 protocol JourneyDataServiceProtocol {
@@ -17,7 +16,7 @@ protocol JourneyDataServiceProtocol {
 
 class JourneyDataService: JourneyDataServiceProtocol {
     func getDepartureStop(_ journey: Journey) -> Stop? {
-        let stop = (journey.stops as? Set<Stop>)?.first { $0.status == "departure" }
+        let stop = (journey.stops)?.first { $0.status == "departure" }
         if stop == nil {
             LogManager.error("Arrêt de départ non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
         }
@@ -25,7 +24,7 @@ class JourneyDataService: JourneyDataServiceProtocol {
     }
     
     func getArrivalStop(_ journey: Journey) -> Stop? {
-        let stop = (journey.stops as? Set<Stop>)?.first { $0.status == "arrival" }
+        let stop = (journey.stops)?.first { $0.status == "arrival" }
         if stop == nil {
             LogManager.error("Arrêt d'arrivée non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
         }

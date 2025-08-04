@@ -9,29 +9,26 @@ import Foundation
 import SwiftUI
 
 final class ConfirmationPickerViewModel: ObservableObject {
-    @Environment(\.managedObjectContext) var moc
-    private var dataController: DataController
+    private let dataController: DataController
 
+    // Entrées UI
     @Published var pickedJourney: DateRow
-    
     @Published var departureStationInfo: StopTime?
     @Published var arrivalStationInfo: StopTime?
 
-
-    
-    public init(pickedJourney: DateRow, dataController: DataController) {
-        self.dataController = dataController
-        self.pickedJourney = pickedJourney
-        
-//        self.pickedJourney.company = resolveCompany(self.pickedJourney.journey.stopTimes.first?.stopPoint.id)
+    // MARK: - Init
+    init(pickedJourney: DateRow, dataController: DataController) {
+        self.dataController   = dataController
+        self.pickedJourney    = pickedJourney
         self.departureStationInfo = getStopPointInfo(
-            from: self.pickedJourney.journey,
-            with: self.pickedJourney.departureStationID)
-        self.arrivalStationInfo = getStopPointInfo(
-            from: self.pickedJourney.journey,
-            with: self.pickedJourney.arrivalStationID)
+            from: pickedJourney.journey,
+            with: pickedJourney.departureStationID)
+        self.arrivalStationInfo   = getStopPointInfo(
+            from: pickedJourney.journey,
+            with: pickedJourney.arrivalStationID)
     }
-    
+
+    // MARK: - Helpers
     func convertToDate(from timeString: String, using baseDate: Date) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm:ss"
@@ -51,8 +48,9 @@ final class ConfirmationPickerViewModel: ObservableObject {
                              of: calendar.date(from: baseComponents) ?? baseDate)
     }
     
-    func saveNewJourney(_ newJourney: NewJourneyModel) {
-        dataController.saveJourney(newJourney: newJourney)
+    @MainActor
+    func saveNewJourney(_ model: NewJourneyModel) {
+        dataController.saveJourney(newJourney: model)
     }
     
     func resolveCompany(_ code: String?) -> String? {
@@ -73,12 +71,12 @@ final class ConfirmationPickerViewModel: ObservableObject {
         }
     }
     
-    func getStopPointInfo(from journey: VehicleJourney, with stopPointID: String?) -> StopTime? {
+    private func getStopPointInfo(from journey: VehicleJourney, with id: String?) -> StopTime? {
         guard getStopPointInfo != nil else {
             return nil
         }
             for stopTime in journey.stopTimes {
-                if stopTime.stopPoint.id == stopPointID {
+                if stopTime.stopPoint.id == id {
                     return stopTime
             }
         }
