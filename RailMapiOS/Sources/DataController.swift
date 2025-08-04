@@ -14,14 +14,14 @@ class DataController: ObservableObject {
     let modelContainer: ModelContainer
     private let modelContext: ModelContext
     
-    @Published var journeys: [JourneySD] = []
+    @Published var journeys: [Journey] = []
     private var mapSettings: MapSettings?
     
     init() {
         LogManager.info("Initialisation du DataController avec SwiftData", category: "swift_data")
         
         do {
-            modelContainer = try ModelContainer(for: JourneySD.self, StopSD.self, StopInfosSD.self, CoordinatesSD.self)
+            modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self, CoordinatesSD.self)
             modelContext = ModelContext(modelContainer)
             LogManager.info("SwiftData initialisé avec succès", category: "swift_data")
         } catch {
@@ -43,7 +43,7 @@ class DataController: ObservableObject {
     func loadJourneys() {
         LogManager.info("Chargement des trajets depuis SwiftData", category: "swift_data")
         
-        let descriptor = FetchDescriptor<JourneySD>(
+        let descriptor = FetchDescriptor<Journey>(
             sortBy: [SortDescriptor(\.startDate, order: .forward)]
         )
         
@@ -82,7 +82,7 @@ class DataController: ObservableObject {
     func saveJourney(newJourney: NewJourneyModel) {
         LogManager.info("Sauvegarde d'un nouveau trajet: \(newJourney.headsign)", category: "swift_data")
         
-        let journey = JourneySD()
+        let journey = Journey()
         journey.id = UUID()
         journey.startDate = newJourney.startDate
         journey.endDate = newJourney.endDate
@@ -95,14 +95,14 @@ class DataController: ObservableObject {
         LogManager.debug("Création de \(newJourney.stops.count) arrêts pour le trajet", category: "swift_data")
         
         for newStop in newJourney.stops {
-            let stop = StopSD()
+            let stop = Stop()
             stop.arrivalTimeUTC = newStop.arrivalTimeUTC
             stop.departureTimeUTC = newStop.departureTimeUTC
             stop.status = newStop.status
             stop.journey = journey
             
             if let newStopInfo = newStop.stopInfo {
-                let stopInfo = StopInfosSD()
+                let stopInfo = StopInfos()
                 stopInfo.id = newStopInfo.id
                 stopInfo.label = newStopInfo.label
                 stopInfo.latitude = newStopInfo.latitude
@@ -137,7 +137,7 @@ class DataController: ObservableObject {
             let startDate = generateEndDate(from: date)
             let endDate = generateEndDate(from: startDate)
             
-            let journey = JourneySD()
+            let journey = Journey()
             journey.id = UUID()
             journey.startDate = startDate
             journey.endDate = endDate
@@ -150,7 +150,7 @@ class DataController: ObservableObject {
             LogManager.debug("Création du trajet fictif #\(indexMock): \(journey.headsign ?? "")", category: "swift_data")
             
             // Créer l'arrêt de départ
-            let departureStopInfo = StopInfosSD()
+            let departureStopInfo = StopInfos()
             departureStopInfo.id = UUID().uuidString
             departureStopInfo.label = "Gare de Lyon"
             departureStopInfo.latitude = 48.8444
@@ -160,7 +160,7 @@ class DataController: ObservableObject {
             departureStopInfo.dropOffAllowed = true
             departureStopInfo.skippedStop = false
             
-            let departureStop = StopSD()
+            let departureStop = Stop()
             departureStop.arrivalTimeUTC = startDate
             departureStop.departureTimeUTC = startDate
             departureStop.status = "departure"
@@ -169,7 +169,7 @@ class DataController: ObservableObject {
             departureStopInfo.stop = departureStop
             
             // Créer l'arrêt d'arrivée
-            let arrivalStopInfo = StopInfosSD()
+            let arrivalStopInfo = StopInfos()
             arrivalStopInfo.id = UUID().uuidString
             arrivalStopInfo.label = "Gare de Perpignan"
             arrivalStopInfo.latitude = 42.6975
@@ -179,7 +179,7 @@ class DataController: ObservableObject {
             arrivalStopInfo.dropOffAllowed = true
             arrivalStopInfo.skippedStop = false
             
-            let arrivalStop = StopSD()
+            let arrivalStop = Stop()
             arrivalStop.arrivalTimeUTC = endDate
             arrivalStop.departureTimeUTC = endDate
             arrivalStop.status = "arrival"
@@ -221,7 +221,7 @@ class DataController: ObservableObject {
         LogManager.warning("Suppression de tous les trajets", category: "swift_data")
         
         do {
-            try modelContext.delete(model: JourneySD.self)
+            try modelContext.delete(model: Journey.self)
             saveContext()
             LogManager.info("Tous les trajets ont été supprimés", category: "swift_data")
         } catch {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreData
 
 public enum AccessibilityID {
     public enum BottomSheetView {

@@ -11,7 +11,7 @@ import SwiftUI
 struct JourneyRowView: View {
     @StateObject private var viewModel: JourneyRowViewModel
     
-    init(journey: JourneySD) {
+    init(journey: Journey) {
         self._viewModel = StateObject(
             wrappedValue: JourneyRowViewModel(journey: journey)
         )
@@ -56,7 +56,7 @@ struct JourneyRowView: View {
 
 #if DEBUG
 #Preview {
-    let journey = JourneySD()
+    let journey = Journey()
     journey.headsign = "1234"
     journey.company = "SNCF"
     journey.startDate = Date()

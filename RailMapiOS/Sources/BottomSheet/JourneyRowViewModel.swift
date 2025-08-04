@@ -10,7 +10,7 @@ import SwiftData
 
 @MainActor
 final class JourneyRowViewModel: ObservableObject {
-    private let journey: JourneySD
+    private let journey: Journey
     private let dateFormatterService: DateFormatterServiceProtocol
     private let journeyDataService: JourneyDataServiceProtocol
     
@@ -25,7 +25,7 @@ final class JourneyRowViewModel: ObservableObject {
     @Published private(set) var duration: String
     
     init(
-        journey: JourneySD,
+        journey: Journey,
         dateFormatterService: DateFormatterServiceProtocol = DateFormatterService(),
         journeyDataService: JourneyDataServiceProtocol = JourneyDataService()
     ) {

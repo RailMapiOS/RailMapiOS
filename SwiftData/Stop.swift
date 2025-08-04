@@ -10,12 +10,12 @@ public import Foundation
 public import SwiftData
 
 
-@Model public class StopSD {
+@Model public class Stop {
     var arrivalTimeUTC: Date?
     var departureTimeUTC: Date?
     var status: String?
-    var journey: JourneySD?
-    @Relationship(inverse: \StopInfosSD.stop) var stopinfo: StopInfosSD?
+    var journey: Journey?
+    @Relationship(inverse: \StopInfos.stop) var stopinfo: StopInfos?
     public init() {
 
     }

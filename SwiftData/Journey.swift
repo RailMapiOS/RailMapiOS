@@ -10,7 +10,7 @@ public import Foundation
 public import SwiftData
 
 
-@Model public class JourneySD {
+@Model public class Journey {
     public var id: UUID?
     var archived: Bool? = false
     var company: String?
@@ -18,7 +18,7 @@ public import SwiftData
     var headsign: String?
     var idVehiculeJourney: String?
     var startDate: Date?
-    @Relationship(inverse: \StopSD.journey) var stops: [StopSD]?
+    @Relationship(inverse: \Stop.journey) var stops: [Stop]?
     public init() {
 
     }

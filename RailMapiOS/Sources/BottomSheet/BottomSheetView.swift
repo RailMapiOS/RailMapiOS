@@ -28,7 +28,7 @@ struct BottomSheetView: View {
     // MARK: - Propriétés
     
     /// Résultats de la requête pour les trajets
-    let journeys: [JourneySD]
+    let journeys: [Journey]
     
     /// Routeur pour gérer la navigation
     @ObservedObject var router: Router
@@ -47,7 +47,7 @@ struct BottomSheetView: View {
     // MARK: - Initialisation
     
     init(
-        journeys: [JourneySD],
+        journeys: [Journey],
         router: Router,
         mapSettings: MapSettings,
         sheetSize: Binding<PresentationDetent>,

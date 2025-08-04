@@ -10,7 +10,7 @@ public import Foundation
 public import SwiftData
 
 
-@Model public class StopInfosSD {
+@Model public class StopInfos {
     public var id: String?
     var adress: String?
     var dropOffAllowed: Bool?
@@ -19,9 +19,8 @@ public import SwiftData
     var longitude: Double? = 0.0
     var pickUpAllowed: Bool?
     var skippedStop: Bool?
-    var stop: StopSD?
+    var stop: Stop?
     public init() {
 
     }
-    
 }

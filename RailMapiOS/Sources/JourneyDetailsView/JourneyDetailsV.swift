@@ -10,7 +10,7 @@ import SwiftData
 
 struct JourneyDetailsV: View {
     @EnvironmentObject var dataController: DataController
-    let journey: JourneySD
+    let journey: Journey
     
     var departureLabel: String {
         guard let stops = journey.stops,
@@ -154,7 +154,7 @@ struct JourneyDetailsV: View {
 // Preview adapté pour SwiftData
 #Preview {
     // Créer un trajet fictif pour la preview
-    let journey = JourneySD()
+    let journey = Journey()
     journey.id = UUID()
     journey.headsign = "Paris -> Lyon"
     journey.company = "SNCF"
@@ -163,26 +163,26 @@ struct JourneyDetailsV: View {
     journey.archived = false
     
     // Créer des arrêts fictifs
-    let departureStopInfo = StopInfosSD()
+    let departureStopInfo = StopInfos()
     departureStopInfo.id = UUID().uuidString
     departureStopInfo.label = "Gare de Lyon"
     departureStopInfo.latitude = 48.8444
     departureStopInfo.longitude = 2.3732
     
-    let departureStop = StopSD()
+    let departureStop = Stop()
     departureStop.arrivalTimeUTC = journey.startDate
     departureStop.departureTimeUTC = journey.startDate
     departureStop.status = "departure"
     departureStop.stopinfo = departureStopInfo
     departureStopInfo.stop = departureStop
     
-    let arrivalStopInfo = StopInfosSD()
+    let arrivalStopInfo = StopInfos()
     arrivalStopInfo.id = UUID().uuidString
     arrivalStopInfo.label = "Gare de Lyon Part-Dieu"
     arrivalStopInfo.latitude = 45.7603
     arrivalStopInfo.longitude = 4.8590
     
-    let arrivalStop = StopSD()
+    let arrivalStop = Stop()
     arrivalStop.arrivalTimeUTC = journey.endDate
     arrivalStop.departureTimeUTC = journey.endDate
     arrivalStop.status = "arrival"

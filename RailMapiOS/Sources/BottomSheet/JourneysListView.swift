@@ -11,7 +11,7 @@ import SwiftUI
 struct JourneysListView: View {
     // MARK: - Propriétés
     /// Collection de trajets à afficher
-    private let journeys: [JourneySD]
+    private let journeys: [Journey]
     
     /// Chemin de navigation pour la navigation programmatique
     @State private var path: NavigationPath
@@ -21,7 +21,7 @@ struct JourneysListView: View {
     /// - Parameters:
     ///   - journeys: Les trajets à afficher
     ///   - path: Le chemin de navigation pour la navigation programmatique
-    init(journeys: [JourneySD], path: NavigationPath) {
+    init(journeys: [Journey], path: NavigationPath) {
         self.journeys = journeys
         self._path = State(initialValue: path)
         LogManager.info("Initialisation de JourneysListView avec \(journeys.count) trajets", category: "viewcycle")
@@ -81,7 +81,7 @@ struct JourneysListView: View {
 }
 
 #Preview {
-    let journey = JourneySD()
+    let journey = Journey()
     journey.headsign = "Test Journey"
     journey.company = "SNCF"
     

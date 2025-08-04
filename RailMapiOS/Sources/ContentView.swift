@@ -20,7 +20,7 @@ public struct ContentView: View {
     @StateObject private var mapSettings = MapSettings()
 
     @EnvironmentObject private var router: Router
-    @Query(sort: \JourneySD.startDate) var journeys: [JourneySD]
+    @Query(sort: \Journey.startDate) var journeys: [Journey]
 
     public var body: some View {
         Group {
@@ -53,7 +53,7 @@ public struct LayoutiPhone: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings
-    let journeys: [JourneySD]
+    let journeys: [Journey]
 
     public var body: some View {
         ZStack {
@@ -85,7 +85,7 @@ public struct LayoutiPad: View {
     @Binding var sheetSize: PresentationDetent
     @ObservedObject var router: Router
     @ObservedObject var mapSettings: MapSettings
-    let journeys: [JourneySD]
+    let journeys: [Journey]
 
     public var body: some View {
         NavigationSplitView {

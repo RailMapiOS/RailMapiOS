@@ -25,7 +25,7 @@ class MapSettings: ObservableObject {
     @Published var showsUserLocation: Bool = true
     
     /// Liste des trajets à afficher sur la carte
-    @Published var journeys: [JourneySD] = []
+    @Published var journeys: [Journey] = []
     
     /// Routes de train générées à partir des trajets
     @Published var trainRoutes: [TrainRoute] = []
@@ -41,7 +41,7 @@ class MapSettings: ObservableObject {
     
     /// Met à jour les trajets à partir d'une collection FetchedResults
     /// - Parameter journeys: Les trajets à afficher
-    public func updateJourneys(from journeys: [JourneySD]) {
+    public func updateJourneys(from journeys: [Journey]) {
         LogManager.info("Mise à jour des trajets depuis SwiftData (\(journeys.count) trajets)", category: "map")
         
         // Trier les trajets par date de départ (gestion des optionnels)

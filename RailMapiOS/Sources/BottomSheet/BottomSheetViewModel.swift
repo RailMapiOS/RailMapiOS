@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 import AuthenticationServices
 import MapKit
-import CoreData
 
 // MARK: - Model (État)
 /// Représente l'état complet de la vue BottomSheet
@@ -24,7 +23,7 @@ struct BottomSheetState: Equatable {
     var showAccount: Bool = false
     
     /// État des données
-    var filteredJourneys: [JourneySD] = []
+    var filteredJourneys: [Journey] = []
     var cachedJourneyCount: Int = 0
     
     /// Détermine quel contenu afficher
@@ -53,8 +52,8 @@ enum BottomSheetIntent {
     case dismissSignIn
     case toggleAccount
     case dismissAccount
-    case journeySelected(JourneySD)
-    case updateJourneys([JourneySD])
+    case journeySelected(Journey)
+    case updateJourneys([Journey])
     case loadUserData
 }
 
@@ -71,7 +70,7 @@ class BottomSheetViewModel: ObservableObject {
     @Published private(set) var state: BottomSheetState = BottomSheetState()
     
     // Trajets non filtrés
-    private var journeys: [JourneySD] = []
+    private var journeys: [Journey] = []
     
     init(
         router: Router,
@@ -179,7 +178,7 @@ class BottomSheetViewModel: ObservableObject {
     }
     
     /// Filtre les trajets en fonction du texte de recherche
-    private func filterJourneys(_ journeys: [JourneySD]) {
+    private func filterJourneys(_ journeys: [Journey]) {
         LogManager.debug("Filtrage des trajets avec le texte: '\(state.searchText)'", category: "search")
         
         let filtered = state.searchText.isEmpty ?
