@@ -1,5 +1,5 @@
 //
-//  AddTicketV.swift
+//  AddTicketView.swift
 //  RailMapiOS
 //
 //  Created by Jérémie Patot on 19/07/2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddTicketV: View {
+struct AddTicketView: View {
     @StateObject var viewModel = AddTicketVM()
     @ObservedObject var router: Router
     
@@ -24,29 +24,35 @@ struct AddTicketV: View {
         VStack {
             if viewModel.vehicleJourneys.isEmpty && searchText == "" {
                 EmptyListJourneyView()
+                    .accessibilityIdentifier(AccessibilityID.AddTicketView.emptyState)
             } else if viewModel.vehicleJourneys.isEmpty {
                 EmptyListJourneyView(title: "No Journey found!", subtitle: "Try searching for another journey")
+                    .accessibilityIdentifier(AccessibilityID.AddTicketView.noJourneyFounded)
             } else {
                 switch currentStep {
                 case .datePicker:
                     DatePickerView(viewModel: createDatePickerViewModel(), router: router) { selectedRow in
                         router.navigate(to: .stationPicker(selectedRow))
                     }
+                    .accessibilityIdentifier(AccessibilityID.AddTicketView.datePicker)
                 case .stationPicker:
                     if let selectedDateRow = selectedDateRow {
                         StationPickerView(viewModel: StationPickerViewModel(pickedJourney: selectedDateRow)) { pickedJourney in
                             router.navigate(to: .confirmation(pickedJourney))
                         }
+                        .accessibilityIdentifier(AccessibilityID.AddTicketView.stationPicker)
                     }
                 case .confirmation:
                     if let pickedJourney = pickedJourney {
                         ConfirmationPickerView(viewModel: ConfirmationPickerViewModel(pickedJourney: pickedJourney, dataController: dataController)) {
                             router.navigateToRoot()
                         }
+                        .accessibilityIdentifier(AccessibilityID.AddTicketView.confirmationPicker)
                     }
                 }
             }
         }
+        .accessibilityIdentifier(AccessibilityID.AddTicketView.vStack)
         .onChange(of: searchText) { newValue in
             Task { @MainActor in
                 await viewModel.fetchHeadsignAddTicket(headsign: newValue)
@@ -65,7 +71,9 @@ struct AddTicketV: View {
         for journey in viewModel.vehicleJourneys {
             if let dates = passageDays[journey.id] {
                 for date in dates {
-                    rows.append(DateRow(journeyId: journey.id, date: date, journey: journey))
+                    rows.append(
+                        DateRow(journeyId: journey.id, date: date, journey: journey)
+                    )
                 }
             }
         }

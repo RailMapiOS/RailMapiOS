@@ -90,6 +90,7 @@ struct BottomSheetView: View {
                     ),
                     placement: .navigationBarDrawer(displayMode: .always)
                 )
+                .accessibilityIdentifier(AccessibilityID.BottomSheetView.searchBar)
                 .searchPresentationToolbarBehavior(.avoidHidingContent)
                 .sheet(
                     item: $router.activeSheet
@@ -98,6 +99,7 @@ struct BottomSheetView: View {
                     case .signIn:
                         SignInView()
                             .environmentObject(UserStorage.shared)
+                            .accessibilityIdentifier(AccessibilityID.BottomSheetView.Sheet.signInView)
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
                                     Button("Close") {
@@ -113,6 +115,7 @@ struct BottomSheetView: View {
                             }
                     case .account:
                         AccountView(userStorage: UserStorage.shared)
+                            .accessibilityIdentifier(AccessibilityID.BottomSheetView.Sheet.accountView)
                             .onDisappear {
                                 viewModel.processIntent(.dismissAccount)
                             }
@@ -136,7 +139,7 @@ struct BottomSheetView: View {
                         mapSettings.clearRouteSelection()
                     }
                 }
-        }
+        }.accessibilityIdentifier(AccessibilityID.BottomSheetView.navigationStack)
     }
     
     // MARK: - Vues composantes
@@ -145,7 +148,7 @@ struct BottomSheetView: View {
     private var contentView: some View {
         VStack {
             if viewModel.state.shouldShowAddTicket {
-                AddTicketV(
+                AddTicketView(
                     router: router,
                     searchText: Binding(
                         get: { viewModel.state.searchText },
@@ -174,10 +177,12 @@ struct BottomSheetView: View {
     private var journeyListView: some View {
         List(viewModel.state.filteredJourneys, id: \.objectID) { journey in
             JourneyRowView(journey: journey)
+                .accessibilityIdentifier(AccessibilityID.BottomSheetView.JourneyRow.base(for: journey.objectID))
                 .onTapGesture {
                     viewModel.processIntent(.journeySelected(journey))
                 }
         }
+        .accessibilityIdentifier(AccessibilityID.BottomSheetView.journeyList)
         .listStyle(.plain)
         .onAppear {
             LogManager.debug("Affichage de la liste avec \(viewModel.state.filteredJourneys.count) trajets filtrés", category: "viewcycle")
@@ -231,6 +236,7 @@ struct BottomSheetView: View {
                     .padding(.horizontal, 10)
             }
         }
+        .accessibilityIdentifier(AccessibilityID.BottomSheetView.userProfileButton)
     }
     
     /// Feuille de compte utilisateur
@@ -243,9 +249,10 @@ struct BottomSheetView: View {
                     }
             } else {
                 SignInView()
-                .onAppear {
-                    LogManager.info("Affichage de la vue de connexion", category: "viewcycle")
-                }
+                    .accessibilityIdentifier(AccessibilityID.BottomSheetView.Sheet.signInView)
+                    .onAppear {
+                        LogManager.info("Affichage de la vue de connexion", category: "viewcycle")
+                    }
             }
         }
     }
@@ -262,7 +269,7 @@ struct BottomSheetView: View {
                     LogManager.info("Navigation vers la vue 'My Journeys'", category: "navigation")
                 }
         case .addTicket(let searchText):
-            AddTicketV(router: router, searchText: .constant(searchText ?? ""))
+            AddTicketView(router: router, searchText: .constant(searchText ?? ""))
                 .onAppear {
                     LogManager.info("Navigation vers la vue d'ajout de ticket avec recherche: '\(searchText ?? "")'", category: "navigation")
                 }

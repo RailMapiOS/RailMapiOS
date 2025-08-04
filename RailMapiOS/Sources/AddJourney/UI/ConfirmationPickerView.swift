@@ -14,12 +14,15 @@ struct ConfirmationPickerView: View {
     var onNext: () -> Void
 
     var body: some View {
-        JourneyHeaderView(company: viewModel.pickedJourney.company,
-                          headsign: viewModel.pickedJourney.journey.headsign,
-                          departureCity: viewModel.departureStationInfo?.stopPoint.label,
-                          arrivalCity: viewModel.arrivalStationInfo?.stopPoint.label,
-                          departureDate: viewModel.pickedJourney.date,
-                          size: CGSize(width: 60, height: 60))
+        JourneyHeaderView(
+            company: viewModel.pickedJourney.company,
+            headsign: viewModel.pickedJourney.journey.headsign,
+            departureCity: viewModel.departureStationInfo?.stopPoint.label,
+            arrivalCity: viewModel.arrivalStationInfo?.stopPoint.label,
+            departureDate: viewModel.pickedJourney.date,
+            size: CGSize(width: 60, height: 60)
+        )
+        .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.header)
         
         VStack(spacing: 0) {
             Divider()
@@ -30,9 +33,15 @@ struct ConfirmationPickerView: View {
                    let arrivalDate = viewModel.convertToDate(from: AStationInfo.arrivalTime, using: viewModel.pickedJourney.date) {
                     VStack{
                         StationView(stationLabel: DStationInfo.stopPoint.name, date: departureDate, arrival: false)
+                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.departureStationView)
+
                         DurationView(startDate: departureDate, endDate : arrivalDate)
+                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.durationView)
+
                         StationView(stationLabel: AStationInfo.stopPoint.label, date: arrivalDate, arrival: true)
+                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.arrivalStationView)
                     }
+                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.vStack)
                     .padding(.vertical)
                 }
                 HStack {
@@ -42,6 +51,7 @@ struct ConfirmationPickerView: View {
                         icon: "ticket.fill",
                         displayMode: .small
                     )
+                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.bookingCodeRow)
                     
                     ClippedRow(
                         title: "Seat",
@@ -49,6 +59,7 @@ struct ConfirmationPickerView: View {
                         icon: "carseat.right.fill",
                         displayMode: .small
                     )
+                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.seatRow)
                 }
                 .padding()
                 
@@ -65,6 +76,7 @@ struct ConfirmationPickerView: View {
                 .padding(.horizontal)
                 Spacer()
             }
+            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.scrollView)
             .padding(.top, -15)
             .padding(.vertical)
             Spacer()
@@ -80,77 +92,9 @@ struct ConfirmationPickerView: View {
                         }
                     }
                 }
+                .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.confirmButton)
                 .font(.headline)
             }
         }
     }
 }
-
-//#Preview {
-//    let mockDatePickerViewModel: ConfirmationPickerViewModel = {
-//        let dateFormatter = ISO8601DateFormatter()
-//        
-//        let stopPoint = StopPoint(
-//            id: "StopPoint:OCETGV INOUI-87686006",
-//            name: "Paris Gare de Lyon Hall 1 - 2",
-//            codes: [Code(type: .gtfsStopCode, value: "StopPoint:OCETGV INOUI-87686006")],
-//            label: "Paris Gare de Lyon Hall 1 - 2",
-//            coord: Coord(lon: "2,373481", lat: "48,844945"),
-//            links: [],
-//            equipments: []
-//        )
-//        
-//        let stopTime = StopTime(
-//            arrivalTime: "11:52:00",
-//            utcArrivalTime: "10:52:00",
-//            departureTime: "11:52:00",
-//            utcDepartureTime: "10:52:00",
-//            headsign: "6613",
-//            stopPoint: stopPoint,
-//            pickupAllowed: true,
-//            dropOffAllowed: false,
-//            skippedStop: false
-//        )
-//        
-//        let weekPattern = WeekPattern(
-//            monday: true,
-//            tuesday: false,
-//            wednesday: false,
-//            thursday: false,
-//            friday: true,
-//            saturday: false,
-//            sunday: false
-//        )
-//        
-//        let calendar = VehicleCalendar(
-//            weekPattern: weekPattern,
-//            exceptions: [Exception(datetime: "2025-01-17", type: .add)],
-//            activePeriods: [ActivePeriod(begin: "2025-01-17", end: "2025-01-31")]
-//        )
-//        
-//        let journey = VehicleJourney(
-//            id: "OCESN6613F3511394:2025-01-14T04:48:49Z",
-//            name: "6613",
-//            journeyPattern: JourneyPattern(id: "OCESN6613F3511394:2025-01-14T04:48:49Z", name: "6613"),
-//            stopTimes: [stopTime],
-//            codes: [Code(type: .source, value: "GTFS")],
-//            validityPattern: ValidityPattern(beginningDate: "2025-01-16T23:00:00Z", days: "Custom Dates"),
-//            calendars: [calendar],
-//            trip: JourneyPattern(id: "OCESN6613F3511394:2025-01-14T04:48:49Z", name: "6613"),
-//            disruptions: [],
-//            headsign: "6613"
-//        )
-//        
-//        let dateRow = DateRow(
-//            journeyId: "OCESN6613F3511394:2025-01-14T04:48:49Z",
-//            date: dateFormatter.date(from: "2025-01-17T10:52:00Z")!,
-//            journey: journey,
-//            departureStationID: "StopPoint:OCETGV INOUI-87686006",
-//            arrivalStationID: "StopPoint:OCETGV INOUI-87722025"
-//        )
-//        
-//        return ConfirmationPickerViewModel(pickedJourney: dateRow)
-//    }()
-//
-//    ConfirmationPickerView(viewModel: mockDatePickerViewModel, onNext: <#() -> Void#>)
-//}

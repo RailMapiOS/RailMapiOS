@@ -4,6 +4,7 @@ let project = Project(
     name: "RailMapiOS",
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
+            .package(url: "https://github.com/AliSoftware/OHHTTPStubs", .upToNextMinor(from: "9.1.0"))
         ],
     targets: [
         .target(
@@ -56,7 +57,8 @@ let project = Project(
 //            resources: [],
             dependencies: [
                 .target(name: "RailMapiOS"),
-                .package(product: "Helpers")
+                .package(product: "Helpers"),
+                .package(product: "OHHTTPStubs")
             ]
         )
 
