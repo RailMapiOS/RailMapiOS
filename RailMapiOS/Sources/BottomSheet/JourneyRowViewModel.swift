@@ -10,7 +10,7 @@ import SwiftData
 
 @MainActor
 final class JourneyRowViewModel: ObservableObject {
-    private let journey: Journey
+    private let journey: JourneySD
     private let dateFormatterService: DateFormatterServiceProtocol
     private let journeyDataService: JourneyDataServiceProtocol
     
@@ -25,7 +25,7 @@ final class JourneyRowViewModel: ObservableObject {
     @Published private(set) var duration: String
     
     init(
-        journey: Journey,
+        journey: JourneySD,
         dateFormatterService: DateFormatterServiceProtocol = DateFormatterService(),
         journeyDataService: JourneyDataServiceProtocol = JourneyDataService()
     ) {
@@ -44,7 +44,6 @@ final class JourneyRowViewModel: ObservableObject {
         self.duration = ""
         
         self.loadJourneyData()
-        
         LogManager.info("Initialisation de JourneyRowViewModel pour le trajet vers \(journey.headsign ?? "destination inconnue")")
     }
     
@@ -67,4 +66,3 @@ final class JourneyRowViewModel: ObservableObject {
         )
     }
 }
-

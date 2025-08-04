@@ -9,7 +9,7 @@ struct RailMapiOSApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, dataController.container.viewContext)
+                .modelContainer(dataController.modelContainer)
                 .environmentObject(dataController)
                 .environmentObject(router)
                 .preferredColorScheme(.light)

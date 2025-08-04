@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftData
 import AuthenticationServices
 
 /// Une vue de feuille inférieure (bottom sheet) qui affiche les trajets et permet la navigation
@@ -23,14 +23,12 @@ import AuthenticationServices
 /// - Gestion du profil utilisateur
 struct BottomSheetView: View {
     // MARK: - Environnement et dépendances
-    
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var dataController: DataController
     
     // MARK: - Propriétés
     
     /// Résultats de la requête pour les trajets
-    let journeys: FetchedResults<Journey>
+    let journeys: [JourneySD]
     
     /// Routeur pour gérer la navigation
     @ObservedObject var router: Router
@@ -49,7 +47,7 @@ struct BottomSheetView: View {
     // MARK: - Initialisation
     
     init(
-        journeys: FetchedResults<Journey>,
+        journeys: [JourneySD],
         router: Router,
         mapSettings: MapSettings,
         sheetSize: Binding<PresentationDetent>,
@@ -62,7 +60,6 @@ struct BottomSheetView: View {
         
         self._viewModel = StateObject(
             wrappedValue: BottomSheetViewModel(
-                moc: dataController.container.viewContext,
                 router: router,
                 mapSettings: mapSettings,
                 initialSheetSize: sheetSize.wrappedValue
@@ -202,6 +199,7 @@ struct BottomSheetView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear() {
             LogManager.info("BottomSheetView apparaît", category: "viewcycle")
         }
@@ -225,9 +223,9 @@ struct BottomSheetView: View {
     
     /// Liste des trajets filtrés
     private var journeyListView: some View {
-        List(viewModel.state.filteredJourneys, id: \.objectID) { journey in
+        List(viewModel.state.filteredJourneys, id: \.id) { journey in
             JourneyRowView(journey: journey)
-                .accessibilityIdentifier(AccessibilityID.BottomSheetView.JourneyRow.base(for: journey.objectID))
+                .accessibilityIdentifier(AccessibilityID.BottomSheetView.JourneyRow.base(for: journey.id ?? UUID()))
                 .onTapGesture {
                     viewModel.processIntent(.journeySelected(journey))
                 }
@@ -316,8 +314,8 @@ struct BottomSheetView: View {
     
     /// Vue de détails d'un trajet
     @ViewBuilder
-    private func journeyDetailsView(for objectID: NSManagedObjectID) -> some View {
-        if let journey = moc.object(with: objectID) as? Journey {
+    private func journeyDetailsView(for journeyID: UUID) -> some View {
+        if let journey = journeys.first(where: { $0.id == journeyID }) {
             JourneyDetailsV(journey: journey)
                 .onAppear {
                     LogManager.info("Navigation vers les détails du trajet: \(journey.headsign ?? "inconnu")", category: "navigation")
@@ -329,11 +327,10 @@ struct BottomSheetView: View {
         } else {
             Text("Journey not found")
                 .onAppear {
-                    LogManager.error("Tentative d'accès à un trajet inexistant (ObjectID: \(objectID))", category: "data_error")
+                    LogManager.error("Tentative d'accès à un trajet inexistant (ID: \(journeyID))", category: "data_error")
                 }
         }
     }
-    
     /// Vue de sélection de station
     private func stationPickerView(for selectedDateRow: DateRow) -> some View {
         StationPickerView(viewModel: StationPickerViewModel(pickedJourney: selectedDateRow)) { pickedJourney in

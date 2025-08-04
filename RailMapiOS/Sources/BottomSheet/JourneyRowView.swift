@@ -5,17 +5,15 @@
 //  Created by Jérémie Patot on 12/07/2024.
 //
 
-import CoreData
+import SwiftData
 import SwiftUI
 
 struct JourneyRowView: View {
     @StateObject private var viewModel: JourneyRowViewModel
     
-    init(journey: Journey) {
+    init(journey: JourneySD) {
         self._viewModel = StateObject(
-            wrappedValue: JourneyRowViewModel(
-                journey: journey
-            )
+            wrappedValue: JourneyRowViewModel(journey: journey)
         )
     }
     
@@ -56,12 +54,14 @@ struct JourneyRowView: View {
     }
 }
 
-//#Preview {
-//    let context = NSPersistentContainer.preview.viewContext
-//    let fetchRequest: NSFetchRequest<Journey> = Journey.fetchRequest()
-//    fetchRequest.fetchLimit = 1
-//    
-//    guard let journey = try? context.fetch(fetchRequest).first else {
-//        fatalError("Aucun voyage trouvé pour la prévisualisation.")
-//    }
-//}
+#if DEBUG
+#Preview {
+    let journey = JourneySD()
+    journey.headsign = "1234"
+    journey.company = "SNCF"
+    journey.startDate = Date()
+    journey.endDate = Date().addingTimeInterval(3600)
+    
+    return JourneyRowView(journey: journey)
+}
+#endif
