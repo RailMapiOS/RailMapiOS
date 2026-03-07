@@ -67,6 +67,7 @@ struct BottomSheetView: View {
         NavigationStack(path: $router.path) {
             contentView
                 .navigationTitle("My Journeys")
+                .navigationBarTitleDisplayMode(.inline)
                 .searchable(
                     text: searchTextBinding,
                     isPresented: searchPresentedBinding,
