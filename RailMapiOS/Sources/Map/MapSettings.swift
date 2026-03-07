@@ -98,16 +98,40 @@ class MapSettings: ObservableObject {
             return TrainRoute(coordinates: coordinates, company: journey.company)
         }
         updateCameraToShowAllRoutes()
+        resolveRouteGeometries()
+    }
+
+    /// Résout les géométries réelles des routes via le backend (signal.eu.org OSRM)
+    private func resolveRouteGeometries() {
+        let service = RouteGeometryService.shared
+        for index in trainRoutes.indices {
+            let route = trainRoutes[index]
+            guard route.stopCoordinates.count >= 2 else { continue }
+
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                do {
+                    let resolved = try await service.fetchRouteGeometry(for: route.stopCoordinates)
+                    if resolved.count > route.stopCoordinates.count,
+                       index < self.trainRoutes.count,
+                       self.trainRoutes[index].id == route.id {
+                        self.trainRoutes[index].routeCoordinates = resolved
+                    }
+                } catch {
+                    LogManager.warning("Route geometry fetch failed: \(error.localizedDescription)", category: "map")
+                }
+            }
+        }
     }
 
     /// Sélectionne une route spécifique et centre la carte sur celle-ci
     func selectRoute(_ route: TrainRoute?) {
         if let route = route {
             selectedRoute = route
-            if !route.coordinates.isEmpty {
+            if !route.stopCoordinates.isEmpty {
                 withAnimation(.easeInOut(duration: 1.5)) {
                     cameraPosition = .region(MKCoordinateRegion(
-                        coordinates: route.coordinates,
+                        coordinates: route.stopCoordinates,
                         padding: 250
                     ))
                 }
@@ -126,7 +150,7 @@ class MapSettings: ObservableObject {
     /// Met à jour la position de la caméra pour montrer toutes les routes
     func updateCameraToShowAllRoutes() {
         guard !trainRoutes.isEmpty else { return }
-        let allCoordinates = trainRoutes.flatMap { $0.coordinates }
+        let allCoordinates = trainRoutes.flatMap { $0.stopCoordinates }
         
         guard !allCoordinates.isEmpty else { return }
         
@@ -145,11 +169,15 @@ class MapSettings: ObservableObject {
 /// le tracé d'un trajet ferroviaire sur la carte.
 public struct TrainRoute: Identifiable, Equatable {
     public let id = UUID()
-    let coordinates: [CLLocationCoordinate2D]
+    /// Coordonnées des arrêts (pour les annotations)
+    let stopCoordinates: [CLLocationCoordinate2D]
+    /// Coordonnées détaillées du tracé ferroviaire (résolu via OSRM, sinon identique à stopCoordinates)
+    var routeCoordinates: [CLLocationCoordinate2D]
     let company: String?
 
     init(coordinates: [CLLocationCoordinate2D], company: String? = nil) {
-        self.coordinates = coordinates
+        self.stopCoordinates = coordinates
+        self.routeCoordinates = coordinates
         self.company = company
     }
 
@@ -168,8 +196,8 @@ public struct TrainRoute: Identifiable, Equatable {
 
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         return lhs.id == rhs.id &&
-        lhs.coordinates.first == rhs.coordinates.first &&
-        lhs.coordinates.last == rhs.coordinates.last
+        lhs.stopCoordinates.first == rhs.stopCoordinates.first &&
+        lhs.stopCoordinates.last == rhs.stopCoordinates.last
     }
 }
 

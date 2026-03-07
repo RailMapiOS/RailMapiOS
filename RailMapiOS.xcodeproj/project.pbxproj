@@ -67,6 +67,7 @@
 		DE7653AE17F4AA670173AF0A /* AddTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF9E0A5805CCFC4487E85E7 /* AddTicketView.swift */; };
 		E2817C280EC2C4C0DD597661 /* InfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB52C182521BB95AE0F7460D /* InfoCard.swift */; };
 		E2949156950476F554346A1D /* VehicleJourneyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334FBF3813011E3F15CE57B4 /* VehicleJourneyService.swift */; };
+		A1B2C3D4E5F60789AB345678 /* RouteGeometryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A60789AB345678 /* RouteGeometryService.swift */; };
 		EC5039B27C29972495A750F4 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31B38C97ED8F2587F97D29 /* OHHTTPStubs */; };
 		F2EE9A5A94367F5874B254AE /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1D70A37468480C1CF29289 /* SignInView.swift */; };
 		F677B53EB7E39133483C6D8E /* JourneyRowVMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */; };
@@ -140,6 +141,7 @@
 		29DCC8711A5AFE25FCDDD699 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30913B157AB7A1BEA75C5D74 /* RailMapiOSDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RailMapiOSDebug.entitlements; sourceTree = "<group>"; };
 		334FBF3813011E3F15CE57B4 /* VehicleJourneyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleJourneyService.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A60789AB345678 /* RouteGeometryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteGeometryService.swift; sourceTree = "<group>"; };
 		33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLabel.swift; sourceTree = "<group>"; };
 		37AA84E5F8A98891935AF10D /* Helpers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Helpers; path = RailMapiOS/Packages/Helpers; sourceTree = "<group>"; };
 		392C239C0CDDCE4442F9C320 /* MapSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSettings.swift; sourceTree = "<group>"; };
@@ -420,6 +422,7 @@
 		AFFBC10A860DC04CFF825833 /* ApiService */ = {
 			isa = PBXGroup;
 			children = (
+				F1E2D3C4B5A60789AB345678 /* RouteGeometryService.swift */,
 				334FBF3813011E3F15CE57B4 /* VehicleJourneyService.swift */,
 				C0E02B6AE2C9BBD404E32FE9 /* VehiculeJourneysModel-Navitia.swift */,
 			);
@@ -752,6 +755,7 @@
 				311CA2287759337B62A5E420 /* VerticalTimeline.swift in Sources */,
 				A92C1FA5A4069FD96AE06571 /* AccessibilityID.swift in Sources */,
 				E2949156950476F554346A1D /* VehicleJourneyService.swift in Sources */,
+				A1B2C3D4E5F60789AB345678 /* RouteGeometryService.swift in Sources */,
 				CCFBCA4A6E64AF2B87A01E55 /* VehiculeJourneysModel-Navitia.swift in Sources */,
 				FF35DA25E3DB0292F19D0603 /* DateFormatterService.swift in Sources */,
 				2EEBB21135D20AB5FDF5DD19 /* JourneyDataService.swift in Sources */,
