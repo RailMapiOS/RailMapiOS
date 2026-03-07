@@ -66,7 +66,6 @@ struct BottomSheetView: View {
     var body: some View {
         NavigationStack(path: $router.path) {
             contentView
-                .navigationTitle("My Journeys")
                 .navigationBarTitleDisplayMode(.inline)
                 .searchable(
                     text: searchTextBinding,
@@ -74,6 +73,11 @@ struct BottomSheetView: View {
                     prompt: "Search journeys..."
                 )
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Text("My Journeys")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             viewModel.processIntent(viewModel.isUserLoggedIn ? .toggleAccount : .toggleSignIn)

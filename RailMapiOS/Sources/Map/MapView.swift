@@ -37,14 +37,14 @@ struct MapView: View {
             let isSelected = mapSettings.selectedRoute?.id == route.id
             let hasSelection = mapSettings.selectedRoute != nil
 
-            MapPolyline(coordinates: route.routeCoordinates)
+            MapPolyline(coordinates: route.coordinates)
                 .stroke(
                     route.routeColor.opacity(hasSelection && !isSelected ? 0.3 : 1.0),
                     lineWidth: isSelected ? 5 : 3
                 )
                 .mapOverlayLevel(level: isSelected ? .aboveRoads : .aboveLabels)
 
-            if let firstCoord = route.stopCoordinates.first {
+            if let firstCoord = route.coordinates.first {
                 Annotation("", coordinate: firstCoord) {
                     Circle()
                         .fill(route.routeColor)
@@ -53,8 +53,8 @@ struct MapView: View {
                 }
             }
 
-            ForEach(1..<max(1, route.stopCoordinates.count - 1), id: \.self) { index in
-                Annotation("", coordinate: route.stopCoordinates[index]) {
+            ForEach(1..<max(1, route.coordinates.count - 1), id: \.self) { index in
+                Annotation("", coordinate: route.coordinates[index]) {
                     Circle()
                         .fill(route.routeColor.opacity(0.7))
                         .frame(width: 5, height: 5)
@@ -62,7 +62,7 @@ struct MapView: View {
                 }
             }
 
-            if let lastCoord = route.stopCoordinates.last, route.stopCoordinates.count > 1 {
+            if let lastCoord = route.coordinates.last, route.coordinates.count > 1 {
                 Annotation("", coordinate: lastCoord) {
                     Circle()
                         .fill(route.routeColor)
