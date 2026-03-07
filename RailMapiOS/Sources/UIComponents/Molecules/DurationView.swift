@@ -20,12 +20,6 @@ struct DurationView: View {
             Text(calculateDurationString(from: startDate, to: endDate))
                 .font(.subheadline)
                 .foregroundStyle(.gray)
-            Text("•")
-                .font(.subheadline)
-                .foregroundStyle(.gray)
-            Text("345 km")
-                .font(.subheadline)
-                .foregroundStyle(.gray)
             VStack { Divider() }
         }
         .padding(.horizontal)

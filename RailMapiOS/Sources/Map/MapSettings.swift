@@ -35,14 +35,11 @@ class MapSettings: ObservableObject {
     @Published var selectedRoute: TrainRoute?
     
     /// Initialise une nouvelle instance de MapSettings
-    public init() {
-        LogManager.info("Initialisation de MapSettings", category: "map")
-    }
+    public init() {}
     
     /// Met à jour les trajets à partir d'une collection FetchedResults
     /// - Parameter journeys: Les trajets à afficher
     public func updateJourneys(from journeys: [Journey]) {
-        LogManager.info("Mise à jour des trajets depuis SwiftData (\(journeys.count) trajets)", category: "map")
         
         // Trier les trajets par date de départ (gestion des optionnels)
         self.journeys = journeys.sorted { journey1, journey2 in
@@ -57,9 +54,6 @@ class MapSettings: ObservableObject {
     
     /// Génère les routes de train à partir des trajets
     private func generateTrainRoutes() {
-        LogManager.debug("Génération des routes de train pour \(journeys.count) trajets", category: "map")
-        let previousRouteCount = self.trainRoutes.count
-        
         self.trainRoutes = journeys.compactMap { journey -> TrainRoute? in
             guard let stops = journey.stops, !stops.isEmpty else {
                 LogManager.warning("Aucun arrêt trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
@@ -101,21 +95,16 @@ class MapSettings: ObservableObject {
                 return nil
             }
             
-            LogManager.debug("Route créée pour le trajet \(journey.headsign ?? "inconnu") avec \(coordinates.count) points", category: "map")
-            return TrainRoute(coordinates: coordinates)
+            return TrainRoute(coordinates: coordinates, company: journey.company)
         }
         updateCameraToShowAllRoutes()
-        LogManager.info("\(self.trainRoutes.count) routes générées (précédemment: \(previousRouteCount))", category: "map")
     }
     
     /// Sélectionne une route spécifique et centre la carte sur celle-ci
     func selectRoute(_ route: TrainRoute?) {
         if let route = route {
-            LogManager.info("Sélection de la route: \(route.id)", category: "map")
             selectedRoute = route
-            
             if !route.coordinates.isEmpty {
-                LogManager.debug("Mise à jour de la position de la caméra pour la route sélectionnée", category: "map")
                 withAnimation(.easeInOut(duration: 1.5)) {
                     cameraPosition = .region(MKCoordinateRegion(
                         coordinates: route.coordinates,
@@ -124,14 +113,12 @@ class MapSettings: ObservableObject {
                 }
             }
         } else {
-            LogManager.info("Désélection de la route", category: "map")
             selectedRoute = nil
             updateCameraToShowAllRoutes()
         }
     }
     
     func clearRouteSelection() {
-        LogManager.info("Désélection de la route active", category: "map")
         selectedRoute = nil
         updateCameraToShowAllRoutes()
     }
@@ -139,8 +126,6 @@ class MapSettings: ObservableObject {
     /// Met à jour la position de la caméra pour montrer toutes les routes
     func updateCameraToShowAllRoutes() {
         guard !trainRoutes.isEmpty else { return }
-        
-        LogManager.debug("Mise à jour de la position de la caméra pour montrer toutes les routes", category: "map")
         let allCoordinates = trainRoutes.flatMap { $0.coordinates }
         
         guard !allCoordinates.isEmpty else { return }
@@ -159,13 +144,28 @@ class MapSettings: ObservableObject {
 /// Cette structure contient les coordonnées géographiques qui définissent
 /// le tracé d'un trajet ferroviaire sur la carte.
 public struct TrainRoute: Identifiable, Equatable {
-    
-    /// Identifiant unique de la route
     public let id = UUID()
-    
-    /// Coordonnées géographiques qui composent la route
     let coordinates: [CLLocationCoordinate2D]
-    
+    let company: String?
+
+    init(coordinates: [CLLocationCoordinate2D], company: String? = nil) {
+        self.coordinates = coordinates
+        self.company = company
+    }
+
+    var routeColor: Color {
+        guard let company = company?.lowercased() else { return .blue }
+        switch company {
+        case "sncf": return .blue
+        case "ter": return .green
+        case "eurostar": return .yellow
+        case "db", "deutsche bahn": return .red
+        case "ouigo": return .pink
+        case "thalys": return .purple
+        default: return .blue
+        }
+    }
+
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         return lhs.id == rhs.id &&
         lhs.coordinates.first == rhs.coordinates.first &&

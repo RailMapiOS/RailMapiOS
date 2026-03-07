@@ -41,23 +41,23 @@ struct DepartureStatusView: View {
                 HStack(spacing: 0.4) {
                     Text("Train delayed")
                         .fontWeight(.bold)
-                        .foregroundStyle(.orange.mix(with: .black, by: 0.07))
+                        .foregroundStyle(.orange)
                     
                     Text(", scheduled departure at")
                         .fontWeight(.semibold)
                     + Text(time.formattedTime())
                         .fontWeight(.semibold)
-                        .foregroundStyle(.orange.mix(with: .black, by: 0.07))
+                        .foregroundStyle(.orange)
                     
                     if let delayedTime = self.delayedTime {
                         Text(" +(\(delayedTime.formattedTimeRemainingDelayed()))")
-                            .foregroundStyle(.red.mix(with: .black, by: 0.07))
+                            .foregroundStyle(.red)
                             .fontWeight(.semibold)
                     }
                     Spacer(minLength: 0)
                 }
                 HStack {
-                    locationInfo(color: .black)
+                    locationInfo(color: .primary)
                 }
             }
             
@@ -68,7 +68,7 @@ struct DepartureStatusView: View {
                         .fontWeight(.semibold)
                     + Text(time.timeRemainingDescription())
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.mix(with: .black, by: 0.07))
+                        .foregroundStyle(.green)
                 }
                 Spacer(minLength: 0)
                 
@@ -82,7 +82,7 @@ struct DepartureStatusView: View {
         if let platform = platform, let hall = hall {
             VStack(alignment: .trailing, spacing: 0) {
                 locationText(title: "Plat.", value: platform, font: .title, color: color)
-                locationText(title: "Hall", value: hall, font: .subheadline, color: .black)
+                locationText(title: "Hall", value: hall, font: .subheadline, color: .primary)
             }
         } else if let platform = platform {
             locationText(title: "Plat.", value: platform, font: .title, color: color)
@@ -106,11 +106,11 @@ struct DepartureStatusView: View {
             Text(title)
                 .font(font)
                 .fontWeight(.semibold)
-                .foregroundStyle(color.mix(with: .black, by: 0.07))
+                .foregroundStyle(color)
             Text(value)
                 .font(font)
                 .fontWeight(.semibold)
-                .foregroundStyle(color.mix(with: .black, by: 0.07))
+                .foregroundStyle(color)
         }
     }
     
@@ -118,7 +118,7 @@ struct DepartureStatusView: View {
         HStack(spacing: 4) {
             Text(title)
                 .fontWeight(.bold)
-                .foregroundStyle(color.mix(with: .black, by: 0.07))
+                .foregroundStyle(color)
             + Text(message)
                 .fontWeight(.semibold)
             Spacer(minLength: 0)

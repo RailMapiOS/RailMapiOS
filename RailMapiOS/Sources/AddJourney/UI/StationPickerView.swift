@@ -126,18 +126,13 @@ struct StationRow: View {
                 }
             }
             Spacer()
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.blue)
-                    .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.checkmark(id: stopTime.stopPoint.id))
-            }
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isSelected ? .blue : .secondary.opacity(0.4))
+                .font(.title3)
+                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.checkmark(id: stopTime.stopPoint.id))
         }
         .opacity(isSelectable ? 1 : 0.5)
         .contentShape(Rectangle())
     }
 }
 
-enum PickerMode {
-    case pickUpDeparture
-    case dropOffArrival
-}
