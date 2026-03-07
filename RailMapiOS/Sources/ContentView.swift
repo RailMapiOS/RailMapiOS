@@ -67,13 +67,12 @@ public struct LayoutiPhone: View {
                         journeys: journeys,
                         router: router,
                         mapSettings: mapSettings,
-                        sheetSize: $sheetSize,
-                        dataController: dataController
+                        sheetSize: $sheetSize
                     )
-                        .padding(.top)
                         .presentationDetents([.fraction(0.3), .medium, .large], selection: $sheetSize)
                         .presentationBackgroundInteraction(.enabled(upThrough: .large))
-                        .presentationBackground(.ultraThickMaterial)
+                        .presentationBackground(.ultraThinMaterial)
+                        .presentationCornerRadius(20)
                         .interactiveDismissDisabled()
                 }
         }
@@ -93,8 +92,7 @@ public struct LayoutiPad: View {
                 journeys: journeys,
                 router: router,
                 mapSettings: mapSettings,
-                sheetSize: $sheetSize,
-                dataController: dataController
+                sheetSize: $sheetSize
             )
                 .listStyle(SidebarListStyle())
                 .frame(minWidth: 200)

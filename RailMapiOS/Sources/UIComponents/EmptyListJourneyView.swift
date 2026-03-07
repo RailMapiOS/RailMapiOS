@@ -8,43 +8,48 @@
 import SwiftUI
 
 struct EmptyListJourneyView: View {
-    private var title: String?
-    private var subtitle: String?
-    private var paragraphe: String?
-    
-    public init(title: String = "Add a ticket ?", subtitle: String = "No journeys found", paragraphe: String = "Try searching for another journey or add a new one.") {
+    private var title: String
+    private var subtitle: String
+    private var paragraph: String
+
+    init(
+        title: String = "Add a ticket?",
+        subtitle: String = "No journeys found",
+        paragraph: String = "Try searching for another journey or add a new one."
+    ) {
         self.title = title
         self.subtitle = subtitle
-        self.paragraphe = paragraphe
+        self.paragraph = paragraph
     }
-    
+
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
+            Spacer()
+
             Image(systemName: "train.side.front.car")
                 .resizable()
-                .foregroundStyle(.gray)
+                .foregroundStyle(.tertiary)
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 80)
-                .padding()
-            
-            if let title = title {
-                Text(title)
-                    .font(.title)
-                    .fontWeight(.bold)
-            }
-            
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-            }
-            
-            if let paragraphe = paragraphe {
-                Text(paragraphe)
-                    .multilineTextAlignment(.center)
-                    .padding()
-            }
+                .padding(.bottom, 8)
+
+            Text(title)
+                .font(.title2)
+                .fontWeight(.bold)
+
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text(paragraph)
+                .font(.subheadline)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
 }
 

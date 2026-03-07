@@ -1,5 +1,5 @@
 //
-//  ClippedRow.swift
+//  InfoCard.swift
 //  RailMapiOS
 //
 //  Created by Jérémie Patot on 15/11/2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ClippedRow: View {
+struct InfoCard: View {
     var header: String?
     var title: String?
     var bodyTexts: [String?]? = nil
@@ -27,16 +27,8 @@ struct ClippedRow: View {
             }
         }
         .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
-        )
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray, lineWidth: 1.0)
-                .opacity(0.5)
-                .shadow(color: .gray, radius: 2, x: 2, y: 2)
-        )
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
 
     }
     
@@ -154,21 +146,21 @@ struct ClippedRow: View {
 #Preview {
     VStack(spacing: 16) {
         HStack(spacing: 16) {
-            ClippedRow(
+            InfoCard(
                 title: "Booking Code",
                 bodyTexts: ["Tap to Edit"],
                 icon: "ticket.fill",
                 displayMode: .small
             )
             
-            ClippedRow(
+            InfoCard(
                 title: "Seat",
                 bodyTexts: ["Tap to Edit"],
                 icon: "carseat.right.fill",
                 displayMode: .small
             )
         }
-        ClippedRow(
+        InfoCard(
             header: "Medium Mode",
             title: "Prévision à l'arrivée",
             bodyTexts: ["11°C et ensoleillé"],
@@ -176,7 +168,7 @@ struct ClippedRow: View {
             displayMode: .medium
         )
         
-        ClippedRow(
+        InfoCard(
             content: {
                 AnyView(
                     HStack {

@@ -45,7 +45,7 @@ struct ConfirmationPickerView: View {
                     .padding(.vertical)
                 }
                 HStack {
-                    ClippedRow(
+                    InfoCard(
                         title: "Booking Code",
                         bodyTexts: ["Tap to Edit"],
                         icon: "ticket.fill",
@@ -53,7 +53,7 @@ struct ConfirmationPickerView: View {
                     )
                     .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.bookingCodeRow)
                     
-                    ClippedRow(
+                    InfoCard(
                         title: "Seat",
                         bodyTexts: ["Tap to Edit"],
                         icon: "carseat.right.fill",
@@ -63,33 +63,17 @@ struct ConfirmationPickerView: View {
                 }
                 .padding()
                 
-                LazyVStack(alignment: .leading) {
-                    Text("Good to know")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    ClippedRow(title: "Prevision à l'arrivée",
-                               bodyTexts: ["14°C et ensoleillée"],
-                               icon: "cloud.sun.fill"
-                    )
-                }
-                .padding(.horizontal)
-                Spacer()
             }
             .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.scrollView)
-            .padding(.top, -15)
             .padding(.vertical)
-            Spacer()
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Confirmer") {
                     let newJourney = viewModel.pickedJourney.toNewJourneyModel()
                     if let newJourney = newJourney {
-                        DispatchQueue.main.async {
-                            viewModel.saveNewJourney(newJourney)
-                            onNext()
-                        }
+                        viewModel.saveNewJourney(newJourney)
+                        onNext()
                     }
                 }
                 .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.confirmButton)
