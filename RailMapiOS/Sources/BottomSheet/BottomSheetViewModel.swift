@@ -125,7 +125,7 @@ class BottomSheetViewModel: ObservableObject {
                     let firstCoord = CLLocationCoordinate2D(latitude: firstLat, longitude: firstLon)
                     let lastCoord = CLLocationCoordinate2D(latitude: lastLat, longitude: lastLon)
 
-                    return route.coordinates.first == firstCoord && route.coordinates.last == lastCoord
+                    return route.stopCoordinates.first == firstCoord && route.stopCoordinates.last == lastCoord
                 }
                 return false
             }) {

@@ -98,16 +98,17 @@ class MapSettings: ObservableObject {
             return TrainRoute(coordinates: coordinates, company: journey.company)
         }
         updateCameraToShowAllRoutes()
+        resolveRouteGeometries()
     }
-    
+
     /// Sélectionne une route spécifique et centre la carte sur celle-ci
     func selectRoute(_ route: TrainRoute?) {
         if let route = route {
             selectedRoute = route
-            if !route.coordinates.isEmpty {
+            if !route.stopCoordinates.isEmpty {
                 withAnimation(.easeInOut(duration: 1.5)) {
                     cameraPosition = .region(MKCoordinateRegion(
-                        coordinates: route.coordinates,
+                        coordinates: route.stopCoordinates,
                         padding: 250
                     ))
                 }
@@ -123,10 +124,69 @@ class MapSettings: ObservableObject {
         updateCameraToShowAllRoutes()
     }
     
+    /// Résout les géométries réelles des routes via MKDirections
+    func resolveRouteGeometries() {
+        Task { @MainActor in
+            for index in trainRoutes.indices {
+                let route = trainRoutes[index]
+                guard route.stopCoordinates.count >= 2 else { continue }
+
+                var allPoints: [CLLocationCoordinate2D] = []
+
+                for i in 0..<(route.stopCoordinates.count - 1) {
+                    let origin = route.stopCoordinates[i]
+                    let destination = route.stopCoordinates[i + 1]
+
+                    if let segmentCoords = await Self.resolveSegment(from: origin, to: destination) {
+                        if allPoints.isEmpty {
+                            allPoints.append(contentsOf: segmentCoords)
+                        } else {
+                            allPoints.append(contentsOf: segmentCoords.dropFirst())
+                        }
+                    } else {
+                        if allPoints.isEmpty {
+                            allPoints.append(origin)
+                        }
+                        allPoints.append(destination)
+                    }
+                }
+
+                if allPoints.count > route.stopCoordinates.count {
+                    trainRoutes[index].routeCoordinates = allPoints
+                }
+            }
+        }
+    }
+
+    private static func resolveSegment(
+        from origin: CLLocationCoordinate2D,
+        to destination: CLLocationCoordinate2D
+    ) async -> [CLLocationCoordinate2D]? {
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: origin))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
+        request.transportType = .automobile
+
+        let directions = MKDirections(request: request)
+        do {
+            let response = try await directions.calculate()
+            if let route = response.routes.first {
+                let polyline = route.polyline
+                let count = polyline.pointCount
+                var coords = [CLLocationCoordinate2D](repeating: CLLocationCoordinate2D(), count: count)
+                polyline.getCoordinates(&coords, range: NSRange(location: 0, length: count))
+                return coords
+            }
+        } catch {
+            LogManager.warning("MKDirections failed: \(error.localizedDescription)", category: "map")
+        }
+        return nil
+    }
+
     /// Met à jour la position de la caméra pour montrer toutes les routes
     func updateCameraToShowAllRoutes() {
         guard !trainRoutes.isEmpty else { return }
-        let allCoordinates = trainRoutes.flatMap { $0.coordinates }
+        let allCoordinates = trainRoutes.flatMap { $0.stopCoordinates }
         
         guard !allCoordinates.isEmpty else { return }
         
@@ -145,11 +205,15 @@ class MapSettings: ObservableObject {
 /// le tracé d'un trajet ferroviaire sur la carte.
 public struct TrainRoute: Identifiable, Equatable {
     public let id = UUID()
-    let coordinates: [CLLocationCoordinate2D]
+    /// Coordonnées des arrêts (pour les annotations sur la carte)
+    let stopCoordinates: [CLLocationCoordinate2D]
+    /// Coordonnées détaillées du tracé (résolu via MKDirections, sinon identique à stopCoordinates)
+    var routeCoordinates: [CLLocationCoordinate2D]
     let company: String?
 
     init(coordinates: [CLLocationCoordinate2D], company: String? = nil) {
-        self.coordinates = coordinates
+        self.stopCoordinates = coordinates
+        self.routeCoordinates = coordinates
         self.company = company
     }
 
@@ -168,8 +232,8 @@ public struct TrainRoute: Identifiable, Equatable {
 
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         return lhs.id == rhs.id &&
-        lhs.coordinates.first == rhs.coordinates.first &&
-        lhs.coordinates.last == rhs.coordinates.last
+        lhs.stopCoordinates.first == rhs.stopCoordinates.first &&
+        lhs.stopCoordinates.last == rhs.stopCoordinates.last
     }
 }
 
