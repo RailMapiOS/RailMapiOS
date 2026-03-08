@@ -21,18 +21,20 @@ struct StationPickerView: View {
     var body: some View {
         List {
             ForEach(viewModel.pickedJourney.journey.stopTimes, id: \.stopPoint.id) { stopTime in
-                StationRow(
-                    stopTime: stopTime,
-                    cityName: viewModel.cityNames[stopTime.stopPoint.id],
-                    isSelected: isStationSelected(stopTime),
-                    isSelectable: isStationSelectable(stopTime)
-                )
-                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.stationRow(id: stopTime.stopPoint.id))
-                .onTapGesture {
+                Button {
                     if isStationSelectable(stopTime) {
                         toggleStationSelection(stopTime)
                     }
+                } label: {
+                    StationRow(
+                        stopTime: stopTime,
+                        cityName: viewModel.cityNames[stopTime.stopPoint.id],
+                        isSelected: isStationSelected(stopTime),
+                        isSelectable: isStationSelectable(stopTime)
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.stationRow(id: stopTime.stopPoint.id))
             }
         }
         .accessibilityIdentifier(AccessibilityID.StationPickerView.list)
