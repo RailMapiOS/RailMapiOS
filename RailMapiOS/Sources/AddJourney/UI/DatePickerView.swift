@@ -25,32 +25,34 @@ struct DatePickerView: View {
                 .accessibilityIdentifier(AccessibilityID.DatePickerView.title)
 
             List(viewModel.dateRows) { row in
-                HStack(spacing: 12) {
-                    if let company = row.company {
-                        Image("icon_\(company.lowercased())_minimal")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: 44)
-                    }
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(row.journey.headsign)
-                            .font(.headline)
-                        Text("Detected train journey")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Text(row.formattedDate)
-                        .font(.title3)
-                        .fontWeight(.medium)
-                        .monospacedDigit()
-                }
-                .accessibilityIdentifier(AccessibilityID.DatePickerView.dateRow(for: row.date))
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-                .onTapGesture {
+                Button {
                     onNext(row)
+                } label: {
+                    HStack(spacing: 12) {
+                        if let company = row.company {
+                            Image("icon_\(company.lowercased())_minimal")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: 44)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(row.journey.headsign)
+                                .font(.headline)
+                            Text("Detected train journey")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text(row.formattedDate)
+                            .font(.title3)
+                            .fontWeight(.medium)
+                            .monospacedDigit()
+                    }
+                    .padding(.vertical, 6)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(AccessibilityID.DatePickerView.dateRow(for: row.date))
             }
             .accessibilityIdentifier(AccessibilityID.DatePickerView.title)
             .listStyle(.plain)
