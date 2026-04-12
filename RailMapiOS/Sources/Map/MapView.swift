@@ -1,14 +1,22 @@
-import SwiftUI
+//
+//  MapView.swift
+//  RailMapiOS
+//
+
+import ComposableArchitecture
 import MapKit
+import SwiftUI
 
 struct MapView: View {
-    @Binding var sheetSize: PresentationDetent
-    @ObservedObject var mapSettings: MapSettings
+    let store: StoreOf<MapFeature>
+    let sheetSize: PresentationDetent
+
+    @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var bottomSheetHeight: CGFloat = 0
 
     var body: some View {
         GeometryReader { proxy in
-            Map(position: $mapSettings.cameraPosition) {
+            Map(position: $cameraPosition) {
                 mapContent
             }
             .mapStyle(.standard)
@@ -22,20 +30,24 @@ struct MapView: View {
             }
             .onAppear {
                 updateBottomSheetHeight(screenHeight: proxy.size.height)
-                if mapSettings.selectedRoute == nil {
-                    mapSettings.updateCameraToShowAllRoutes()
-                }
+                updateCamera()
             }
             .onChange(of: sheetSize) { _, _ in
                 updateBottomSheetHeight(screenHeight: proxy.size.height)
             }
+            .onChange(of: store.cameraUpdateTrigger) { _, _ in
+                updateCamera()
+            }
         }
     }
 
+    // MARK: - Map Content
+
+    @MapContentBuilder
     private var mapContent: some MapContent {
-        ForEach(mapSettings.trainRoutes) { route in
-            let isSelected = mapSettings.selectedRoute?.id == route.id
-            let hasSelection = mapSettings.selectedRoute != nil
+        ForEach(store.trainRoutes) { route in
+            let isSelected = store.selectedRoute?.id == route.id
+            let hasSelection = store.selectedRoute != nil
 
             MapPolyline(coordinates: route.routeCoordinates)
                 .stroke(
@@ -73,14 +85,26 @@ struct MapView: View {
         }
     }
 
+    // MARK: - Camera
+
+    private func updateCamera() {
+        withAnimation(.easeInOut(duration: 1.5)) {
+            if let selected = store.selectedRoute, !selected.stopCoordinates.isEmpty {
+                cameraPosition = .region(MKCoordinateRegion(coordinates: selected.stopCoordinates, padding: 250))
+            } else if !store.trainRoutes.isEmpty {
+                let allCoords = store.trainRoutes.flatMap(\.stopCoordinates)
+                if !allCoords.isEmpty {
+                    cameraPosition = .region(MKCoordinateRegion(coordinates: allCoords, padding: 150))
+                }
+            }
+        }
+    }
+
     private func updateBottomSheetHeight(screenHeight: CGFloat) {
         switch sheetSize {
-        case .medium:
-            bottomSheetHeight = screenHeight * 0.5
-        case .large:
-            bottomSheetHeight = screenHeight * 0.8
-        default:
-            bottomSheetHeight = screenHeight * 0.3
+        case .medium: bottomSheetHeight = screenHeight * 0.5
+        case .large: bottomSheetHeight = screenHeight * 0.8
+        default: bottomSheetHeight = screenHeight * 0.3
         }
     }
 }

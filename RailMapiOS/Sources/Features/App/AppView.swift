@@ -33,10 +33,10 @@ struct AppView: View {
 
     private var iPhoneLayout: some View {
         ZStack {
-            MapViewTCA(store: store.scope(state: \.map, action: \.map), sheetSize: store.sheetSize)
+            MapView(store: store.scope(state: \.map, action: \.map), sheetSize: store.sheetSize)
                 .edgesIgnoringSafeArea(.all)
                 .sheet(isPresented: $isSheetPresented) {
-                    BottomSheetViewTCA(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
+                    BottomSheetView(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
                         .presentationDetents(
                             [.fraction(0.3), .medium, .large],
                             selection: Binding(
@@ -56,10 +56,10 @@ struct AppView: View {
 
     private var iPadLayout: some View {
         NavigationSplitView {
-            BottomSheetViewTCA(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
+            BottomSheetView(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
                 .frame(minWidth: 200)
         } detail: {
-            MapViewTCA(store: store.scope(state: \.map, action: \.map), sheetSize: .large)
+            MapView(store: store.scope(state: \.map, action: \.map), sheetSize: .large)
                 .edgesIgnoringSafeArea(.all)
         }
     }

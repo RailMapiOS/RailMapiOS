@@ -13,10 +13,9 @@ import Foundation
 class DataController: ObservableObject {
     let modelContainer: ModelContainer
     private let modelContext: ModelContext
-    
+
     @Published var journeys: [Journey] = []
-    private var mapSettings: MapSettings?
-    
+
     init() {
         do {
             modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self)
@@ -25,40 +24,23 @@ class DataController: ObservableObject {
             LogManager.error("Échec de l'initialisation de SwiftData: \(error.localizedDescription)", category: "swift_data_error")
             fatalError("Impossible d'initialiser SwiftData: \(error)")
         }
-        
+
         loadJourneys()
     }
-    
-    /// Connecte les paramètres de carte au contrôleur de données
-    func connectMapSettings(_ mapSettings: MapSettings) {
-        self.mapSettings = mapSettings
-        mapSettings.onShapeResolved = { [weak self] journey, coordinates, source in
-            journey.setRouteShape(coordinates: coordinates, source: source)
-            self?.saveContext()
-        }
-        updateMapSettings()
-    }
-    
+
     /// Charge tous les trajets depuis SwiftData
     func loadJourneys() {
         let descriptor = FetchDescriptor<Journey>(
             sortBy: [SortDescriptor(\.startDate, order: .forward)]
         )
-        
+
         do {
             journeys = try modelContext.fetch(descriptor)
-            updateMapSettings()
         } catch {
             LogManager.error("Échec du chargement des trajets: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
-    
-    /// Met à jour les paramètres de carte avec les trajets actuels
-    private func updateMapSettings() {
-        guard let mapSettings = mapSettings else { return }
-        mapSettings.updateJourneys(from: self.journeys)
-    }
-    
+
     /// Sauvegarde le contexte SwiftData si des modifications ont été effectuées
     func saveContext() {
         do {
@@ -68,7 +50,7 @@ class DataController: ObservableObject {
             LogManager.error("Échec de la sauvegarde des données: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
-    
+
     /// Sauvegarde un nouveau trajet dans SwiftData
     func saveJourney(newJourney: NewJourneyModel) {
         let journey = Journey()
@@ -80,15 +62,14 @@ class DataController: ObservableObject {
         journey.company = newJourney.company
         journey.archived = false
         journey.stops = []
-        
-        
+
         for newStop in newJourney.stops {
             let stop = Stop()
             stop.arrivalTimeUTC = newStop.arrivalTimeUTC
             stop.departureTimeUTC = newStop.departureTimeUTC
             stop.status = newStop.status
             stop.journey = journey
-            
+
             if let newStopInfo = newStop.stopInfo {
                 let stopInfo = StopInfos()
                 stopInfo.id = newStopInfo.id
@@ -100,116 +81,24 @@ class DataController: ObservableObject {
                 stopInfo.dropOffAllowed = newStopInfo.dropOffAllowed
                 stopInfo.skippedStop = newStopInfo.skippedStop
                 stopInfo.stop = stop
-                
+
                 stop.stopinfo = stopInfo
                 modelContext.insert(stopInfo)
             }
-            
+
             journey.stops?.append(stop)
             modelContext.insert(stop)
         }
-        
+
         modelContext.insert(journey)
         saveContext()
     }
-    
-    /// Crée des trajets fictifs pour les tests et le développement
-    func createMockJourneys() {
-        LogManager.info("Création de trajets fictifs pour les tests", category: "swift_data")
-        
-        let compagnies = ["Deutsche Bahn", "SNCF", "Eurostar", "TER", "Trenitalia", "Renfe"]
-        var date = Date()
-        
-        for indexMock in 1...5 {
-            let startDate = generateEndDate(from: date)
-            let endDate = generateEndDate(from: startDate)
-            
-            let journey = Journey()
-            journey.id = UUID()
-            journey.startDate = startDate
-            journey.endDate = endDate
-            journey.headsign = "Headsign \(indexMock)"
-            journey.idVehiculeJourney = "\(UUID().uuidString)_idVehiculeJourney"
-            journey.company = compagnies.randomElement() ?? "SNCF"
-            journey.archived = false
-            journey.stops = []
-            
-            LogManager.debug("Création du trajet fictif #\(indexMock): \(journey.headsign ?? "")", category: "swift_data")
-            
-            // Créer l'arrêt de départ
-            let departureStopInfo = StopInfos()
-            departureStopInfo.id = UUID().uuidString
-            departureStopInfo.label = "Gare de Lyon"
-            departureStopInfo.latitude = 48.8444
-            departureStopInfo.longitude = 2.3732
-            departureStopInfo.adress = "Place Louis Armand, 75012 Paris"
-            departureStopInfo.pickUpAllowed = true
-            departureStopInfo.dropOffAllowed = true
-            departureStopInfo.skippedStop = false
-            
-            let departureStop = Stop()
-            departureStop.arrivalTimeUTC = startDate
-            departureStop.departureTimeUTC = startDate
-            departureStop.status = "departure"
-            departureStop.journey = journey
-            departureStop.stopinfo = departureStopInfo
-            departureStopInfo.stop = departureStop
-            
-            // Créer l'arrêt d'arrivée
-            let arrivalStopInfo = StopInfos()
-            arrivalStopInfo.id = UUID().uuidString
-            arrivalStopInfo.label = "Gare de Perpignan"
-            arrivalStopInfo.latitude = 42.6975
-            arrivalStopInfo.longitude = 2.8808
-            arrivalStopInfo.adress = "Boulevard Saint-Assiscle, 66000 Perpignan"
-            arrivalStopInfo.pickUpAllowed = true
-            arrivalStopInfo.dropOffAllowed = true
-            arrivalStopInfo.skippedStop = false
-            
-            let arrivalStop = Stop()
-            arrivalStop.arrivalTimeUTC = endDate
-            arrivalStop.departureTimeUTC = endDate
-            arrivalStop.status = "arrival"
-            arrivalStop.journey = journey
-            arrivalStop.stopinfo = arrivalStopInfo
-            arrivalStopInfo.stop = arrivalStop
-            
-            journey.stops = [departureStop, arrivalStop]
-            
-            // Insérer tous les objets dans le contexte
-            modelContext.insert(journey)
-            modelContext.insert(departureStop)
-            modelContext.insert(arrivalStop)
-            modelContext.insert(departureStopInfo)
-            modelContext.insert(arrivalStopInfo)
-            
-            LogManager.debug("Arrêts ajoutés au trajet fictif #\(indexMock)", category: "swift_data")
-            date = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? Date()
-        }
-        
-        saveContext()
-        LogManager.info("5 trajets fictifs créés et sauvegardés avec succès", category: "swift_data")
-    }
-    
-    /// Génère une date de fin aléatoire à partir d'une date de début
-    func generateEndDate(from startDate: Date) -> Date {
-        let calendar = Calendar.current
-        let minInterval: TimeInterval = 30 * 60 // 30 minutes
-        let maxInterval: TimeInterval = 5 * 3600 // 5 heures
-        let randomInterval = TimeInterval.random(in: minInterval...maxInterval)
-        let endDate = calendar.date(byAdding: .second, value: Int(randomInterval), to: startDate)!
-        
-        return endDate
-    }
-    
+
     /// Supprime tous les trajets
     func deleteAllJourneys() {
-        LogManager.warning("Suppression de tous les trajets", category: "swift_data")
-        
         do {
             try modelContext.delete(model: Journey.self)
             saveContext()
-            LogManager.info("Tous les trajets ont été supprimés", category: "swift_data")
         } catch {
             LogManager.error("Échec de la suppression des trajets: \(error.localizedDescription)", category: "swift_data_error")
         }

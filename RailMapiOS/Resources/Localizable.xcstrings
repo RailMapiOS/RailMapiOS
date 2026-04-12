@@ -273,6 +273,9 @@
         }
       }
     },
+    "Aucun compte" : {
+
+    },
     "Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur." : {
 
     },
@@ -444,6 +447,9 @@
 
     },
     "CONDITIONS D'UTILISATION ET POLITIQUE DE CONFIDENTIALITÉ" : {
+
+    },
+    "Connectez-vous avec iCloud pour synchroniser vos trajets" : {
 
     },
     "Connectez-vous pour accéder à votre profil" : {
@@ -822,6 +828,12 @@
 
     },
     "Se connecter" : {
+
+    },
+    "Se connecter avec iCloud" : {
+
+    },
+    "Se déconnecter" : {
 
     },
     "Search" : {
