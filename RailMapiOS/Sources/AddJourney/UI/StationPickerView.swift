@@ -12,32 +12,51 @@ struct StationPickerView: View {
     @EnvironmentObject var dataController: DataController
 
     @ObservedObject var viewModel: StationPickerViewModel
+    @StateObject private var cardDataSource: SearchJourneyDataSource
     @State var departureStation: String?
     @State var arrivalStation: String?
     @State var pickerMode: PickerModeStation = .pickUpDeparture
-    
+
     var onNext: (DateRow) -> Void
-    
+
+    init(viewModel: StationPickerViewModel, onNext: @escaping (DateRow) -> Void) {
+        self.viewModel = viewModel
+        self.onNext = onNext
+        self._cardDataSource = StateObject(
+            wrappedValue: SearchJourneyDataSource(journey: viewModel.pickedJourney.journey)
+        )
+    }
+
     var body: some View {
-        List {
-            ForEach(viewModel.pickedJourney.journey.stopTimes, id: \.stopPoint.id) { stopTime in
-                StationRow(
-                    stopTime: stopTime,
-                    cityName: viewModel.cityNames[stopTime.stopPoint.id],
-                    isSelected: isStationSelected(stopTime),
-                    isSelectable: isStationSelectable(stopTime)
-                )
-                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.stationRow(id: stopTime.stopPoint.id))
-                .onTapGesture {
-                    if isStationSelectable(stopTime) {
-                        toggleStationSelection(stopTime)
+        VStack(spacing: 0) {
+            // Fixed journey card at top
+            JourneyRowView(dataSource: cardDataSource)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
+
+            // Station list
+            List {
+                ForEach(viewModel.pickedJourney.journey.stopTimes, id: \.stopPoint.id) { stopTime in
+                    Button {
+                        if isStationSelectable(stopTime) {
+                            toggleStationSelection(stopTime)
+                        }
+                    } label: {
+                        StationRow(
+                            stopTime: stopTime,
+                            cityName: viewModel.cityNames[stopTime.stopPoint.id],
+                            isSelected: isStationSelected(stopTime),
+                            isSelectable: isStationSelectable(stopTime)
+                        )
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.stationRow(id: stopTime.stopPoint.id))
                 }
             }
+            .accessibilityIdentifier(AccessibilityID.StationPickerView.list)
+            .listStyle(.plain)
         }
-        .accessibilityIdentifier(AccessibilityID.StationPickerView.list)
-        .listStyle(.plain)
-        .navigationTitle(Text(pickerMode == .pickUpDeparture ? "Pick a starting station" : "Pick an ending station"))
+        .navigationTitle(pickerMode == .pickUpDeparture ? "Gare de départ" : "Gare d'arrivée")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 if departureStation != nil && arrivalStation != nil {
@@ -53,11 +72,11 @@ struct StationPickerView: View {
             }
         }
     }
-    
+
     private func isStationSelected(_ stopTime: StopTime) -> Bool {
         stopTime.stopPoint.id == departureStation || stopTime.stopPoint.id == arrivalStation
     }
-    
+
     private func isStationSelectable(_ stopTime: StopTime) -> Bool {
         switch pickerMode {
         case .pickUpDeparture:
@@ -70,10 +89,10 @@ struct StationPickerView: View {
             return currentIdx > departureIdx && stopTime.dropOffAllowed
         }
     }
-    
+
     private func toggleStationSelection(_ stopTime: StopTime) {
         let stopID = stopTime.stopPoint.id
-        
+
         switch pickerMode {
         case .pickUpDeparture:
             if departureStation == stopID {
@@ -84,7 +103,7 @@ struct StationPickerView: View {
                 departureStation = stopID
                 pickerMode = .dropOffArrival
             }
-            
+
         case .dropOffArrival:
             if arrivalStation == stopID {
                 arrivalStation = nil
@@ -92,6 +111,12 @@ struct StationPickerView: View {
                 arrivalStation = stopID
             }
         }
+
+        // Update card to reflect selected stations
+        cardDataSource.updateStations(
+            departureStationID: departureStation,
+            arrivalStationID: arrivalStation
+        )
     }
 }
 
@@ -106,7 +131,9 @@ struct StationRow: View {
     let cityName: String?
     let isSelected: Bool
     let isSelectable: Bool
-    
+
+    private static let formatter = DateFormatterService()
+
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -119,25 +146,19 @@ struct StationRow: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    Text(stopTime.arrivalTime)
+                    Text(Self.formatter.formattedHour(from: stopTime.departureTime))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.time(id: stopTime.stopPoint.id))
                 }
             }
             Spacer()
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.blue)
-                    .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.checkmark(id: stopTime.stopPoint.id))
-            }
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isSelected ? .blue : .secondary.opacity(0.4))
+                .font(.title3)
+                .accessibilityIdentifier(AccessibilityID.StationPickerView.StationRow.checkmark(id: stopTime.stopPoint.id))
         }
         .opacity(isSelectable ? 1 : 0.5)
         .contentShape(Rectangle())
     }
-}
-
-enum PickerMode {
-    case pickUpDeparture
-    case dropOffArrival
 }

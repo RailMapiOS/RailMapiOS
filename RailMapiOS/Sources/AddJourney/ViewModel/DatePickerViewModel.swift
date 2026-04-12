@@ -12,20 +12,16 @@ class DatePickerViewModel: ObservableObject {
 
     init(dateRows: [DateRow]) {
         self.dateRows = dateRows
-//        self.dateRows = dateRows.map { row in
-//            var mutableRow = row
-//            mutableRow.company = self.resolvedCompany(from: row.journey.stopTimes.first!.stopPoint.id)
-//            print("Company: \(mutableRow.company)")
-//            return mutableRow
-//        }
     }
-    
-    private func resolvedCompany(from stopPoint: String) -> String? {
-        let parts = stopPoint.components(separatedBy: " ")
-        if parts.count > 1 {
-            return parts[1].components(separatedBy: "-").first
+
+    /// Groups date rows by journey, preserving the original VehicleJourney reference.
+    var groupedByJourney: [(journey: VehicleJourney, dates: [DateRow])] {
+        let grouped = Dictionary(grouping: dateRows) { $0.journeyId }
+        return grouped.compactMap { (_, rows) -> (VehicleJourney, [DateRow])? in
+            guard let first = rows.first else { return nil }
+            return (first.journey, rows.sorted { $0.date < $1.date })
         }
-        return nil
+        .sorted { ($0.dates.first?.date ?? .distantFuture) < ($1.dates.first?.date ?? .distantFuture) }
     }
 }
 
@@ -45,20 +41,20 @@ struct DateRow: Identifiable, Hashable {
         }
         return nil
     }
-   
+
     var formattedDate: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "d MMM"
         dateFormatter.locale = Locale.current
         return dateFormatter.string(from: date)
     }
-    
+
     static func == (lhs: DateRow, rhs: DateRow) -> Bool {
         return lhs.id == rhs.id
             && lhs.journeyId == rhs.journeyId
             && lhs.date == rhs.date
     }
-        
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(journeyId)

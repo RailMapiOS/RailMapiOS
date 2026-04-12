@@ -18,12 +18,9 @@ class DataController: ObservableObject {
     private var mapSettings: MapSettings?
     
     init() {
-        LogManager.info("Initialisation du DataController avec SwiftData", category: "swift_data")
-        
         do {
-            modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self, CoordinatesSD.self)
+            modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self)
             modelContext = ModelContext(modelContainer)
-            LogManager.info("SwiftData initialisé avec succès", category: "swift_data")
         } catch {
             LogManager.error("Échec de l'initialisation de SwiftData: \(error.localizedDescription)", category: "swift_data_error")
             fatalError("Impossible d'initialiser SwiftData: \(error)")
@@ -34,22 +31,22 @@ class DataController: ObservableObject {
     
     /// Connecte les paramètres de carte au contrôleur de données
     func connectMapSettings(_ mapSettings: MapSettings) {
-        LogManager.debug("Connexion des paramètres de carte au DataController", category: "swift_data")
         self.mapSettings = mapSettings
+        mapSettings.onShapeResolved = { [weak self] journey, coordinates, source in
+            journey.setRouteShape(coordinates: coordinates, source: source)
+            self?.saveContext()
+        }
         updateMapSettings()
     }
     
     /// Charge tous les trajets depuis SwiftData
     func loadJourneys() {
-        LogManager.info("Chargement des trajets depuis SwiftData", category: "swift_data")
-        
         let descriptor = FetchDescriptor<Journey>(
             sortBy: [SortDescriptor(\.startDate, order: .forward)]
         )
         
         do {
             journeys = try modelContext.fetch(descriptor)
-            LogManager.info("\(journeys.count) trajets chargés avec succès", category: "swift_data")
             updateMapSettings()
         } catch {
             LogManager.error("Échec du chargement des trajets: \(error.localizedDescription)", category: "swift_data_error")
@@ -58,12 +55,7 @@ class DataController: ObservableObject {
     
     /// Met à jour les paramètres de carte avec les trajets actuels
     private func updateMapSettings() {
-        guard let mapSettings = mapSettings else {
-            LogManager.warning("Tentative de mise à jour des paramètres de carte sans connexion établie", category: "swift_data")
-            return
-        }
-        
-        LogManager.debug("Mise à jour des paramètres de carte avec \(journeys.count) trajets", category: "swift_data")
+        guard let mapSettings = mapSettings else { return }
         mapSettings.updateJourneys(from: self.journeys)
     }
     
@@ -71,7 +63,6 @@ class DataController: ObservableObject {
     func saveContext() {
         do {
             try modelContext.save()
-            LogManager.info("Données sauvegardées dans SwiftData", category: "swift_data")
             loadJourneys()
         } catch {
             LogManager.error("Échec de la sauvegarde des données: \(error.localizedDescription)", category: "swift_data_error")
@@ -80,8 +71,6 @@ class DataController: ObservableObject {
     
     /// Sauvegarde un nouveau trajet dans SwiftData
     func saveJourney(newJourney: NewJourneyModel) {
-        LogManager.info("Sauvegarde d'un nouveau trajet: \(newJourney.headsign)", category: "swift_data")
-        
         let journey = Journey()
         journey.id = UUID()
         journey.startDate = newJourney.startDate
@@ -92,7 +81,6 @@ class DataController: ObservableObject {
         journey.archived = false
         journey.stops = []
         
-        LogManager.debug("Création de \(newJourney.stops.count) arrêts pour le trajet", category: "swift_data")
         
         for newStop in newJourney.stops {
             let stop = Stop()
@@ -115,7 +103,6 @@ class DataController: ObservableObject {
                 
                 stop.stopinfo = stopInfo
                 modelContext.insert(stopInfo)
-                LogManager.debug("Arrêt créé: \(newStopInfo.label)", category: "swift_data")
             }
             
             journey.stops?.append(stop)
@@ -212,7 +199,6 @@ class DataController: ObservableObject {
         let randomInterval = TimeInterval.random(in: minInterval...maxInterval)
         let endDate = calendar.date(byAdding: .second, value: Int(randomInterval), to: startDate)!
         
-        LogManager.debug("Date de fin générée: \(endDate) (intervalle: \(Int(randomInterval/60)) minutes)", category: "swift_data")
         return endDate
     }
     

@@ -40,15 +40,29 @@ class DateFormatterService: DateFormatterServiceProtocol {
     }
     
     func formattedHour(from dateString: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HHmmss"
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        
-        if let date = formatter.date(from: dateString) {
-            return dateFormatter.string(from: date)
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "HH:mm"
+
+        // Try multiple input formats
+        let inputFormats = ["HHmmss", "HH:mm:ss", "HH:mm"]
+        for format in inputFormats {
+            let parser = DateFormatter()
+            parser.dateFormat = format
+            if let date = parser.date(from: dateString) {
+                return outputFormatter.string(from: date)
+            }
         }
-        return "Erreur, mauvais format de date"
+
+        // Last resort: if it looks like "083000", try stripping and reformatting
+        let stripped = dateString.replacingOccurrences(of: ":", with: "")
+        if stripped.count >= 4 {
+            let hh = stripped.prefix(2)
+            let mm = stripped.dropFirst(2).prefix(2)
+            return "\(hh):\(mm)"
+        }
+
+        LogManager.warning("Unrecognized time format: '\(dateString)'", category: "formatting")
+        return dateString
     }
 }
 

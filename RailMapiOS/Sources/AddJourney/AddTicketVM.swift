@@ -34,11 +34,13 @@ final class AddTicketVM: ObservableObject {
     }
     
     // MARK: - API
-    /// Récupère les voyages en véhicule depuis une API en fonction du `headsign` spécifié.
-    /// - Parameter headsign: Le signe de tête du voyage à rechercher.
-    func fetchHeadsignAddTicket(headsign: String) async {
+    /// Fetches vehicle journeys from the API for the given headsign and data source.
+    /// - Parameters:
+    ///   - headsign: The trip headsign to search for.
+    ///   - source: The data source identifier (e.g. "sncf-ter", "sncf-tgv"). Defaults to "sncf-ter".
+    func fetchHeadsignAddTicket(headsign: String, source: String = "sncf-ter") async {
         do {
-            vehicleJourneys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign)
+            vehicleJourneys = try await vehicleJourneyService.fetchVehicleJourneys(headsign: headsign, source: source)
         } catch {
             LogManager.error("Error: \(error)")
         }

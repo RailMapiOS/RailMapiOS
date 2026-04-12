@@ -12,7 +12,6 @@ struct RailMapiOSApp: App {
                 .modelContainer(dataController.modelContainer)
                 .environmentObject(dataController)
                 .environmentObject(router)
-                .preferredColorScheme(.light)
         }
     }
 }

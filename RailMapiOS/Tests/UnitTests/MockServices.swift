@@ -9,18 +9,26 @@ import CoreData
 
 public final class MockVehicleJourneyService: VehicleJourneyServiceProtocol, Sendable {
     public var fetchVehicleJourneysResult: [VehicleJourney] = []
+    public var fetchTrainInfoResult: TrainInfoResult = TrainInfoResult(trainNumber: "", results: [])
     public var passageDaysResult: [String: [Date]] = [:]
     public var shouldThrowError = false
-    
+
     public init() {}
-    
-    public func fetchVehicleJourneys(headsign: String) async throws -> [VehicleJourney] {
+
+    public func fetchVehicleJourneys(headsign: String, source: String) async throws -> [VehicleJourney] {
         if shouldThrowError {
             throw ServiceError.serverError(URLResponse())
         }
         return fetchVehicleJourneysResult
     }
-    
+
+    public func fetchTrainInfo(trainNumber: String, source: String?) async throws -> TrainInfoResult {
+        if shouldThrowError {
+            throw ServiceError.serverError(URLResponse())
+        }
+        return fetchTrainInfoResult
+    }
+
     public func getPassageDays(from vehicleJourneys: [VehicleJourney]) -> [String: [Date]] {
         return passageDaysResult
     }

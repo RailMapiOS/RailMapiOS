@@ -69,6 +69,9 @@
         }
       }
     },
+    "%@" : {
+
+    },
     "%@ %@" : {
       "localizations" : {
         "ca" : {
@@ -121,7 +124,18 @@
         }
       }
     },
+    "%@ → %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@"
+          }
+        }
+      }
+    },
     "•" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -206,9 +220,6 @@
     "6. Contact" : {
 
     },
-    "345 km" : {
-
-    },
     "Add a Journey" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -262,10 +273,10 @@
         }
       }
     },
-    "Ajoutez un trajet aléatoire" : {
+    "Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur." : {
 
     },
-    "Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur." : {
+    "Bientôt disponible" : {
 
     },
     "Bilan Ferroviaire" : {
@@ -326,6 +337,9 @@
         }
       }
     },
+    "Choisir une date" : {
+
+    },
     "Choose a date" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -378,9 +392,6 @@
           }
         }
       }
-    },
-    "choose_a_date" : {
-
     },
     "Close" : {
       "extractionState" : "manual",
@@ -435,19 +446,22 @@
     "CONDITIONS D'UTILISATION ET POLITIQUE DE CONFIDENTIALITÉ" : {
 
     },
+    "Connectez-vous pour accéder à votre profil" : {
+
+    },
     "Departure in " : {
 
     },
     "Dernière mise à jour: 28 février 2025" : {
 
     },
-    "Detected train journey" : {
-
-    },
-    "Direct" : {
-
-    },
     "En téléchargeant et en utilisant l'application RailMap pour iOS, vous acceptez d'être lié par les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre application." : {
+
+    },
+    "Entrez un numéro de train" : {
+
+    },
+    "ex. 6234, 8541..." : {
 
     },
     "Fast and secure access" : {
@@ -544,9 +558,6 @@
         }
       }
     },
-    "Good to know" : {
-
-    },
     "Journey not found" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -595,6 +606,9 @@
       }
     },
     "L'application RailMap est fournie \"telle quelle\" sans garantie d'aucune sorte. Nous ne garantissons pas que l'application sera exempte d'erreurs ou disponible de façon ininterrompue." : {
+
+    },
+    "Mes Amis" : {
 
     },
     "My Journeys" : {
@@ -754,9 +768,6 @@
     "Pour toute question concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante: contact@railmap-app.com" : {
 
     },
-    "Prenons le train vers l'inconnu" : {
-
-    },
     "Profil" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -807,6 +818,12 @@
     "RailMap est fournie pour votre usage personnel et non commercial. Vous vous engagez à ne pas modifier, copier, distribuer, transmettre, afficher, exécuter, reproduire, publier, concéder sous licence, créer des œuvres dérivées, transférer ou vendre des informations obtenues à partir de l'application." : {
 
     },
+    "Rechercher un trajet" : {
+
+    },
+    "Se connecter" : {
+
+    },
     "Search" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -853,9 +870,6 @@
           }
         }
       }
-    },
-    "Settings" : {
-
     },
     "Share your trips with your friends" : {
       "localizations" : {
@@ -1068,9 +1082,6 @@
 
     },
     "Train delayed" : {
-
-    },
-    "Utilisez la barre de recherche ou" : {
 
     },
     "You are signed in to iCloud." : {

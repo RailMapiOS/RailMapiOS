@@ -35,14 +35,11 @@ class MapSettings: ObservableObject {
     @Published var selectedRoute: TrainRoute?
     
     /// Initialise une nouvelle instance de MapSettings
-    public init() {
-        LogManager.info("Initialisation de MapSettings", category: "map")
-    }
+    public init() {}
     
     /// Met à jour les trajets à partir d'une collection FetchedResults
     /// - Parameter journeys: Les trajets à afficher
     public func updateJourneys(from journeys: [Journey]) {
-        LogManager.info("Mise à jour des trajets depuis SwiftData (\(journeys.count) trajets)", category: "map")
         
         // Trier les trajets par date de départ (gestion des optionnels)
         self.journeys = journeys.sorted { journey1, journey2 in
@@ -55,24 +52,24 @@ class MapSettings: ObservableObject {
         generateTrainRoutes()
     }
     
+    /// Callback to persist shape data back to SwiftData after resolution.
+    var onShapeResolved: ((Journey, [CLLocationCoordinate2D], String) -> Void)?
+
     /// Génère les routes de train à partir des trajets
     private func generateTrainRoutes() {
-        LogManager.debug("Génération des routes de train pour \(journeys.count) trajets", category: "map")
-        let previousRouteCount = self.trainRoutes.count
-        
         self.trainRoutes = journeys.compactMap { journey -> TrainRoute? in
             guard let stops = journey.stops, !stops.isEmpty else {
                 LogManager.warning("Aucun arrêt trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
-            
+
             // Trier les arrêts par heure de départ/arrivée
             let sortedStops = stops.sorted { stop1, stop2 in
                 let time1 = stop1.departureTimeUTC ?? stop1.arrivalTimeUTC ?? Date.distantPast
                 let time2 = stop2.departureTimeUTC ?? stop2.arrivalTimeUTC ?? Date.distantPast
                 return time1 < time2
             }
-            
+
             // Trouver les indices de départ et d'arrivée
             guard let departureIndex = sortedStops.firstIndex(where: { $0.status?.lowercased() == "departure" }),
                   let arrivalIndex = sortedStops.lastIndex(where: { $0.status?.lowercased() == "arrival" }),
@@ -80,10 +77,10 @@ class MapSettings: ObservableObject {
                 LogManager.warning("Structure d'arrêts invalide pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
-            
+
             // Extraire les arrêts de la route
             let routeStops = Array(sortedStops[departureIndex...arrivalIndex])
-            
+
             // Convertir en coordonnées
             let coordinates = routeStops.compactMap { stop -> CLLocationCoordinate2D? in
                 guard let stopInfo = stop.stopinfo,
@@ -92,56 +89,119 @@ class MapSettings: ObservableObject {
                     LogManager.warning("Information de géolocalisation manquante pour un arrêt du trajet \(journey.headsign ?? "inconnu")", category: "map")
                     return nil
                 }
-                
+
                 return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             }
-            
+
             guard coordinates.count >= 2 else {
                 LogManager.warning("Pas assez de coordonnées pour créer une route pour le trajet \(journey.headsign ?? "inconnu")", category: "map")
                 return nil
             }
-            
-            LogManager.debug("Route créée pour le trajet \(journey.headsign ?? "inconnu") avec \(coordinates.count) points", category: "map")
-            return TrainRoute(coordinates: coordinates)
+
+            // Use persisted shape if available
+            var route = TrainRoute(coordinates: coordinates, company: journey.company, headsign: journey.headsign)
+            if let cached = journey.getRouteShape(), cached.count > coordinates.count {
+                route.routeCoordinates = cached
+                LogManager.debug("Loaded persisted shape for \(journey.headsign ?? "?")", category: "map")
+            }
+
+            return route
         }
         updateCameraToShowAllRoutes()
-        LogManager.info("\(self.trainRoutes.count) routes générées (précédemment: \(previousRouteCount))", category: "map")
+        resolveRouteGeometries()
     }
-    
+
+    /// Resolves real rail route geometries via the RailMapAPI /train/:trainNumber/shape endpoint,
+    /// falling back to direct signal.eu.org OSRM if the API is unavailable.
+    /// Skips journeys that already have a persisted shape.
+    private func resolveRouteGeometries() {
+        let service = RouteGeometryService.shared
+        for index in trainRoutes.indices {
+            let route = trainRoutes[index]
+            guard route.stopCoordinates.count >= 2 else { continue }
+
+            // Skip if shape is already resolved (loaded from persistence)
+            if route.routeCoordinates.count > route.stopCoordinates.count { continue }
+
+            // Find the matching Journey for persistence
+            let journey = journeys.first { $0.headsign == route.headsign }
+
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                do {
+                    var resolved: [CLLocationCoordinate2D]
+                    var shapeSource = "stops-only"
+
+                    if let headsign = route.headsign {
+                        let result = try await service.fetchRouteShape(
+                            trainNumber: headsign,
+                            source: "sncf-ter"
+                        )
+                        resolved = result.coordinates
+                        shapeSource = result.shapeSource
+                        LogManager.debug("Route shape resolved via \(shapeSource) for \(headsign)", category: "map")
+                    } else {
+                        resolved = try await service.fetchRouteGeometry(for: route.stopCoordinates)
+                        shapeSource = "signal-osrm"
+                    }
+
+                    if resolved.count > route.stopCoordinates.count,
+                       index < self.trainRoutes.count,
+                       self.trainRoutes[index].id == route.id {
+                        self.trainRoutes[index].routeCoordinates = resolved
+
+                        // Persist to SwiftData
+                        if let journey {
+                            self.onShapeResolved?(journey, resolved, shapeSource)
+                        }
+                    }
+                } catch {
+                    do {
+                        let fallback = try await service.fetchRouteGeometry(for: route.stopCoordinates)
+                        if fallback.count > route.stopCoordinates.count,
+                           index < self.trainRoutes.count,
+                           self.trainRoutes[index].id == route.id {
+                            self.trainRoutes[index].routeCoordinates = fallback
+
+                            if let journey {
+                                self.onShapeResolved?(journey, fallback, "signal-osrm")
+                            }
+                        }
+                    } catch {
+                        LogManager.warning("Route geometry fetch failed: \(error.localizedDescription)", category: "map")
+                    }
+                }
+            }
+        }
+    }
+
     /// Sélectionne une route spécifique et centre la carte sur celle-ci
     func selectRoute(_ route: TrainRoute?) {
         if let route = route {
-            LogManager.info("Sélection de la route: \(route.id)", category: "map")
             selectedRoute = route
-            
-            if !route.coordinates.isEmpty {
-                LogManager.debug("Mise à jour de la position de la caméra pour la route sélectionnée", category: "map")
+            if !route.stopCoordinates.isEmpty {
                 withAnimation(.easeInOut(duration: 1.5)) {
                     cameraPosition = .region(MKCoordinateRegion(
-                        coordinates: route.coordinates,
+                        coordinates: route.stopCoordinates,
                         padding: 250
                     ))
                 }
             }
         } else {
-            LogManager.info("Désélection de la route", category: "map")
             selectedRoute = nil
             updateCameraToShowAllRoutes()
         }
     }
-    
+
     func clearRouteSelection() {
-        LogManager.info("Désélection de la route active", category: "map")
         selectedRoute = nil
         updateCameraToShowAllRoutes()
     }
-    
+
     /// Met à jour la position de la caméra pour montrer toutes les routes
     func updateCameraToShowAllRoutes() {
         guard !trainRoutes.isEmpty else { return }
-        
-        LogManager.debug("Mise à jour de la position de la caméra pour montrer toutes les routes", category: "map")
-        let allCoordinates = trainRoutes.flatMap { $0.coordinates }
+        let allCoordinates = trainRoutes.flatMap { $0.stopCoordinates }
         
         guard !allCoordinates.isEmpty else { return }
         
@@ -159,17 +219,39 @@ class MapSettings: ObservableObject {
 /// Cette structure contient les coordonnées géographiques qui définissent
 /// le tracé d'un trajet ferroviaire sur la carte.
 public struct TrainRoute: Identifiable, Equatable {
-    
-    /// Identifiant unique de la route
     public let id = UUID()
-    
-    /// Coordonnées géographiques qui composent la route
-    let coordinates: [CLLocationCoordinate2D]
-    
+    /// Stop coordinates (for annotations)
+    let stopCoordinates: [CLLocationCoordinate2D]
+    /// Detailed rail track coordinates (resolved via OSRM/GTFS shapes, or same as stopCoordinates)
+    var routeCoordinates: [CLLocationCoordinate2D]
+    let company: String?
+    /// Train number / headsign, used to query RailMapAPI for exact route shape
+    let headsign: String?
+
+    init(coordinates: [CLLocationCoordinate2D], company: String? = nil, headsign: String? = nil) {
+        self.stopCoordinates = coordinates
+        self.routeCoordinates = coordinates
+        self.company = company
+        self.headsign = headsign
+    }
+
+    var routeColor: Color {
+        guard let company = company?.lowercased() else { return .blue }
+        switch company {
+        case "sncf": return .blue
+        case "ter": return .green
+        case "eurostar": return .yellow
+        case "db", "deutsche bahn": return .red
+        case "ouigo": return .pink
+        case "thalys": return .purple
+        default: return .blue
+        }
+    }
+
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         return lhs.id == rhs.id &&
-        lhs.coordinates.first == rhs.coordinates.first &&
-        lhs.coordinates.last == rhs.coordinates.last
+        lhs.stopCoordinates.first == rhs.stopCoordinates.first &&
+        lhs.stopCoordinates.last == rhs.stopCoordinates.last
     }
 }
 

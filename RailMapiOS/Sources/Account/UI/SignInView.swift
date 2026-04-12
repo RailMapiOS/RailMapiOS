@@ -105,20 +105,18 @@ struct SignInView: View {
                         .font(.headline)
                         .foregroundColor(.green)
                 } else {
-                    Button(action: {
+                    Button {
                         Task {
                             await viewModel.requestPermissionAndSignIn()
                         }
-                    }) {
+                    } label: {
                         Text("Sign in to iCloud")
                             .fontWeight(.bold)
                             .frame(height: 50)
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 30)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.horizontal, 30)
                 }
                 
                 TermsAndPrivacyTextView()

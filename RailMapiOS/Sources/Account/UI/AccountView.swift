@@ -49,21 +49,11 @@ struct AccountView: View {
                     Button {
                         print("setting")
                     } label: {
-                        RoundedRectangle(cornerRadius: 100)
-                            .stroke()
-                            .frame(width: 90, height: 25)
-                            .overlay(
-                                HStack {
-                                    Image(systemName: "gear")
-                                        .font(.caption)
-                                    Text("Settings")
-                                        .font(.caption)
-                                }
-                                    .foregroundStyle(.gray)
-                            )
-                            .foregroundStyle(.gray)
-                        
+                        Label("Settings", systemImage: "gear")
+                            .font(.caption)
                     }
+                    .buttonStyle(.bordered)
+                    .tint(.secondary)
                     
                 }
                 .padding(.horizontal)
