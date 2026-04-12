@@ -5,6 +5,7 @@
 //  TCA Dependency wrapping DataController for SwiftData operations.
 //
 
+import CoreLocation
 import Dependencies
 import DependenciesMacros
 import Foundation
@@ -16,50 +17,36 @@ struct DataControllerClient {
     var loadJourneys: @Sendable () async -> [Journey] = { [] }
     var deleteAllJourneys: @Sendable () async -> Void
     var saveRouteShape: @Sendable (_ journey: Journey, _ coordinates: [CLLocationCoordinate2D], _ source: String) async -> Void
-    var modelContainer: @Sendable () -> ModelContainer? = { nil }
+    var getModelContainer: @Sendable () -> ModelContainer? = { nil }
 }
 
-import CoreLocation
-
 extension DataControllerClient: DependencyKey {
-    static let liveValue: Self = {
-        // DataController is @MainActor, so we capture it lazily
-        let getController: @Sendable () -> DataController = {
-            // This will be set from the app entry point
-            DataControllerClient._sharedController!
-        }
+    /// Shared reference set at app launch, before any dependency is resolved.
+    nonisolated(unsafe) static var shared: DataController?
 
-        return Self(
-            saveJourney: { newJourney in
-                await MainActor.run {
-                    getController().saveJourney(newJourney: newJourney)
-                }
-            },
-            loadJourneys: {
-                await MainActor.run {
-                    getController().loadJourneys()
-                    return getController().journeys
-                }
-            },
-            deleteAllJourneys: {
-                await MainActor.run {
-                    getController().deleteAllJourneys()
-                }
-            },
-            saveRouteShape: { journey, coordinates, source in
-                await MainActor.run {
-                    journey.setRouteShape(coordinates: coordinates, source: source)
-                    getController().saveContext()
-                }
-            },
-            modelContainer: {
-                getController().modelContainer
+    static let liveValue = Self(
+        saveJourney: { newJourney in
+            await MainActor.run { shared?.saveJourney(newJourney: newJourney) }
+        },
+        loadJourneys: {
+            await MainActor.run {
+                shared?.loadJourneys()
+                return shared?.journeys ?? []
             }
-        )
-    }()
-
-    /// Set by the app entry point to provide access to the shared DataController.
-    @MainActor static var _sharedController: DataController?
+        },
+        deleteAllJourneys: {
+            await MainActor.run { shared?.deleteAllJourneys() }
+        },
+        saveRouteShape: { journey, coordinates, source in
+            await MainActor.run {
+                journey.setRouteShape(coordinates: coordinates, source: source)
+                shared?.saveContext()
+            }
+        },
+        getModelContainer: {
+            shared?.modelContainer
+        }
+    )
 }
 
 extension DependencyValues {
