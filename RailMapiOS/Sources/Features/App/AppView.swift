@@ -21,8 +21,8 @@ struct AppView: View {
                 iPadLayout
             }
         }
-        .onChange(of: journeys) { _, newJourneys in
-            store.send(.journeysLoaded(newJourneys))
+        .onChange(of: journeys.compactMap(\.id)) { _, _ in
+            store.send(.journeysLoaded(journeys))
         }
         .onAppear {
             store.send(.journeysLoaded(journeys))
@@ -46,7 +46,7 @@ struct AppView: View {
                         )
                         .presentationBackgroundInteraction(.enabled(upThrough: .large))
                         .presentationBackground(.ultraThinMaterial)
-                        .presentationCornerRadius(20)
+                        .presentationCornerRadius(nil)
                         .interactiveDismissDisabled()
                 }
         }

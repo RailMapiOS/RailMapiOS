@@ -119,8 +119,16 @@ struct BottomSheetView: View {
                 List(store.filteredJourneys, id: \.id) { journey in
                     JourneyRowView(journey: journey)
                         .onTapGesture { store.send(.journeyTapped(journey)) }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.send(.journeyDeleted(journey))
+                            } label: {
+                                Label("Supprimer", systemImage: "trash")
+                            }
+                        }
                 }
                 .listStyle(.plain)
+                .scrollIndicators(.visible)
             }
         }
         .frame(maxWidth: .infinity)

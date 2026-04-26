@@ -32,6 +32,8 @@ struct BottomSheetFeature {
         var isSearchPresented: Bool = false
         var isSearchingAPI: Bool = false
         var searchResults: [VehicleJourney] = []
+        /// Tracks the last searchText that triggered an auto-navigation, to avoid re-navigating on back.
+        var lastNavigatedSearchText: String = ""
 
         // Journeys
         var allJourneys: [Journey] = []
@@ -80,6 +82,7 @@ struct BottomSheetFeature {
         // Journeys
         case journeysUpdated([Journey])
         case journeyTapped(Journey)
+        case journeyDeleted(Journey)
 
         // Sheet
         case sheetSizeChanged(PresentationDetent)
@@ -98,6 +101,7 @@ struct BottomSheetFeature {
     @Dependency(\.vehicleJourneyClient) var vehicleJourneyClient
     @Dependency(\.journeyFilterClient) var journeyFilter
     @Dependency(\.userStorageClient) var userStorage
+    @Dependency(\.dataControllerClient) var dataController
 
     private enum CancelID { case search }
 
@@ -124,6 +128,10 @@ struct BottomSheetFeature {
             // MARK: Search
 
             case .searchTextChanged(let text):
+                // Different text → allow re-navigation for the new query
+                if text != state.searchText {
+                    state.lastNavigatedSearchText = ""
+                }
                 state.searchText = text
                 state.filteredJourneys = journeyFilter.filterJourneys(state.allJourneys, text)
 
@@ -148,6 +156,9 @@ struct BottomSheetFeature {
                 state.isSearchingAPI = false
                 state.searchResults = results
                 guard let journey = results.first else { return .none }
+                // Avoid re-navigating if user already saw this result and went back
+                guard state.lastNavigatedSearchText != state.searchText else { return .none }
+                state.lastNavigatedSearchText = state.searchText
                 state.path.append(.stationPicker(StationPickerFeature.State(journey: journey)))
                 return .none
 
@@ -166,6 +177,12 @@ struct BottomSheetFeature {
                 guard let journeyID = journey.id else { return .none }
                 state.path.append(.journeyDetail(JourneyDetailFeature.State(journey: journey)))
                 return .none
+
+            case .journeyDeleted(let journey):
+                guard let journeyID = journey.id else { return .none }
+                return .run { _ in
+                    await dataController.deleteJourney(journeyID)
+                }
 
             // MARK: Sheet
 

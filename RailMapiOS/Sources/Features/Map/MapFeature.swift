@@ -28,20 +28,25 @@ struct MapFeature {
         case journeysUpdated([Journey])
         case selectRoute(TrainRoute?)
         case clearRouteSelection
-        case routeGeometryResolved(routeID: UUID, coordinates: [CLLocationCoordinate2D], source: String, journey: Journey?)
+        case routeGeometryResolved(routeID: UUID, coordinates: [CLLocationCoordinate2D], source: String, journeyID: UUID?)
         case routeGeometryFailed(routeID: UUID)
     }
 
     @Dependency(\.routeGeometryClient) var routeGeometry
     @Dependency(\.dataControllerClient) var dataController
+    @Dependency(\.mapClient) var mapClient
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .journeysUpdated(let journeys):
+                let oldIDs = Set(state.journeys.compactMap(\.id))
+                let newIDs = Set(journeys.compactMap(\.id))
+                let isSameSet = oldIDs == newIDs && !state.trainRoutes.isEmpty
                 state.journeys = journeys
-                state.trainRoutes = Self.generateTrainRoutes(from: journeys)
+                state.trainRoutes = mapClient.generateTrainRoutes(journeys)
                 state.cameraUpdateTrigger += 1
+                guard !isSameSet else { return .none }
                 return resolveGeometries(for: &state)
 
             case .selectRoute(let route):
@@ -54,14 +59,13 @@ struct MapFeature {
                 state.cameraUpdateTrigger += 1
                 return .none
 
-            case .routeGeometryResolved(let routeID, let coordinates, let source, let journey):
+            case .routeGeometryResolved(let routeID, let coordinates, let source, let journeyID):
                 if let index = state.trainRoutes.firstIndex(where: { $0.id == routeID }),
                    coordinates.count > state.trainRoutes[index].stopCoordinates.count {
                     state.trainRoutes[index].routeCoordinates = coordinates
-                    // Persist shape
-                    if let journey {
-                        return .run { [journey, coordinates, source] _ in
-                            await dataController.saveRouteShape(journey, coordinates, source)
+                    if let journeyID {
+                        return .run { _ in
+                            await dataController.saveRouteShape(journeyID, coordinates, source)
                         }
                     }
                 }
@@ -70,35 +74,6 @@ struct MapFeature {
             case .routeGeometryFailed:
                 return .none
             }
-        }
-    }
-
-    // MARK: - Route Generation (pure logic, extracted from MapSettings)
-
-    static func generateTrainRoutes(from journeys: [Journey]) -> [TrainRoute] {
-        journeys.compactMap { journey -> TrainRoute? in
-            guard let stops = journey.stops, !stops.isEmpty else { return nil }
-
-            let sortedStops = stops.sorted { s1, s2 in
-                (s1.departureTimeUTC ?? s1.arrivalTimeUTC ?? .distantPast) < (s2.departureTimeUTC ?? s2.arrivalTimeUTC ?? .distantPast)
-            }
-
-            guard let depIdx = sortedStops.firstIndex(where: { $0.status?.lowercased() == "departure" }),
-                  let arrIdx = sortedStops.lastIndex(where: { $0.status?.lowercased() == "arrival" }),
-                  depIdx <= arrIdx else { return nil }
-
-            let coordinates = Array(sortedStops[depIdx...arrIdx]).compactMap { stop -> CLLocationCoordinate2D? in
-                guard let info = stop.stopinfo, let lat = info.latitude, let lon = info.longitude else { return nil }
-                return CLLocationCoordinate2D(latitude: lat, longitude: lon)
-            }
-
-            guard coordinates.count >= 2 else { return nil }
-
-            var route = TrainRoute(coordinates: coordinates, company: journey.company, headsign: journey.headsign)
-            if let cached = journey.getRouteShape(), cached.count > coordinates.count {
-                route.routeCoordinates = cached
-            }
-            return route
         }
     }
 
@@ -115,24 +90,21 @@ struct MapFeature {
             let routeID = route.id
             let headsign = route.headsign
             let stops = route.stopCoordinates
-            let journey = state.journeys.first { $0.headsign == headsign }
+            let journeyID = state.journeys.first { $0.headsign == headsign }?.id
 
             return .run { send in
                 do {
-                    let resolved: [CLLocationCoordinate2D]
                     if let headsign {
                         let result = try await routeGeometry.fetchRouteShape(headsign, "sncf-ter")
-                        resolved = result.coordinates
-                        await send(.routeGeometryResolved(routeID: routeID, coordinates: resolved, source: result.shapeSource, journey: journey))
+                        await send(.routeGeometryResolved(routeID: routeID, coordinates: result.coordinates, source: result.shapeSource, journeyID: journeyID))
                     } else {
-                        resolved = try await routeGeometry.fetchRouteGeometry(stops)
-                        await send(.routeGeometryResolved(routeID: routeID, coordinates: resolved, source: "signal-osrm", journey: journey))
+                        let resolved = try await routeGeometry.fetchRouteGeometry(stops)
+                        await send(.routeGeometryResolved(routeID: routeID, coordinates: resolved, source: "signal-osrm", journeyID: journeyID))
                     }
                 } catch {
-                    // Fallback to OSRM
                     do {
                         let fallback = try await routeGeometry.fetchRouteGeometry(stops)
-                        await send(.routeGeometryResolved(routeID: routeID, coordinates: fallback, source: "signal-osrm", journey: journey))
+                        await send(.routeGeometryResolved(routeID: routeID, coordinates: fallback, source: "signal-osrm", journeyID: journeyID))
                     } catch {
                         await send(.routeGeometryFailed(routeID: routeID))
                     }
@@ -140,5 +112,4 @@ struct MapFeature {
             }
         })
     }
-
 }

@@ -2,86 +2,60 @@
 //  RouteGeometryService.swift
 //  RailMapiOS
 //
-//  Created by Jérémie Patot on 07/03/2026.
+//  Pure business logic service for train route shape fetching.
+//  Cascades through GTFS shapes → signal.eu.org OSRM → Overpass → stop-to-stop.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 
-/// Fetches train route shapes from RailMapAPI.
-/// Uses the `/train/:trainNumber/shape` endpoint which cascades through:
-/// GTFS shapes.txt → signal.eu.org OSRM → Overpass API → stop-to-stop fallback.
-actor RouteGeometryService {
-    static let shared = RouteGeometryService()
+// MARK: - Result
 
-    private let baseURL: String
+struct TrainShapeResult: Sendable {
+    let coordinates: [CLLocationCoordinate2D]
+    /// "gtfs", "signal-osrm", "overpass", or "stops-only"
+    let shapeSource: String
+}
+
+// MARK: - Service
+
+struct RouteGeometryService: Sendable {
+    let baseURL: String
 
     init(baseURL: String = "http://127.0.0.1:8080") {
         self.baseURL = baseURL
     }
 
     /// Fetches the route shape for a specific train number from RailMapAPI.
-    /// The API resolves the best available shape (GTFS, OSRM, Overpass, or stop-to-stop).
-    ///
-    /// - Parameters:
-    ///   - trainNumber: The train number (trip_short_name in GTFS), e.g. "6234"
-    ///   - source: The data source identifier, e.g. "sncf-tgv", "sncf-ter"
-    /// - Returns: An array of coordinates forming the train route polyline.
-    func fetchRouteShape(
-        trainNumber: String,
-        source: String
-    ) async throws -> TrainShapeResult {
+    func fetchRouteShape(trainNumber: String, source: String) async throws -> TrainShapeResult {
         let encodedTrain = trainNumber.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? trainNumber
-        let urlString = "\(baseURL)/train/\(encodedTrain)/shape?source=\(source)"
-
-        guard let url = URL(string: urlString) else {
+        guard let url = URL(string: "\(baseURL)/train/\(encodedTrain)/shape?source=\(source)") else {
             throw ServiceError.invalidURL
         }
-
         let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
-
-        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 {
             throw ServiceError.serverError(response)
         }
-
         let decoded = try JSONDecoder().decode(TrainShapeAPIResponse.self, from: data)
-
         let coordinates = decoded.geojson.coordinates.compactMap { pair -> CLLocationCoordinate2D? in
             guard pair.count >= 2 else { return nil }
             return CLLocationCoordinate2D(latitude: pair[1], longitude: pair[0])
         }
-
-        return TrainShapeResult(
-            coordinates: coordinates,
-            shapeSource: decoded.shapeSource
-        )
+        return TrainShapeResult(coordinates: coordinates, shapeSource: decoded.shapeSource)
     }
 
-    /// Legacy method: fetches route geometry using stop coordinates as waypoints.
-    /// Falls back to this when no train number is available.
+    /// Fallback: fetches route geometry from signal.eu.org OSRM using stop coordinates as waypoints.
     func fetchRouteGeometry(for stops: [CLLocationCoordinate2D]) async throws -> [CLLocationCoordinate2D] {
         guard stops.count >= 2 else { return stops }
-
-        // Call signal.eu.org OSRM directly as fallback
         let waypoints = stops.map { "\($0.longitude),\($0.latitude)" }.joined(separator: ";")
         let urlString = "https://signal.eu.org/osm/eu/route/v1/train/\(waypoints)?overview=full&geometries=geojson"
-
-        guard let url = URL(string: urlString) else {
-            throw ServiceError.invalidURL
-        }
-
+        guard let url = URL(string: urlString) else { throw ServiceError.invalidURL }
         let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
-
-        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 {
             throw ServiceError.serverError(response)
         }
-
         let decoded = try JSONDecoder().decode(OSRMDirectResponse.self, from: data)
-
-        guard decoded.code == "Ok", let route = decoded.routes.first else {
-            return stops
-        }
-
+        guard decoded.code == "Ok", let route = decoded.routes.first else { return stops }
         return route.geometry.coordinates.compactMap { pair -> CLLocationCoordinate2D? in
             guard pair.count >= 2 else { return nil }
             return CLLocationCoordinate2D(latitude: pair[1], longitude: pair[0])
@@ -89,15 +63,7 @@ actor RouteGeometryService {
     }
 }
 
-// MARK: - Result Types
-
-struct TrainShapeResult {
-    let coordinates: [CLLocationCoordinate2D]
-    /// Where the shape came from: "gtfs", "signal-osrm", "overpass", or "stops-only"
-    let shapeSource: String
-}
-
-// MARK: - API Response DTOs
+// MARK: - DTOs (private to file)
 
 private struct TrainShapeAPIResponse: Decodable {
     let trainNumber: String

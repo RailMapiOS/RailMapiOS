@@ -124,16 +124,6 @@
         }
       }
     },
-    "%@ → %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@"
-          }
-        }
-      }
-    },
     "•" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -289,6 +279,7 @@
 
     },
     "Check your device settings and try again" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -462,9 +453,6 @@
 
     },
     "En téléchargeant et en utilisant l'application RailMap pour iOS, vous acceptez d'être lié par les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre application." : {
-
-    },
-    "Entrez un numéro de train" : {
 
     },
     "ex. 6234, 8541..." : {
@@ -665,6 +653,7 @@
       }
     },
     "My Train log" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -717,6 +706,7 @@
 
     },
     "Personalize your experience" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -824,9 +814,6 @@
     "RailMap est fournie pour votre usage personnel et non commercial. Vous vous engagez à ne pas modifier, copier, distribuer, transmettre, afficher, exécuter, reproduire, publier, concéder sous licence, créer des œuvres dérivées, transférer ou vendre des informations obtenues à partir de l'application." : {
 
     },
-    "Rechercher un trajet" : {
-
-    },
     "Se connecter" : {
 
     },
@@ -884,6 +871,7 @@
       }
     },
     "Share your trips with your friends" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -1039,6 +1027,7 @@
       }
     },
     "Sync across all your devices" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -1097,6 +1086,7 @@
 
     },
     "You are signed in to iCloud." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {

@@ -2,7 +2,7 @@
 //  RouteGeometryClient.swift
 //  RailMapiOS
 //
-//  TCA Dependency wrapping RouteGeometryService.
+//  Thin TCA adapter for RouteGeometryService.
 //
 
 import CoreLocation
@@ -18,14 +18,10 @@ struct RouteGeometryClient {
 
 extension RouteGeometryClient: DependencyKey {
     static let liveValue: Self = {
-        let service = RouteGeometryService.shared
+        let service = RouteGeometryService()
         return Self(
-            fetchRouteShape: { trainNumber, source in
-                try await service.fetchRouteShape(trainNumber: trainNumber, source: source)
-            },
-            fetchRouteGeometry: { stops in
-                try await service.fetchRouteGeometry(for: stops)
-            }
+            fetchRouteShape: { try await service.fetchRouteShape(trainNumber: $0, source: $1) },
+            fetchRouteGeometry: { try await service.fetchRouteGeometry(for: $0) }
         )
     }()
 }

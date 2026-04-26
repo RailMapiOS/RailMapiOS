@@ -5,22 +5,24 @@ import SwiftUI
 struct RailMapiOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
-    // TCA store is the single source of truth
+    /// TCA store: single source of truth.
     static let store = Store(initialState: AppFeature.State()) { AppFeature() }
 
-    // DataController still needed for SwiftData ModelContainer + legacy views during migration
-    @StateObject private var dataController = DataController()
+    /// SwiftData service shared across the app.
+    @State private var dataService: DataService = {
+        do {
+            let service = try DataService()
+            DataControllerClient.shared = service
+            return service
+        } catch {
+            fatalError("Failed to initialize SwiftData: \(error)")
+        }
+    }()
 
     var body: some Scene {
         WindowGroup {
             AppView(store: Self.store)
-                .modelContainer(dataController.modelContainer)
-                .environmentObject(dataController) // kept for legacy views not yet migrated
-                .onAppear {
-                    DataControllerClient.shared = dataController
-                    // DataController shared ref for TCA dependencies
-                    // Old MapSettings is no longer used — MapFeature handles routes now
-                }
+                .modelContainer(dataService.modelContainer)
         }
     }
 }

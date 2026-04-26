@@ -32,6 +32,8 @@ struct AppFeature {
         case sheetSizeChanged(PresentationDetent)
     }
 
+    @Dependency(\.mapClient) var mapClient
+
     var body: some ReducerOf<Self> {
         Scope(state: \.map, action: \.map) { MapFeature() }
         Scope(state: \.bottomSheet, action: \.bottomSheet) { BottomSheetFeature() }
@@ -59,26 +61,14 @@ struct AppFeature {
             // MARK: - Journey selection → Map route selection
 
             case .bottomSheet(.journeyTapped(let journey)):
-                if let matchingRoute = state.map.trainRoutes.first(where: { route in
-                    guard let stops = journey.stops,
-                          let firstStop = stops.first(where: { $0.status?.lowercased() == "departure" }),
-                          let lastStop = stops.last(where: { $0.status?.lowercased() == "arrival" }),
-                          let firstInfo = firstStop.stopinfo,
-                          let lastInfo = lastStop.stopinfo,
-                          let firstLat = firstInfo.latitude, let firstLon = firstInfo.longitude,
-                          let lastLat = lastInfo.latitude, let lastLon = lastInfo.longitude else { return false }
-
-                    let firstCoord = CLLocationCoordinate2D(latitude: firstLat, longitude: firstLon)
-                    let lastCoord = CLLocationCoordinate2D(latitude: lastLat, longitude: lastLon)
-                    return route.stopCoordinates.first == firstCoord && route.stopCoordinates.last == lastCoord
-                }) {
+                if let matchingRoute = mapClient.findMatchingRoute(journey, state.map.trainRoutes) {
                     return .send(.map(.selectRoute(matchingRoute)))
                 }
                 return .none
 
-            // MARK: - Clear route selection on nav back
+            // MARK: - Clear route selection on nav back (popFrom or pop via swipe)
 
-            case .bottomSheet(.path(.element(_, action: .journeyDetail(.delegate(.dismissed))))):
+            case .bottomSheet(.path(.popFrom)):
                 return .send(.map(.clearRouteSelection))
 
             // MARK: - Passthrough
