@@ -20,7 +20,7 @@ class DateExtTests: XCTestCase {
         let formattedTime = now.formattedTime()
         
         // Assert
-        XCTAssertEqual(formattedTime, expectedTime, "La méthode formattedTime devrait retourner l'heure au format HH:mm.")
+        XCTAssertEqual(formattedTime, expectedTime, "formattedTime should return the time in HH:mm format.")
     }
     
     func testFormattedTime_withCustomFormat() {
@@ -36,7 +36,7 @@ class DateExtTests: XCTestCase {
         formatter.dateFormat = "hh:mm a"
         let expectedCustomTime = formatter.string(from: now)
         
-        XCTAssertEqual(formattedTime, expectedCustomTime, "La méthode formattedTime devrait retourner l'heure au format personnalisé.")
+        XCTAssertEqual(formattedTime, expectedCustomTime, "formattedTime should return the time using the custom format.")
     }
 
     func testTimeRemainingDescription_withFutureDate() {
@@ -58,7 +58,9 @@ class DateExtTests: XCTestCase {
         let timeRemaining = pastDate.timeRemainingDescription()
         
         // Assert
-        XCTAssertEqual(timeRemaining, "Déjà parti", "La méthode timeRemainingDescription devrait retourner 'Déjà parti' pour une date passée.")
+        // Looked up against the main bundle's String Catalog. In test (no bundle
+        // override), the lookup returns the source-language English literal.
+        XCTAssertEqual(timeRemaining, "Already departed", "timeRemainingDescription should return the 'Already departed' string for a past date.")
     }
 
     func testDuration_toFutureDate() {
@@ -70,7 +72,7 @@ class DateExtTests: XCTestCase {
         let duration = startDate.duration(to: endDate)
         
         // Assert
-        XCTAssertEqual(duration, "01h01", "La durée entre les dates devrait être '01h01'.")
+        XCTAssertEqual(duration, "01h01", "Duration between the dates should be '01h01'.")
     }
     
     func testDuration_toPastDate() {
@@ -82,7 +84,7 @@ class DateExtTests: XCTestCase {
         let duration = startDate.duration(to: endDate)
         
         // Assert
-        XCTAssertEqual(duration, "00h00", "La durée entre les dates passées devrait être '00h00'.")
+        XCTAssertEqual(duration, "00h00", "Duration between past dates should clamp to '00h00'.")
     }
 
     func testFormattedTimeRemaining() {
@@ -93,6 +95,6 @@ class DateExtTests: XCTestCase {
         let formattedTimeRemaining = timeInterval.formattedTimeRemaining()
         
         // Assert
-        XCTAssertEqual(formattedTimeRemaining, "1 h 1 min", "La méthode formattedTimeRemaining devrait retourner '1 h 1 min'.")
+        XCTAssertEqual(formattedTimeRemaining, "1 h 1 min", "formattedTimeRemaining should return '1 h 1 min'.")
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct User: Codable {
+public struct User: Codable, Equatable {
     var userId: String
     var firstName: String
     var lastName: String
@@ -19,11 +19,19 @@ public struct User: Codable {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
-        
+
         if let image = profileImage, let imageData = image.jpegData(compressionQuality: 0.8) {
             self.profileImage = imageData
         } else {
             self.profileImage = nil
         }
+    }
+
+    public init(userId: String, firstName: String, lastName: String, email: String?, profileImageData: Data?) {
+        self.userId = userId
+        self.firstName = firstName
+        self.lastName = lastName
+        self.email = email
+        self.profileImage = profileImageData
     }
 }

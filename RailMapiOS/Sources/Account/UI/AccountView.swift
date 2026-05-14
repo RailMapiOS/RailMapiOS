@@ -2,79 +2,69 @@
 //  AccountView.swift
 //  RailMapiOS
 //
-//  Created by Jérémie Patot on 15/02/2025.
-//
 
+import ComposableArchitecture
 import SwiftUI
 
 struct AccountView: View {
-    @ObservedObject var userStorage: UserStorage
+    let store: StoreOf<AccountFeature>
+    @Environment(\.dismiss) var dismiss
+
     var body: some View {
-        VStack {
-            
-            if let user = userStorage.currentUser  {
-                VStack (alignment: .leading) {
-                    //MARK: Header
-                    HStack(alignment: .center) {
-                        if let data = user.profileImage ,
-                           let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 40)
-                                .clipShape(.circle)
-                                .padding(.horizontal, 10)
-                        } else {
-                            Image(systemName: "person.crop.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 40)
-                                .foregroundStyle(.green)
-                                .padding(.horizontal, 10)
-                        }
-                        
-                        VStack (alignment: .leading) {
-                            Text("\(user.firstName) \(user.lastName)")
-                                .fontWeight(.medium)
-                                .font(.title2)
-                            Text("My Train log")
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                        }
-                        Spacer()
+        NavigationStack {
+            VStack(spacing: 24) {
+                if let user = store.user {
+                    // Profile image
+                    if let data = user.profileImage, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .clipShape(.circle)
+                    } else {
+                        Image(systemName: "person.crop.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .foregroundStyle(.secondary)
                     }
-                    .padding(.top)
-                    
-                    
-                    Button {
-                        print("setting")
+
+                    Text("\(user.firstName) \(user.lastName)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    if let email = user.email {
+                        Text(email)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Button(role: .destructive) {
+                        store.send(.signOutTapped)
+                        dismiss()
                     } label: {
-                        RoundedRectangle(cornerRadius: 100)
-                            .stroke()
-                            .frame(width: 90, height: 25)
-                            .overlay(
-                                HStack {
-                                    Image(systemName: "gear")
-                                        .font(.caption)
-                                    Text("Settings")
-                                        .font(.caption)
-                                }
-                                    .foregroundStyle(.gray)
-                            )
-                            .foregroundStyle(.gray)
-                        
+                        Text("Sign out")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(.red.opacity(0.1))
+                            .foregroundStyle(.red)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    
+                    .padding(.horizontal, 32)
+                } else {
+                    Text("No account")
+                        .foregroundStyle(.secondary)
                 }
-                .padding(.horizontal)
-                
-                
-                Divider()
-                ScrollView {
-                    TrainTravelSummaryCard(numberOfTrips: 42, totalDistance: 1245.67, timeSpentOnTrains: "2j 4h 32m", numberOfStationsVisited: 68)
-                    //.preferredColorScheme(.dark)
+            }
+            .padding(.top, 40)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
                 }
             }
         }
+        .onAppear { store.send(.onAppear) }
     }
 }

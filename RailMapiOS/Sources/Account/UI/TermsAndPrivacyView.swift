@@ -2,99 +2,86 @@
 //  TermsAndPrivacyView.swift
 //  RailMapiOS
 //
-//  Created by Jérémie Patot on 28/02/2025.
+//  Legal copy. Strings flow through the catalog so each language gets a
+//  proper localized version. The English text here is the source of truth;
+//  fr/en-GB/es/ca/de/it translations are filled in via Xcode's catalog editor.
 //
-
 
 import SwiftUI
 
 struct TermsAndPrivacyView: View {
     @Environment(\.presentationMode) var presentationMode
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("CONDITIONS D'UTILISATION ET POLITIQUE DE CONFIDENTIALITÉ")
+                    Text("TERMS OF USE AND PRIVACY POLICY")
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(.bottom, 10)
-                    
+
                     Group {
-                        Text("CONDITIONS D'UTILISATION")
+                        Text("TERMS OF USE")
                             .font(.headline)
                             .fontWeight(.bold)
-                        
-                        Text("1. Acceptation des conditions")
+
+                        Text("1. Acceptance of terms")
                             .fontWeight(.bold)
-                        Text("En téléchargeant et en utilisant l'application RailMap pour iOS, vous acceptez d'être lié par les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre application.")
-                        
-                        Text("2. Utilisation de l'application")
+                        Text("By downloading and using the RailMap app for iOS, you agree to be bound by these terms of use. If you do not accept these terms, please do not use our app.")
+
+                        Text("2. Use of the app")
                             .fontWeight(.bold)
-                        Text("RailMap est fournie pour votre usage personnel et non commercial. Vous vous engagez à ne pas modifier, copier, distribuer, transmettre, afficher, exécuter, reproduire, publier, concéder sous licence, créer des œuvres dérivées, transférer ou vendre des informations obtenues à partir de l'application.")
-                        
-                        Text("3. Propriété intellectuelle")
+                        Text("RailMap is provided for your personal, non-commercial use. You agree not to modify, copy, distribute, transmit, display, perform, reproduce, publish, license, create derivative works from, transfer, or sell any information obtained from the app.")
+
+                        Text("3. Intellectual property")
                             .fontWeight(.bold)
-                        Text(
-                            "Tous les droits de propriété intellectuelle relatifs à l'application RailMap et son contenu appartiennent à leurs propriétaires respectifs et sont protégés par les lois applicables."
-                        )
-                        
-                        Text("4. Limitation de responsabilité")
+                        Text("All intellectual property rights relating to the RailMap app and its content belong to their respective owners and are protected by applicable laws.")
+
+                        Text("4. Limitation of liability")
                             .fontWeight(.bold)
-                        Text(
-                            "L'application RailMap est fournie \"telle quelle\" sans garantie d'aucune sorte. Nous ne garantissons pas que l'application sera exempte d'erreurs ou disponible de façon ininterrompue."
-                        )
+                        Text("The RailMap app is provided \"as is\" without warranty of any kind. We do not guarantee that the app will be error-free or continuously available.")
                     }
-                    
+
                     Group {
-                        Text("POLITIQUE DE CONFIDENTIALITÉ")
+                        Text("PRIVACY POLICY")
                             .font(.headline)
                             .fontWeight(.bold)
                             .padding(.top, 20)
-                        
-                        Text("1. Collecte des informations")
+
+                        Text("1. Information collection")
                             .fontWeight(.bold)
-                        Text("Notre application RailMap ne collecte aucune information personnelle des utilisateurs. Nous ne stockons ni ne traitons aucune donnée utilisateur sur nos serveurs backend.")
-                        
-                        Text("2. Données de localisation")
+                        Text("Our RailMap app does not collect any personal information from users. We neither store nor process any user data on our backend servers.")
+
+                        Text("2. Location data")
                             .fontWeight(.bold)
-                        Text(
-                            "Si vous autorisez l'accès à votre localisation, ces données sont uniquement utilisées localement sur votre appareil pour améliorer votre expérience de navigation et ne sont jamais transmises à nos serveurs."
-                        )
-                        
-                        Text("3. Informations sur l'appareil")
+                        Text("If you grant access to your location, this data is used only locally on your device to improve your navigation experience and is never transmitted to our servers.")
+
+                        Text("3. Device information")
                             .fontWeight(.bold)
-                        Text(
-                            "Certaines informations techniques non personnelles (comme le modèle d'appareil et la version iOS) peuvent être collectées automatiquement pour assurer la compatibilité de l'application, mais ces données ne sont pas associées à votre identité."
-                        )
-                        
-                        Text("4. Sécurité")
+                        Text("Certain non-personal technical information (such as device model and iOS version) may be collected automatically to ensure app compatibility, but this data is not associated with your identity.")
+
+                        Text("4. Security")
                             .fontWeight(.bold)
-                        Text(
-                            "Bien que nous ne collections aucune donnée personnelle, nous prenons la sécurité de notre application au sérieux et mettons en œuvre des mesures appropriées pour protéger votre expérience utilisateur."
-                        )
-                        
-                        Text("5. Modifications de la politique")
+                        Text("Although we do not collect any personal data, we take the security of our app seriously and implement appropriate measures to protect your user experience.")
+
+                        Text("5. Policy changes")
                             .fontWeight(.bold)
-                        Text(
-                            "Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications seront publiées dans l'application et prendront effet immédiatement."
-                        )
-                        
+                        Text("We reserve the right to modify this privacy policy at any time. Changes will be published in the app and take effect immediately.")
+
                         Text("6. Contact")
                             .fontWeight(.bold)
-                        Text(
-                            "Pour toute question concernant cette politique de confidentialité, veuillez nous contacter à l'adresse suivante: contact@railmap-app.com"
-                        )
+                        Text("For any questions regarding this privacy policy, please contact us at: contact@railmap-app.com")
                     }
-                    
-                    Text("Dernière mise à jour: 28 février 2025")
+
+                    Text("Last updated: February 28, 2025")
                         .italic()
                         .padding(.top, 20)
                 }
                 .padding()
             }
-            .navigationBarTitle("Mentions légales", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Fermer") {
+            .navigationBarTitle("Legal", displayMode: .inline)
+            .navigationBarItems(trailing: Button("Close") {
                 presentationMode.wrappedValue.dismiss()
             })
         }

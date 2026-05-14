@@ -1,99 +1,61 @@
 //
-//  ConfirmationPickerView.swift
+//  ConfirmationView.swift
 //  RailMapiOS
 //
-//  Created by Jérémie Patot on 19/01/2025.
-//
 
+import ComposableArchitecture
 import SwiftUI
 
-struct ConfirmationPickerView: View {
-    @EnvironmentObject var dataController: DataController
-    @ObservedObject var viewModel: ConfirmationPickerViewModel
-    
-    var onNext: () -> Void
+struct ConfirmationView: View {
+    let store: StoreOf<ConfirmationFeature>
+
+    private var departureLabel: String {
+        store.departureStationInfo?.stopPoint.name ?? "N/A"
+    }
+
+    private var arrivalLabel: String {
+        store.arrivalStationInfo?.stopPoint.label ?? "N/A"
+    }
 
     var body: some View {
-        JourneyHeaderView(
-            company: viewModel.pickedJourney.company,
-            headsign: viewModel.pickedJourney.journey.headsign,
-            departureCity: viewModel.departureStationInfo?.stopPoint.label,
-            arrivalCity: viewModel.arrivalStationInfo?.stopPoint.label,
-            departureDate: viewModel.pickedJourney.date,
-            size: CGSize(width: 60, height: 60)
-        )
-        .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.header)
-        
         VStack(spacing: 0) {
+            JourneyHeaderView(
+                company: store.pickedJourney.company,
+                headsign: store.pickedJourney.journey.headsign,
+                departureCity: departureLabel,
+                arrivalCity: arrivalLabel,
+                departureDate: store.pickedJourney.date,
+                size: CGSize(width: 60, height: 60)
+            )
+
             Divider()
-            ScrollView(showsIndicators: true) {
-                if let DStationInfo = viewModel.departureStationInfo,
-                   let AStationInfo = viewModel.arrivalStationInfo,
-                   let departureDate = viewModel.convertToDate(from: DStationInfo.arrivalTime, using: viewModel.pickedJourney.date),
-                   let arrivalDate = viewModel.convertToDate(from: AStationInfo.arrivalTime, using: viewModel.pickedJourney.date) {
-                    VStack{
-                        StationView(stationLabel: DStationInfo.stopPoint.name, date: departureDate, arrival: false)
-                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.departureStationView)
 
-                        DurationView(startDate: departureDate, endDate : arrivalDate)
-                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.durationView)
+            ScrollView {
+                VStack(spacing: 16) {
+                    if let depInfo = store.departureStationInfo,
+                       let arrInfo = store.arrivalStationInfo,
+                       let depDate = ConfirmationFeature.convertToDate(from: depInfo.departureTime, using: store.pickedJourney.date),
+                       let arrDate = ConfirmationFeature.convertToDate(from: arrInfo.arrivalTime, using: store.pickedJourney.date) {
 
-                        StationView(stationLabel: AStationInfo.stopPoint.label, date: arrivalDate, arrival: true)
-                            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.arrivalStationView)
+                        VStack {
+                            StationView(stationLabel: depInfo.stopPoint.name, date: depDate, arrival: false)
+                            DurationView(startDate: depDate, endDate: arrDate)
+                            StationView(stationLabel: arrInfo.stopPoint.label, date: arrDate, arrival: true)
+                        }
+                        .padding(.vertical)
                     }
-                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.vStack)
-                    .padding(.vertical)
+
+                    // Booking code & seat: hidden until edit is implemented.
+                    // TODO: re-enable when sheet for editing is added.
                 }
-                HStack {
-                    ClippedRow(
-                        title: "Booking Code",
-                        bodyTexts: ["Tap to Edit"],
-                        icon: "ticket.fill",
-                        displayMode: .small
-                    )
-                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.bookingCodeRow)
-                    
-                    ClippedRow(
-                        title: "Seat",
-                        bodyTexts: ["Tap to Edit"],
-                        icon: "carseat.right.fill",
-                        displayMode: .small
-                    )
-                    .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.seatRow)
-                }
-                .padding()
-                
-                LazyVStack(alignment: .leading) {
-                    Text("Good to know")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    ClippedRow(title: "Prevision à l'arrivée",
-                               bodyTexts: ["14°C et ensoleillée"],
-                               icon: "cloud.sun.fill"
-                    )
-                }
-                .padding(.horizontal)
-                Spacer()
+                .padding(.vertical)
             }
-            .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.scrollView)
-            .padding(.top, -15)
-            .padding(.vertical)
-            Spacer()
         }
+        .navigationTitle("Summary")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Confirmer") {
-                    let newJourney = viewModel.pickedJourney.toNewJourneyModel()
-                    if let newJourney = newJourney {
-                        DispatchQueue.main.async {
-                            viewModel.saveNewJourney(newJourney)
-                            onNext()
-                        }
-                    }
-                }
-                .accessibilityIdentifier(AccessibilityID.ConfirmationPickerView.confirmButton)
-                .font(.headline)
+                Button("Add to my journeys") { store.send(.confirmTapped) }
+                    .font(.headline)
             }
         }
     }

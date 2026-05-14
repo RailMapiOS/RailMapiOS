@@ -2,184 +2,62 @@
 //  SignInView.swift
 //  RailMapiOS
 //
-//  Created by Jérémie Patot on 07/02/2025.
-//
 
+import ComposableArchitecture
 import SwiftUI
-import CloudKit
 
 struct SignInView: View {
+    let store: StoreOf<SignInFeature>
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var userStorage: UserStorage
-    @EnvironmentObject var router: Router
-    @ObservedObject var viewModel: SignInViewModel
-    
-    public init(userStorage: UserStorage = UserStorage.shared) {
-        self.viewModel = SignInViewModel(userStorage: userStorage)
-    }
-    
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                
+            VStack(spacing: 24) {
                 Spacer()
-                
-                VStack(spacing: 10) {
-                    
-                    if let errorMessage = viewModel.errorMessage {
-                        Image(systemName: "exclamationmark.icloud")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .foregroundStyle(.primary)
-                        
-                        Text(errorMessage)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.red)
-                        
-                        Text("Check your device settings and try again")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                        
-                    } else {
-                        if viewModel.isSignedInToiCloud {
-                            Image(systemName: "checkmark.icloud")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(Color.primary, Color.green)
-                        } else {
-                            Image(systemName: "person.icloud")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                                .foregroundStyle(.blue)
-                        }
-                        
-                        Text("Fast and secure access")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(nil)
-                            .frame(maxHeight: 100)
-                    }
-                }
-                
-                Spacer()
-                    .frame(maxHeight: 10)
-                
-                VStack(alignment: .leading) {
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("Sync across all your devices")
-                    }
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("Share your trips with your friends")
-                    }
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("Fast and secure access")
-                    }
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("Personalize your experience")
-                    }
-                }
-                .font(.headline)
-                .padding(.horizontal)
-                
-                Spacer()
-                
-                if viewModel.isSignedInToiCloud {
-                    Text("You are signed in to iCloud.")
-                        .font(.headline)
-                        .foregroundColor(.green)
-                } else {
-                    Button(action: {
-                        Task {
-                            await viewModel.requestPermissionAndSignIn()
-                        }
-                    }) {
-                        Text("Sign in to iCloud")
-                            .fontWeight(.bold)
-                            .frame(height: 50)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 30)
-                    }
-                }
-                
-                TermsAndPrivacyTextView()
 
-                 Spacer()
+                Image(systemName: "train.side.front.car")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 80)
+                    .foregroundStyle(.tint)
+
+                Text("Sign in")
+                    .font(.title)
+                    .fontWeight(.bold)
+
+                Text("Sign in with iCloud to sync your journeys")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+
+                if let error = store.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .padding(.horizontal)
+                }
+
+                Button {
+                    store.send(.requestPermissionTapped)
+                } label: {
+                    Text("Sign in with iCloud")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
             }
-            .padding()
-            .presentationDetents([.large])
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        router.dismissSheet()
-                    }
+                    Button("Close") { dismiss() }
                 }
             }
         }
     }
 }
-
-struct TermsAndPrivacyTextView: View {
-    @State private var showTermsAndPrivacyPolicy = false
-
-    var body: some View {
-        VStack {
-            Text(termsText)
-                .font(.footnote)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 30)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            showTermsAndPrivacyPolicy = true
-        }
-        .sheet(isPresented: $showTermsAndPrivacyPolicy) {
-            TermsAndPrivacyView()
-        }
-    }
-    
-    private var termsText: AttributedString {
-        var text = AttributedString("En vous inscrivant, vous acceptez nos ")
-        
-        var termsText = AttributedString("Conditions d'utilisation")
-        termsText.foregroundColor = .blue
-        termsText.underlineStyle = .single
-        
-        var andText = AttributedString(" et notre ")
-        
-        var privacyText = AttributedString("Politique de confidentialité")
-        privacyText.foregroundColor = .blue
-        privacyText.underlineStyle = .single
-        
-        var endText = AttributedString(".")
-        
-        text.append(termsText)
-        text.append(andText)
-        text.append(privacyText)
-        text.append(endText)
-        
-        return text
-    }
-}
-
-

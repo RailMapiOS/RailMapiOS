@@ -1,18 +1,28 @@
+import ComposableArchitecture
 import SwiftUI
 
 @main
 struct RailMapiOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject private var dataController = DataController()
-    @StateObject private var router = Router()
-    
+
+    /// TCA store: single source of truth.
+    static let store = Store(initialState: AppFeature.State()) { AppFeature() }
+
+    /// SwiftData service shared across the app.
+    @State private var dataService: DataService = {
+        do {
+            let service = try DataService()
+            DataControllerClient.shared = service
+            return service
+        } catch {
+            fatalError("Failed to initialize SwiftData: \(error)")
+        }
+    }()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .modelContainer(dataController.modelContainer)
-                .environmentObject(dataController)
-                .environmentObject(router)
-                .preferredColorScheme(.light)
+            AppView(store: Self.store)
+                .modelContainer(dataService.modelContainer)
         }
     }
 }

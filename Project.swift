@@ -2,9 +2,14 @@ import ProjectDescription
 
 let project = Project(
     name: "RailMapiOS",
+    // Source language is English. The String Catalog at
+    // `RailMapiOS/Resources/Localizable.xcstrings` lists target languages —
+    // Xcode reads this list and expects translations for each.
+    options: .options(developmentRegion: "en"),
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
-            .package(url: "https://github.com/AliSoftware/OHHTTPStubs", .upToNextMinor(from: "9.1.0"))
+            .package(url: "https://github.com/AliSoftware/OHHTTPStubs", .upToNextMinor(from: "9.1.0")),
+            .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.25.5")
         ],
     targets: [
         .target(
@@ -19,13 +24,14 @@ let project = Project(
                     "NSContactsUsageDescription": "This app requires access to your contacts to display profile information."
                 ]
             ),
-            sources: ["RailMapiOS/Sources/**"],
+            sources: ["RailMapiOS/Sources/**", "SwiftData/**"],
             resources: ["RailMapiOS/Resources/**"],
             entitlements: "Config/RailMapiOSDebug.entitlements",
             dependencies: [
                 .package(product: "Helpers"),
                 .package(product: "OHHTTPStubs"),
-                .package(product: "OHHTTPStubsSwift")
+                .package(product: "OHHTTPStubsSwift"),
+                .package(product: "ComposableArchitecture")
             ],
             settings: .settings(base: [
                 "SWIFT_VERSION": "5"
@@ -33,9 +39,7 @@ let project = Project(
                 .debug(name: "Debug", settings: [:]),
                 .release(name: "Release", settings: [:])
             ]),
-            coreDataModels: [
-                .coreDataModel("CoreData/RailMap.xcdatamodeld")
-            ]
+            coreDataModels: []
         ),
         .target(
             name: "RailMapiOSTests",

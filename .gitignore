@@ -1,0 +1,20 @@
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+xcuserdata/
+*.moved-aside
+
+# Tuist
+Derived/
+
+# SPM
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+*.swp
+
+# Secrets — never commit. Use `APIKeys.example.swift` to document the shape.
+**/APIKeys.swift

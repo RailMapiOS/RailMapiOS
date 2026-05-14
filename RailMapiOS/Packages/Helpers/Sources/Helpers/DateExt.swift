@@ -18,11 +18,13 @@ public extension Date {
     public func timeRemainingDescription() -> String {
         let now = Date()
         let timeInterval = self.timeIntervalSince(now)
-        
+
         if timeInterval > 0 {
             return timeInterval.formattedTimeRemaining()
         } else {
-            return "Déjà parti"
+            // Looked up against the main app bundle's String Catalog so the
+            // package contributes translatable copy without owning its own.
+            return String(localized: "Already departed", bundle: .main, comment: "Shown when a journey's start date is in the past.")
         }
     }
     
@@ -42,7 +44,7 @@ public extension TimeInterval {
         formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropLeading
         
-        return formatter.string(from: self) ?? "Temps inconnu"
+        return formatter.string(from: self) ?? String(localized: "Unknown time", bundle: .main, comment: "Fallback when the duration formatter returns nil.")
     }
     
     public func formattedTimeRemainingDelayed() -> String {
@@ -51,6 +53,6 @@ public extension TimeInterval {
         formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropLeading
         
-        return formatter.string(from: self) ?? "Temps inconnu"
+        return formatter.string(from: self) ?? String(localized: "Unknown time", bundle: .main, comment: "Fallback when the duration formatter returns nil.")
     }
 }

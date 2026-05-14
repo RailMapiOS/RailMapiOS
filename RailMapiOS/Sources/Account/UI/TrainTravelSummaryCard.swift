@@ -33,7 +33,7 @@ struct TrainTravelSummaryCard: View {
                         .font(.title2)
                         .foregroundColor(.white)
                         .opacity(0.9)
-                    Text("Bilan Ferroviaire")
+                    Text("Train summary")
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -44,10 +44,10 @@ struct TrainTravelSummaryCard: View {
                 }
                 .padding(.bottom, 5)
 
-                SummaryRow(title: "Voyages", value: "\(numberOfTrips)")
-                SummaryRow(title: "Kilomètres", value: String(format: "%.0f km", totalDistance))
-                SummaryRow(title: "Temps à bord", value: timeSpentOnTrains)
-                SummaryRow(title: "Gares visitées", value: "\(numberOfStationsVisited)")
+                SummaryRow(title: "Trips", value: "\(numberOfTrips)")
+                SummaryRow(title: "Kilometres", value: String(format: "%.0f km", totalDistance))
+                SummaryRow(title: "Time on board", value: timeSpentOnTrains)
+                SummaryRow(title: "Stations visited", value: "\(numberOfStationsVisited)")
             }
             .padding(20)
             .foregroundColor(.white)
@@ -58,7 +58,8 @@ struct TrainTravelSummaryCard: View {
 }
 
 struct SummaryRow: View {
-    let title: String
+    let title: LocalizedStringResource
+    /// Runtime data — distance, count, formatted duration. Rendered verbatim.
     let value: String
 
     var body: some View {
@@ -68,7 +69,7 @@ struct SummaryRow: View {
                 .foregroundColor(.white)
                 .opacity(0.8)
             Spacer()
-            Text(value)
+            Text(verbatim: value)
                 .font(.title3)
                 .fontWeight(.bold)
         }
