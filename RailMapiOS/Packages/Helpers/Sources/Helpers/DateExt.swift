@@ -9,13 +9,13 @@ import Foundation
 
 //MARK: Date
 public extension Date {
-    public func formattedTime(with format: String? = "HH:mm") -> String {
+    func formattedTime(with format: String? = "HH:mm") -> String {
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = format
         return timeFormatter.string(from: self)
     }
-    
-    public func timeRemainingDescription() -> String {
+
+    func timeRemainingDescription() -> String {
         let now = Date()
         let timeInterval = self.timeIntervalSince(now)
 
@@ -27,8 +27,8 @@ public extension Date {
             return String(localized: "Already departed", bundle: .main, comment: "Shown when a journey's start date is in the past.")
         }
     }
-    
-    public func duration(to endDate: Date) -> String {
+
+    func duration(to endDate: Date) -> String {
         let interval = endDate.timeIntervalSince(self)
         let hours = Int(interval) / 3600
         let minutes = (Int(interval) % 3600) / 60
@@ -38,21 +38,21 @@ public extension Date {
 
 //MARK: TimeInterval
 public extension TimeInterval {
-    public func formattedTimeRemaining() -> String {
+    func formattedTimeRemaining() -> String {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.year, .month, .day, .hour, .minute]
         formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropLeading
-        
+
         return formatter.string(from: self) ?? String(localized: "Unknown time", bundle: .main, comment: "Fallback when the duration formatter returns nil.")
     }
-    
-    public func formattedTimeRemainingDelayed() -> String {
+
+    func formattedTimeRemainingDelayed() -> String {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropLeading
-        
+
         return formatter.string(from: self) ?? String(localized: "Unknown time", bundle: .main, comment: "Fallback when the duration formatter returns nil.")
     }
 }

@@ -8,8 +8,8 @@
 import Foundation
 
 public extension String {
-    
-    public func convertToDouble() -> Double? {
+
+    func convertToDouble() -> Double? {
         let formatter = NumberFormatter()
         formatter.decimalSeparator = ","
         return formatter.number(from: self)?.doubleValue
