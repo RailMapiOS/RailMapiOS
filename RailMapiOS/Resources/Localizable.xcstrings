@@ -115,9 +115,6 @@
     "Dismiss" : {
 
     },
-    "Eligible for refund" : {
-
-    },
     "For any questions regarding this privacy policy, please contact us at: contact@railmap-app.com" : {
 
     },
@@ -152,10 +149,10 @@
     "Not provided" : {
 
     },
-    "Opens the %@ refund form. Swipe left to dismiss." : {
+    "Our RailMap app does not collect any personal information from users. We neither store nor process any user data on our backend servers." : {
 
     },
-    "Our RailMap app does not collect any personal information from users. We neither store nor process any user data on our backend servers." : {
+    "Platform %@" : {
 
     },
     "PRIVACY POLICY" : {

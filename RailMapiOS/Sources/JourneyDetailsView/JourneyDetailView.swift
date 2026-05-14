@@ -93,6 +93,7 @@ struct JourneyDetailView: View {
                     RefundBanner(
                         eligibility: eligibility,
                         operatorName: contact.displayName,
+                        isAutomaticCompensation: store.claimRules?.isAutomaticCompensation ?? false,
                         onTap: { store.send(.refundBannerTapped) },
                         onDismiss: { store.send(.refundBannerDismissed) }
                     )

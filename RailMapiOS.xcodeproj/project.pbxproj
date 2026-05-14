@@ -36,6 +36,7 @@
 		418E71A9E04B4B81629E635F /* JourneyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0947289B14C6281C15A66C /* JourneyDetailView.swift */; };
 		445BB681E880BD2DC7402FA9 /* BottomSheetFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFA3AEFA39EB7A9398D8408 /* BottomSheetFeature.swift */; };
 		47BDC01908B9A1DAB6D70E08 /* DateRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC31C6D465A7F590D752268 /* DateRow.swift */; };
+		491A68D8831C9690DC0FB924 /* RefundEligibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3229527528B849B6566690D8 /* RefundEligibilityTests.swift */; };
 		4DC2529E0BD6B6CECA6686C1 /* JourneyFilterClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4CFB54F09F6E6A8EFFA2C /* JourneyFilterClient.swift */; };
 		502D052AA66E61B79F8A0B1E /* UKTrainParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636EB8BC3994592EB7767017 /* UKTrainParser.swift */; };
 		523C35C99390C21127C16665 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = AC4CAFD81B22DE5528812781 /* OHHTTPStubs */; };
@@ -129,6 +130,7 @@
 		F7267D6E129B1AFC8A6544B7 /* AccountFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A70D6155D25C08F8F9B1008 /* AccountFeature.swift */; };
 		F7BB4AC6D0AB42ED35648964 /* DBTrainParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F283C85A04498D8A600C5CC /* DBTrainParser.swift */; };
 		F9B9152F6DCFE428D46101F2 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = B84FBECDF06B2687B7C68274 /* Helpers */; };
+		FAABBC5C9A7998ABBCC66E27 /* OUIGORules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A790788501A864FA56D019D6 /* OUIGORules.swift */; };
 		FEC52261390F89EA6F5E9E9E /* TrainTravelSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96392A880A67BC4A9960D69 /* TrainTravelSummaryCard.swift */; };
 		FEF5C7D189895CFF0BD6802D /* DatePickerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A855A2EEF61673ED417B59 /* DatePickerFeature.swift */; };
 		FF4A68D62DAE123AF930CF5E /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C643AC3FC441F02712D6F9C /* MockServices.swift */; };
@@ -212,6 +214,7 @@
 		2DDA5976FF900E08791F4B10 /* VehicleJourneyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleJourneyService.swift; sourceTree = "<group>"; };
 		302BBD5AEA747C4A93507702 /* OperatorContactsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorContactsCard.swift; sourceTree = "<group>"; };
 		30913B157AB7A1BEA75C5D74 /* RailMapiOSDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RailMapiOSDebug.entitlements; sourceTree = "<group>"; };
+		3229527528B849B6566690D8 /* RefundEligibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefundEligibilityTests.swift; sourceTree = "<group>"; };
 		33DC6EF31A52472DBD6A8E19 /* StationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLabel.swift; sourceTree = "<group>"; };
 		37AA84E5F8A98891935AF10D /* Helpers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Helpers; path = RailMapiOS/Packages/Helpers; sourceTree = "<group>"; };
 		3D1FC26CDBA325361410A1A1 /* RouteGeometryClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteGeometryClient.swift; sourceTree = "<group>"; };
@@ -262,6 +265,7 @@
 		A4CE8C7AA1E75D93901B1A98 /* VehicleMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarker.swift; sourceTree = "<group>"; };
 		A5C312D3D592DDDF7BA766FD /* AppFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFeature.swift; sourceTree = "<group>"; };
 		A665019D72B4D25A15CF001C /* StationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationRow.swift; sourceTree = "<group>"; };
+		A790788501A864FA56D019D6 /* OUIGORules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUIGORules.swift; sourceTree = "<group>"; };
 		A9F86A5BC0A0D5D644CDFE01 /* VehicleJourneysModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleJourneysModel.swift; sourceTree = "<group>"; };
 		AA7B1226B7AC0D204FBB93CD /* PositionEstimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionEstimator.swift; sourceTree = "<group>"; };
 		ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainIcon.swift; sourceTree = "<group>"; };
@@ -396,6 +400,7 @@
 				EE8F3B56AE6FFD5DAEA9434D /* ClaimRegistry.swift */,
 				C100DB417586BFE122BCD1C2 /* ClaimRules.swift */,
 				C7435FD5F302C35E63DA489E /* OperatorContact.swift */,
+				A790788501A864FA56D019D6 /* OUIGORules.swift */,
 				BC8A02FD211280A53CE2C2FB /* SNCFG30Rules.swift */,
 			);
 			path = Refund;
@@ -695,6 +700,7 @@
 				F41A6CD7E40CEADE24F4E5E1 /* AddTicketVMTests.swift */,
 				D4F0DF9697B1A0D5C112BB7A /* JourneyRowVMTests.swift */,
 				6C643AC3FC441F02712D6F9C /* MockServices.swift */,
+				3229527528B849B6566690D8 /* RefundEligibilityTests.swift */,
 				5B81D9677388A75E034072D8 /* TrainParserTests.swift */,
 			);
 			path = UnitTests;
@@ -1086,6 +1092,7 @@
 				C5C42CE60273C1091AD3C53B /* RealtimeStatus.swift in Sources */,
 				6425DF6A78F603CFEB4BE2B2 /* ClaimRegistry.swift in Sources */,
 				8A52D575FFAF0676683F479C /* ClaimRules.swift in Sources */,
+				FAABBC5C9A7998ABBCC66E27 /* OUIGORules.swift in Sources */,
 				822CDDFA483EC2D1CD102DF7 /* OperatorContact.swift in Sources */,
 				9BFAF15769154F10C82A5A30 /* SNCFG30Rules.swift in Sources */,
 				59BF12783FB57BBDDE2C1220 /* SearchResult.swift in Sources */,
@@ -1148,6 +1155,7 @@
 				AE6BDA40B5A6F5521DEEC790 /* AddTicketVMTests.swift in Sources */,
 				F677B53EB7E39133483C6D8E /* JourneyRowVMTests.swift in Sources */,
 				FF4A68D62DAE123AF930CF5E /* MockServices.swift in Sources */,
+				491A68D8831C9690DC0FB924 /* RefundEligibilityTests.swift in Sources */,
 				6532F0B938820812140607C2 /* TrainParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

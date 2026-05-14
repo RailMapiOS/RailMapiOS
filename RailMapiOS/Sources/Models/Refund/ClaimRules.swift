@@ -2,9 +2,10 @@
 //  ClaimRules.swift
 //  RailMapiOS
 //
-//  Per-operator delay-compensation rules. Each operator (SNCF, DB, Renfe, …)
-//  implements `ClaimRules` to translate a measured delay into a compensation
-//  percentage. The shared `ClaimRegistry` routes by `Journey.company`.
+//  Per-operator delay-compensation rules. Each operator (SNCF, OUIGO, DB,
+//  Renfe…) implements `ClaimRules` to translate a measured delay into a
+//  compensation percentage. The shared `ClaimRegistry` routes by
+//  `Journey.company`.
 //
 
 import Foundation
@@ -35,7 +36,20 @@ protocol ClaimRules: Sendable {
     /// Customer-facing contact info, including the refund form URL.
     var contact: OperatorContact { get }
 
+    /// `true` when the operator compensates **automatically** (no claim form
+    /// to fill — they push a voucher or wire transfer themselves). OUIGO is
+    /// the canonical example: they send an SMS with the compensation amount
+    /// once the delay is confirmed. In that case the UI surfaces an
+    /// informational banner with a follow-up contact link rather than a
+    /// "File a claim" CTA.
+    var isAutomaticCompensation: Bool { get }
+
     /// Returns the eligibility tier matching `delayMinutes`, or nil if below
     /// the smallest threshold.
     func evaluate(delayMinutes: Int) -> ClaimEligibility?
+}
+
+extension ClaimRules {
+    /// Default: the user must file a claim themselves.
+    var isAutomaticCompensation: Bool { false }
 }
