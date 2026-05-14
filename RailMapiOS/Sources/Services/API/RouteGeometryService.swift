@@ -22,7 +22,7 @@ struct TrainShapeResult: Sendable {
 struct RouteGeometryService: Sendable {
     let baseURL: String
 
-    init(baseURL: String = "http://127.0.0.1:8080") {
+    init(baseURL: String = APIConfiguration.baseURL) {
         self.baseURL = baseURL
     }
 
@@ -32,7 +32,8 @@ struct RouteGeometryService: Sendable {
         guard let url = URL(string: "\(baseURL)/train/\(encodedTrain)/shape?source=\(source)") else {
             throw ServiceError.invalidURL
         }
-        let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
+        // RailMapAPI call → token attached.
+        let (data, response) = try await URLSession.shared.data(for: .authorized(url))
         if let http = response as? HTTPURLResponse, http.statusCode != 200 {
             throw ServiceError.serverError(response)
         }

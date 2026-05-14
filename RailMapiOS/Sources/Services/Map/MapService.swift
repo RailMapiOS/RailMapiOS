@@ -35,7 +35,12 @@ struct MapService: Sendable {
 
             guard coordinates.count >= 2 else { return nil }
 
-            var route = TrainRoute(coordinates: coordinates, company: journey.company, headsign: journey.headsign)
+            var route = TrainRoute(
+                coordinates: coordinates,
+                company: journey.company,
+                headsign: journey.headsign,
+                isPast: journey.isPast
+            )
             if let cached = journey.getRouteShape(), cached.count > coordinates.count {
                 route.routeCoordinates = cached
             }

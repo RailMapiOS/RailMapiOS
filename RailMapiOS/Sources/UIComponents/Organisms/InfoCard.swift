@@ -147,23 +147,23 @@ struct InfoCard: View {
     VStack(spacing: 16) {
         HStack(spacing: 16) {
             InfoCard(
-                title: "Booking Code",
-                bodyTexts: ["Tap to Edit"],
+                title: "Booking reference",
+                bodyTexts: ["Not provided"],
                 icon: "ticket.fill",
                 displayMode: .small
             )
-            
+
             InfoCard(
                 title: "Seat",
-                bodyTexts: ["Tap to Edit"],
+                bodyTexts: ["Not provided"],
                 icon: "carseat.right.fill",
                 displayMode: .small
             )
         }
         InfoCard(
             header: "Medium Mode",
-            title: "Prévision à l'arrivée",
-            bodyTexts: ["11°C et ensoleillé"],
+            title: "Weather at arrival",
+            bodyTexts: ["11°C, sunny"],
             icon: "cloud.sun.fill",
             displayMode: .medium
         )

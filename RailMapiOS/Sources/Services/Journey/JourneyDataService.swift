@@ -18,7 +18,7 @@ class JourneyDataService: JourneyDataServiceProtocol {
     func getDepartureStop(_ journey: Journey) -> Stop? {
         let stop = (journey.stops)?.first { $0.status == "departure" }
         if stop == nil {
-            LogManager.error("Arrêt de départ non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
+            LogManager.error("Departure stop not found for journey \(journey.headsign ?? "unknown")", category: "data", privacy: .private)
         }
         return stop
     }
@@ -26,7 +26,7 @@ class JourneyDataService: JourneyDataServiceProtocol {
     func getArrivalStop(_ journey: Journey) -> Stop? {
         let stop = (journey.stops)?.first { $0.status == "arrival" }
         if stop == nil {
-            LogManager.error("Arrêt d'arrivée non trouvé pour le trajet \(journey.headsign ?? "inconnu")", category: "data", privacy: .private)
+            LogManager.error("Arrival stop not found for journey \(journey.headsign ?? "unknown")", category: "data", privacy: .private)
         }
         return stop
     }

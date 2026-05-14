@@ -44,13 +44,13 @@ struct SignInFeature {
                         case .available:
                             await send(.iCloudStatusChecked(true))
                         case .noAccount:
-                            await send(.iCloudError("Compte iCloud non trouvé"))
+                            await send(.iCloudError(String(localized: "iCloud account not found", comment: "Sign-in error: user has no iCloud account configured.")))
                         case .couldNotDetermine:
-                            await send(.iCloudError("Statut du compte iCloud indéterminé"))
+                            await send(.iCloudError(String(localized: "iCloud account status unknown", comment: "Sign-in error: CloudKit returned an indeterminate status.")))
                         case .restricted:
-                            await send(.iCloudError("Compte iCloud restreint"))
+                            await send(.iCloudError(String(localized: "iCloud account restricted", comment: "Sign-in error: CloudKit account is restricted (e.g. parental controls).")))
                         default:
-                            await send(.iCloudError("Erreur inconnue avec le compte iCloud"))
+                            await send(.iCloudError(String(localized: "Unknown iCloud account error", comment: "Sign-in error fallback when CloudKit returns an unexpected status.")))
                         }
                     } catch {
                         await send(.iCloudError(error.localizedDescription))

@@ -21,9 +21,12 @@ struct JourneyRowView<DataSource: JourneyRowDataSource>: View {
             Divider().padding(.horizontal, 14)
             contentSection
 
-            if case .saved = dataSource.footer {
+            switch dataSource.footer {
+            case .saved, .search:
                 Divider().padding(.horizontal, 14)
                 footerSection
+            case .none:
+                EmptyView()
             }
         }
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
@@ -95,7 +98,8 @@ struct JourneyRowView<DataSource: JourneyRowDataSource>: View {
 
     @ViewBuilder
     private var footerSection: some View {
-        if case .saved(let date, let status) = dataSource.footer {
+        switch dataSource.footer {
+        case .saved(let date, let status):
             HStack {
                 Text(date)
                     .font(.caption)
@@ -106,6 +110,29 @@ struct JourneyRowView<DataSource: JourneyRowDataSource>: View {
             .padding(.horizontal, 14)
             .padding(.top, 8)
             .padding(.bottom, 12)
+
+        case .search(let operatingDays, let stopCount):
+            HStack(spacing: 6) {
+                Image(systemName: "calendar")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Text(operatingDays)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Image(systemName: "mappin.and.ellipse")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                Text("\(stopCount) stops")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+
+        case .none:
+            EmptyView()
         }
     }
 }

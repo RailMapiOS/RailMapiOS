@@ -68,7 +68,7 @@ extension VehicleJourney: @unchecked Sendable {}
 struct VehicleJourneyService: Sendable {
     let baseURL: String
 
-    init(baseURL: String = "http://127.0.0.1:8080") {
+    init(baseURL: String = APIConfiguration.baseURL) {
         self.baseURL = baseURL
     }
 
@@ -79,7 +79,7 @@ struct VehicleJourneyService: Sendable {
         guard let url = URL(string: "\(baseURL)/stop/\(encodedHeadsign)?source=\(source)") else {
             throw ServiceError.invalidURL
         }
-        let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
+        let (data, response) = try await URLSession.shared.data(for: .authorized(url))
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
             throw ServiceError.serverError(response)
         }
@@ -91,7 +91,7 @@ struct VehicleJourneyService: Sendable {
         var urlString = "\(baseURL)/train/\(encodedTrain)"
         if let source { urlString += "?source=\(source)" }
         guard let url = URL(string: urlString) else { throw ServiceError.invalidURL }
-        let (data, response) = try await URLSession.shared.data(for: URLRequest(url: url))
+        let (data, response) = try await URLSession.shared.data(for: .authorized(url))
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
             throw ServiceError.serverError(response)
         }

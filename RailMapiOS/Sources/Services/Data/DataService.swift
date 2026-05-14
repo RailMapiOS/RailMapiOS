@@ -32,7 +32,7 @@ final class DataService {
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            LogManager.error("Échec du chargement des trajets: \(error.localizedDescription)", category: "swift_data_error")
+            LogManager.error("Failed to load journeys: \(error.localizedDescription)", category: "swift_data_error")
             return []
         }
     }
@@ -57,7 +57,7 @@ final class DataService {
             try modelContext.delete(model: Journey.self)
             save()
         } catch {
-            LogManager.error("Échec de la suppression des trajets: \(error.localizedDescription)", category: "swift_data_error")
+            LogManager.error("Failed to delete journeys: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
 
@@ -70,13 +70,21 @@ final class DataService {
         save()
     }
 
+    /// Persists the user's choice to dismiss the refund-eligibility banner
+    /// on a specific journey. Survives app relaunches.
+    func setRefundBannerDismissed(journeyID: UUID, dismissed: Bool) {
+        guard let journey = loadJourneys().first(where: { $0.id == journeyID }) else { return }
+        journey.refundBannerDismissed = dismissed
+        save()
+    }
+
     // MARK: - Private
 
     private func save() {
         do {
             try modelContext.save()
         } catch {
-            LogManager.error("Échec de la sauvegarde des données: \(error.localizedDescription)", category: "swift_data_error")
+            LogManager.error("Failed to save data: \(error.localizedDescription)", category: "swift_data_error")
         }
     }
 

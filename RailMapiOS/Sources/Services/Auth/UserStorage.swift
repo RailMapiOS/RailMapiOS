@@ -41,16 +41,16 @@ public final class UserStorage: ObservableObject, @unchecked Sendable {
     /// - Parameter user: L'objet utilisateur à sauvegarder
     public func saveUser(_ user: User) {
         queue.async(flags: .barrier) { [self] in
-            LogManager.info("Tentative de sauvegarde des données utilisateur", category: "auth")
+            LogManager.info("Attempting to save user data", category: "auth")
             if let encoded = try? JSONEncoder().encode(user) {
                 userDefaults.set(encoded, forKey: userDefaultsKey)
                 userDefaults.set(true, forKey: isLoggedInKey)
-                LogManager.info("Données utilisateur sauvegardées avec succès", category: "auth")
-                
+                LogManager.info("User data saved successfully", category: "auth")
+
                 self.currentUser = user
-                LogManager.debug("État currentUser mis à jour", category: "auth")
+                LogManager.debug("currentUser state updated", category: "auth")
             } else {
-                LogManager.error("Échec de l'encodage des données utilisateur", category: "auth_error")
+                LogManager.error("Failed to encode user data", category: "auth_error")
             }
         }
     }
@@ -66,21 +66,21 @@ public final class UserStorage: ObservableObject, @unchecked Sendable {
         var result: User?
         
         queue.sync {
-            LogManager.info("Tentative de chargement des données utilisateur", category: "auth")
-            
+            LogManager.info("Attempting to load user data", category: "auth")
+
             if let data = userDefaults.data(forKey: userDefaultsKey) {
                 do {
                     let user = try JSONDecoder().decode(User.self, from: data)
-                    LogManager.info("Données utilisateur chargées avec succès", category: "auth")
-                    
+                    LogManager.info("User data loaded successfully", category: "auth")
+
                     self.currentUser = user
                     result = user
-                    LogManager.debug("État currentUser mis à jour", category: "auth")
+                    LogManager.debug("currentUser state updated", category: "auth")
                 } catch {
-                    LogManager.error("Échec du décodage des données utilisateur: \(error.localizedDescription)", category: "auth_error")
+                    LogManager.error("Failed to decode user data: \(error.localizedDescription)", category: "auth_error")
                 }
             } else {
-                LogManager.info("Aucune donnée utilisateur trouvée dans le stockage", category: "auth")
+                LogManager.info("No user data found in storage", category: "auth")
             }
         }
         
@@ -93,13 +93,13 @@ public final class UserStorage: ObservableObject, @unchecked Sendable {
     /// la propriété `currentUser` à `nil`.
     public func deleteUser() {
         queue.async(flags: .barrier) { [self] in
-            LogManager.info("Suppression des données utilisateur", category: "auth")
+            LogManager.info("Deleting user data", category: "auth")
             userDefaults.removeObject(forKey: userDefaultsKey)
             userDefaults.set(false, forKey: isLoggedInKey)
-            
+
             self.currentUser = nil
-            LogManager.debug("État currentUser réinitialisé", category: "auth")
-            LogManager.info("Données utilisateur supprimées avec succès", category: "auth")
+            LogManager.debug("currentUser state reset", category: "auth")
+            LogManager.info("User data deleted successfully", category: "auth")
         }
     }
     
@@ -114,11 +114,11 @@ public final class UserStorage: ObservableObject, @unchecked Sendable {
         
         queue.sync {
             loggedIn = userDefaults.bool(forKey: isLoggedInKey)
-            LogManager.debug("Vérification de l'état de connexion: \(loggedIn)", category: "auth")
-            
+            LogManager.debug("Checking sign-in state: \(loggedIn)", category: "auth")
+
             if !loggedIn {
                 self.currentUser = nil
-                LogManager.debug("État currentUser réinitialisé", category: "auth")
+                LogManager.debug("currentUser state reset", category: "auth")
             }
         }
         

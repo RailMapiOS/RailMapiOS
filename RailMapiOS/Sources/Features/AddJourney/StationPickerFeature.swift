@@ -47,8 +47,10 @@ struct StationPickerFeature {
             departureStation != nil && arrivalStation != nil
         }
 
-        var navigationTitle: String {
-            pickerMode == .pickUpDeparture ? "Gare de départ" : "Gare d'arrivée"
+        var navigationTitle: LocalizedStringResource {
+            pickerMode == .pickUpDeparture
+                ? LocalizedStringResource("Departure station", comment: "Nav title when picking the departure station.")
+                : LocalizedStringResource("Arrival station", comment: "Nav title when picking the arrival station.")
         }
 
         private func resolvedStop(for id: String?, fallback: StopTime?) -> StopTime? {

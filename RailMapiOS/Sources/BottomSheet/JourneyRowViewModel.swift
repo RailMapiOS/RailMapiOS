@@ -116,6 +116,7 @@ final class SearchJourneyDataSource: JourneyRowDataSource {
         journey: VehicleJourney,
         departureStationID: String? = nil,
         arrivalStationID: String? = nil,
+        showOperatingDays: Bool = false,
         dateFormatterService: DateFormatterServiceProtocol = DateFormatterService()
     ) {
         self.journey = journey
@@ -124,9 +125,16 @@ final class SearchJourneyDataSource: JourneyRowDataSource {
         self.headsign = journey.headsign
         self.company = Self.resolveCompany(from: journey)
         self.duration = Self.calculateDuration(from: journey, formatter: dateFormatterService)
-        self.footer = .none
 
-        // Resolve station names and colors
+        if showOperatingDays {
+            self.footer = .search(
+                operatingDays: Self.operatingDaysSummary(from: journey),
+                stopCount: journey.stopTimes.count
+            )
+        } else {
+            self.footer = .none
+        }
+
         let resolved = Self.resolveStations(
             journey: journey,
             departureStationID: departureStationID,
@@ -139,6 +147,27 @@ final class SearchJourneyDataSource: JourneyRowDataSource {
         self.primaryRight = resolved.arrivalName
         self.primaryRightColor = resolved.arrivalColor
         self.secondaryRight = resolved.arrivalTime
+    }
+
+    // MARK: - Operating days summary
+
+    /// Returns a human-readable summary of operating days from the calendar pattern.
+    /// Examples: "Tous les jours", "Lun-Ven", "Sam-Dim", "Lun, Mer, Ven"
+    static func operatingDaysSummary(from journey: VehicleJourney) -> String {
+        guard let pattern = journey.calendars.first?.weekPattern else { return "—" }
+        let flags = [pattern.monday, pattern.tuesday, pattern.wednesday, pattern.thursday, pattern.friday, pattern.saturday, pattern.sunday]
+        let active = flags.filter { $0 }.count
+
+        if active == 7 { return "Tous les jours" }
+        if active == 5 && pattern.monday && pattern.tuesday && pattern.wednesday && pattern.thursday && pattern.friday {
+            return "Lun-Ven"
+        }
+        if active == 2 && pattern.saturday && pattern.sunday { return "Week-end" }
+        if active == 0 { return "—" }
+
+        let labels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+        let activeLabels = zip(flags, labels).compactMap { $0.0 ? $0.1 : nil }
+        return activeLabels.joined(separator: ", ")
     }
 
     /// Updates the displayed stations and recalculates duration when the user picks departure/arrival.

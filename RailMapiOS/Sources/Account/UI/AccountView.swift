@@ -45,7 +45,7 @@ struct AccountView: View {
                         store.send(.signOutTapped)
                         dismiss()
                     } label: {
-                        Text("Se déconnecter")
+                        Text("Sign out")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(.red.opacity(0.1))
@@ -54,14 +54,14 @@ struct AccountView: View {
                     }
                     .padding(.horizontal, 32)
                 } else {
-                    Text("Aucun compte")
+                    Text("No account")
                         .foregroundStyle(.secondary)
                 }
             }
             .padding(.top, 40)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Fermer") { dismiss() }
+                    Button("Close") { dismiss() }
                 }
             }
         }

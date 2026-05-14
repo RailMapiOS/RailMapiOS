@@ -17,12 +17,16 @@ public struct TrainRoute: Identifiable, Equatable {
     let company: String?
     /// Train number / headsign, used to query RailMapAPI for exact route shape
     let headsign: String?
+    /// True when the underlying journey is more than 30min past its arrival.
+    /// Hidden from the default map view (re-shown when selected).
+    var isPast: Bool
 
-    init(coordinates: [CLLocationCoordinate2D], company: String? = nil, headsign: String? = nil) {
+    init(coordinates: [CLLocationCoordinate2D], company: String? = nil, headsign: String? = nil, isPast: Bool = false) {
         self.stopCoordinates = coordinates
         self.routeCoordinates = coordinates
         self.company = company
         self.headsign = headsign
+        self.isPast = isPast
     }
 
     var routeColor: Color {

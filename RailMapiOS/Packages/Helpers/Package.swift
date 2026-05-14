@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "Helpers",
+    // Bumped from default to match the host app's deployment target — required
+    // for `String(localized:)` (iOS 15+) and `LocalizedStringResource` (iOS 16+).
+    platforms: [.iOS(.v18)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(

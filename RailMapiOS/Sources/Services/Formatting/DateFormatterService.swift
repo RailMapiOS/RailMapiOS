@@ -90,7 +90,7 @@ extension DateFormatterService {
     
     func calculateDuration(startDate: Date?, endDate: Date?) -> String {
         guard let startDate = startDate, let endDate = endDate else {
-            LogManager.error("Impossible de calculer la durée: dates de début ou de fin manquantes", category: "calculations")
+            LogManager.error("Cannot compute duration: missing start or end date", category: "calculations")
             return "N/A"
         }
         let interval = endDate.timeIntervalSince(startDate)

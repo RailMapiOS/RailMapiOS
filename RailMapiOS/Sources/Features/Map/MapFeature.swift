@@ -14,12 +14,15 @@ struct MapFeature {
         static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.trainRoutes == rhs.trainRoutes &&
             lhs.selectedRoute == rhs.selectedRoute &&
-            lhs.journeys.compactMap(\.id) == rhs.journeys.compactMap(\.id)
+            lhs.journeys.compactMap(\.id) == rhs.journeys.compactMap(\.id) &&
+            lhs.vehicleMarkers == rhs.vehicleMarkers
         }
 
         var trainRoutes: [TrainRoute] = []
         var selectedRoute: TrainRoute?
         var journeys: [Journey] = []
+        /// Live train markers (GTFS-RT vehicle positions, computed by AppFeature).
+        var vehicleMarkers: [VehicleMarker] = []
         /// Incremented whenever camera should update — the View reacts to this.
         var cameraUpdateTrigger: Int = 0
     }
@@ -30,6 +33,11 @@ struct MapFeature {
         case clearRouteSelection
         case routeGeometryResolved(routeID: UUID, coordinates: [CLLocationCoordinate2D], source: String, journeyID: UUID?)
         case routeGeometryFailed(routeID: UUID)
+        case vehicleMarkersUpdated([VehicleMarker])
+        /// Refetch a route's geometry with a real GPS coordinate inserted as a
+        /// waypoint between two stops. Used when a live train drifts off the
+        /// precomputed shape (e.g. detour, alternate track).
+        case refetchShapeWithWaypoint(routeID: UUID, waypoint: CLLocationCoordinate2D, stopInsertionIndex: Int)
     }
 
     @Dependency(\.routeGeometryClient) var routeGeometry
@@ -73,6 +81,38 @@ struct MapFeature {
 
             case .routeGeometryFailed:
                 return .none
+
+            case .vehicleMarkersUpdated(let markers):
+                state.vehicleMarkers = markers
+                return .none
+
+            case .refetchShapeWithWaypoint(let routeID, let waypoint, let stopInsertionIndex):
+                guard let index = state.trainRoutes.firstIndex(where: { $0.id == routeID }) else { return .none }
+                let route = state.trainRoutes[index]
+                guard route.stopCoordinates.count >= 2 else { return .none }
+
+                // Insert waypoint right after stopInsertionIndex (clamped).
+                var mutableStops = route.stopCoordinates
+                let insertAt = max(0, min(mutableStops.count, stopInsertionIndex + 1))
+                mutableStops.insert(waypoint, at: insertAt)
+                let stops = mutableStops
+
+                let matchingJourney = state.journeys.first { $0.headsign == route.headsign }
+                let journeyID = matchingJourney?.id
+
+                return .run { send in
+                    do {
+                        let resolved = try await routeGeometry.fetchRouteGeometry(stops)
+                        await send(.routeGeometryResolved(
+                            routeID: routeID,
+                            coordinates: resolved,
+                            source: "signal-osrm-waypoint",
+                            journeyID: journeyID
+                        ))
+                    } catch {
+                        await send(.routeGeometryFailed(routeID: routeID))
+                    }
+                }
             }
         }
     }
@@ -90,12 +130,16 @@ struct MapFeature {
             let routeID = route.id
             let headsign = route.headsign
             let stops = route.stopCoordinates
-            let journeyID = state.journeys.first { $0.headsign == headsign }?.id
+            let matchingJourney = state.journeys.first { $0.headsign == headsign }
+            let journeyID = matchingJourney?.id
+            // Pick the right API source based on the journey's operator
+            // (TGV/INOUI → sncf-tgv, OUIGO → ouigo, etc.). Falls back to sncf-ter.
+            let source = matchingJourney.map(AppFeature.apiSource(for:)) ?? "sncf-ter"
 
             return .run { send in
                 do {
                     if let headsign {
-                        let result = try await routeGeometry.fetchRouteShape(headsign, "sncf-ter")
+                        let result = try await routeGeometry.fetchRouteShape(headsign, source)
                         await send(.routeGeometryResolved(routeID: routeID, coordinates: result.coordinates, source: result.shapeSource, journeyID: journeyID))
                     } else {
                         let resolved = try await routeGeometry.fetchRouteGeometry(stops)

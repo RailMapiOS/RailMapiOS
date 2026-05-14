@@ -42,11 +42,11 @@ struct StationPickerView: View {
             }
             .listStyle(.plain)
         }
-        .navigationTitle(store.navigationTitle)
+        .navigationTitle(Text(store.navigationTitle))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 if store.hasStationsSelected {
-                    Button("Confirmer") { store.send(.confirmTapped) }
+                    Button("Confirm") { store.send(.confirmTapped) }
                         .font(.headline)
                 }
             }

@@ -45,29 +45,16 @@ struct ConfirmationView: View {
                         .padding(.vertical)
                     }
 
-                    HStack {
-                        InfoCard(
-                            title: "Booking Code",
-                            bodyTexts: ["Tap to Edit"],
-                            icon: "ticket.fill",
-                            displayMode: .small
-                        )
-                        InfoCard(
-                            title: "Seat",
-                            bodyTexts: ["Tap to Edit"],
-                            icon: "carseat.right.fill",
-                            displayMode: .small
-                        )
-                    }
-                    .padding(.horizontal)
+                    // Booking code & seat: hidden until edit is implemented.
+                    // TODO: re-enable when sheet for editing is added.
                 }
                 .padding(.vertical)
             }
         }
-        .navigationTitle("Confirmation")
+        .navigationTitle("Summary")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Confirmer") { store.send(.confirmTapped) }
+                Button("Add to my journeys") { store.send(.confirmTapped) }
                     .font(.headline)
             }
         }

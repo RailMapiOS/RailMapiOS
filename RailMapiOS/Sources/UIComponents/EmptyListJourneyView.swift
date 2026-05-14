@@ -8,15 +8,17 @@
 import SwiftUI
 
 struct EmptyListJourneyView: View {
-    private var title: String
-    private var subtitle: String
-    private var paragraph: String
+    /// Strings flow through `LocalizedStringResource` so callers can override
+    /// per-context (different empty states for the journeys list vs search).
+    private var title: LocalizedStringResource
+    private var subtitle: LocalizedStringResource
+    private var paragraph: LocalizedStringResource
     var compact: Bool = false
 
     init(
-        title: String = "Ajouter un trajet ?",
-        subtitle: String = "Aucun trajet trouvé",
-        paragraph: String = "Recherchez un trajet par numéro de train.",
+        title: LocalizedStringResource = LocalizedStringResource("Add a journey?", comment: "Empty-state title for the journeys list."),
+        subtitle: LocalizedStringResource = LocalizedStringResource("No journeys yet", comment: "Empty-state subtitle for the journeys list."),
+        paragraph: LocalizedStringResource = LocalizedStringResource("Search for a journey by its train number.", comment: "Empty-state instruction text."),
         compact: Bool = false
     ) {
         self.title = title

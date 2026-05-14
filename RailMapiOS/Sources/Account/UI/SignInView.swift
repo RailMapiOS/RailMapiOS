@@ -21,11 +21,11 @@ struct SignInView: View {
                     .frame(maxWidth: 80)
                     .foregroundStyle(.tint)
 
-                Text("Se connecter")
+                Text("Sign in")
                     .font(.title)
                     .fontWeight(.bold)
 
-                Text("Connectez-vous avec iCloud pour synchroniser vos trajets")
+                Text("Sign in with iCloud to sync your journeys")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -41,7 +41,7 @@ struct SignInView: View {
                 Button {
                     store.send(.requestPermissionTapped)
                 } label: {
-                    Text("Se connecter avec iCloud")
+                    Text("Sign in with iCloud")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -55,7 +55,7 @@ struct SignInView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Fermer") { dismiss() }
+                    Button("Close") { dismiss() }
                 }
             }
         }

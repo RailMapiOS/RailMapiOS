@@ -50,14 +50,14 @@ extension DateRow {
               let arrivalID = arrivalStationID,
               let departureStop = journey.stopTimes.first(where: { $0.stopPoint.id == departureID }),
               let arrivalStop = journey.stopTimes.first(where: { $0.stopPoint.id == arrivalID }),
-              let startDate = combineDateWithTime(date: date, timeString: departureStop.utcDepartureTime),
-              let endDate = combineDateWithTime(date: date, timeString: arrivalStop.utcArrivalTime) else {
+              let startDate = combineDateWithTime(date: date, timeString: departureStop.departureTime),
+              let endDate = combineDateWithTime(date: date, timeString: arrivalStop.arrivalTime) else {
             return nil
         }
 
         let stops = journey.stopTimes.compactMap { stopTime -> NewStop? in
-            guard let arrivalTime = combineDateWithTime(date: date, timeString: stopTime.utcArrivalTime),
-                  let departureTime = combineDateWithTime(date: date, timeString: stopTime.utcDepartureTime) else {
+            guard let arrivalTime = combineDateWithTime(date: date, timeString: stopTime.arrivalTime),
+                  let departureTime = combineDateWithTime(date: date, timeString: stopTime.departureTime) else {
                 return nil
             }
 
@@ -94,14 +94,37 @@ extension DateRow {
         )
     }
 
+    /// Combines a calendar date with an Navitia time string.
+    /// Navitia API gives times in "HHmmss" (no separators) for the operator's local timezone.
+    /// We assume Europe/Paris (the default for SNCF/SNCB/Trenitalia France) since the dataset
+    /// is France-centric. For multi-timezone trips, store the operator timezone per journey later.
     private func combineDateWithTime(date: Date, timeString: String?) -> Date? {
-        guard let timeString = timeString else { return nil }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        guard let timeString = timeString, !timeString.isEmpty else { return nil }
+
+        // Navitia returns "HHmmss" (e.g. "174000"). Normalize to "HH:mm:ss".
+        let normalized: String = {
+            if timeString.contains(":") { return timeString }
+            guard timeString.count >= 6 else { return timeString }
+            let h = timeString.prefix(2)
+            let m = timeString.dropFirst(2).prefix(2)
+            let s = timeString.dropFirst(4).prefix(2)
+            return "\(h):\(m):\(s)"
+        }()
+
+        let parser = DateFormatter()
+        parser.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        parser.timeZone = TimeZone(identifier: "Europe/Paris")
+        parser.locale = Locale(identifier: "en_US_POSIX")
+
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month, .day], from: date)
-        let fullDateString = String(format: "%04d-%02d-%02d %@", components.year ?? 2000, components.month ?? 1, components.day ?? 1, timeString)
-        return dateFormatter.date(from: fullDateString)
+        let fullDateString = String(
+            format: "%04d-%02d-%02d %@",
+            components.year ?? 2000,
+            components.month ?? 1,
+            components.day ?? 1,
+            normalized
+        )
+        return parser.date(from: fullDateString)
     }
 }

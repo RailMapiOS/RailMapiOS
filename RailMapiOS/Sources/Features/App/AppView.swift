@@ -33,22 +33,22 @@ struct AppView: View {
 
     private var iPhoneLayout: some View {
         ZStack {
-            MapView(store: store.scope(state: \.map, action: \.map), sheetSize: store.sheetSize)
-                .edgesIgnoringSafeArea(.all)
-                .sheet(isPresented: $isSheetPresented) {
-                    BottomSheetView(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
-                        .presentationDetents(
-                            [.fraction(0.3), .medium, .large],
-                            selection: Binding(
-                                get: { store.sheetSize },
-                                set: { store.send(.sheetSizeChanged($0)) }
-                            )
+            MapView(store: store.scope(state: \.map, action: \.map))
+            .edgesIgnoringSafeArea(.all)
+            .sheet(isPresented: $isSheetPresented) {
+                BottomSheetView(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
+                    .presentationDetents(
+                        store.bottomSheet.availableDetents,
+                        selection: Binding(
+                            get: { store.bottomSheet.sheetSize },
+                            set: { store.send(.bottomSheet(.sheetSizeChanged($0))) }
                         )
-                        .presentationBackgroundInteraction(.enabled(upThrough: .large))
-                        .presentationBackground(.ultraThinMaterial)
-                        .presentationCornerRadius(nil)
-                        .interactiveDismissDisabled()
-                }
+                    )
+                    .presentationBackgroundInteraction(.enabled(upThrough: .large))
+                    .presentationBackground(.clear)
+                    .presentationCornerRadius(nil)
+                    .interactiveDismissDisabled()
+            }
         }
     }
 
@@ -59,7 +59,7 @@ struct AppView: View {
             BottomSheetView(store: store.scope(state: \.bottomSheet, action: \.bottomSheet))
                 .frame(minWidth: 200)
         } detail: {
-            MapView(store: store.scope(state: \.map, action: \.map), sheetSize: .large)
+            MapView(store: store.scope(state: \.map, action: \.map))
                 .edgesIgnoringSafeArea(.all)
         }
     }

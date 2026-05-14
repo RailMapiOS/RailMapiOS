@@ -32,5 +32,7 @@ protocol JourneyRowDataSource: ObservableObject {
 
 enum JourneyRowFooter {
     case saved(date: String, status: JourneyStatus)
+    /// Search variant footer: shows operating days info (e.g. "Lun-Ven", "Tous les jours")
+    case search(operatingDays: String, stopCount: Int)
     case none
 }

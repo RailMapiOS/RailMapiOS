@@ -27,7 +27,7 @@ struct DatePickerView: View {
             // Calendar
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Choisir une date")
+                    Text("Choose a date")
                         .fontWeight(.bold)
                         .font(.title3)
                         .foregroundStyle(.secondary)
@@ -39,11 +39,11 @@ struct DatePickerView: View {
                 }
             }
         }
-        .navigationTitle("Date du voyage")
+        .navigationTitle("Journey date")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 if store.selectedDate != nil {
-                    Button("Confirmer") { store.send(.confirmTapped) }
+                    Button("Confirm") { store.send(.confirmTapped) }
                         .font(.headline)
                 }
             }

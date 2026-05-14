@@ -66,12 +66,12 @@ struct TabBarButtonStyle: ButtonStyle {
 enum TabItem: CaseIterable {
     case journeys, friends, profile, search
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
-        case .journeys: return "Mes Trajets"
-        case .friends: return "Mes Amis"
-        case .profile: return "Profil"
-        case .search: return "Rechercher"
+        case .journeys: return LocalizedStringResource("My Journeys", comment: "Tab bar title for the saved journeys list.")
+        case .friends:  return LocalizedStringResource("Friends", comment: "Tab bar title for the (future) friends feed.")
+        case .profile:  return LocalizedStringResource("Profile", comment: "Tab bar title for the user's profile / account.")
+        case .search:   return LocalizedStringResource("Search", comment: "Tab bar title for the train search tab.")
         }
     }
 

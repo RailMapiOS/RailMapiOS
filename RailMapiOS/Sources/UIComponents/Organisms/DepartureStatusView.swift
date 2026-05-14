@@ -31,8 +31,8 @@ struct DepartureStatusView: View {
         switch status {
         case .cancelled:
             statusView(
-                title: "Train annulé",
-                message: ", veuillez vous rapprocher des agents de voyage",
+                title: "Train cancelled",
+                message: ", please contact a station agent",
                 color: .red
             )
             
@@ -90,11 +90,12 @@ struct DepartureStatusView: View {
             locationText(title: "Hall", value: hall, font: .title, color: color)
         }
     }
-    
+
     @ViewBuilder
     private func locationInfo(color: Color) -> some View {
         if let platform = platform {
-            locationText(title: "Quai", value: platform, font: .subheadline, color: color)
+            // "Platform" abbreviation matches the heading style of `Plat.`.
+            locationText(title: "Platform", value: platform, font: .subheadline, color: color)
         }
         if let hall = hall {
             locationText(title: "Hall", value: hall, font: .subheadline, color: color)

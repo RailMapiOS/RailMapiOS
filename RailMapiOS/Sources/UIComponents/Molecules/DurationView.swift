@@ -17,19 +17,18 @@ struct DurationView: View {
         HStack(spacing: 5) {
             Image(systemName: "clock")
                 .foregroundStyle(.gray)
-            Text(calculateDurationString(from: startDate, to: endDate))
+            Text(verbatim: calculateDurationString(from: startDate, to: endDate))
                 .font(.subheadline)
                 .foregroundStyle(.gray)
             VStack { Divider() }
         }
         .padding(.horizontal)
     }
-    
+
     func calculateDurationString(from startDate: Date?, to endDate: Date?) -> String {
         guard let startDate = startDate, let endDate = endDate else {
-            return "Durée non disponible"
+            return String(localized: "Duration unavailable", comment: "Fallback shown when journey start or end is missing.")
         }
-        
         return startDate.duration(to: endDate)
     }
 }

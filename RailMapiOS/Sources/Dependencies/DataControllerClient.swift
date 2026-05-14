@@ -18,6 +18,7 @@ struct DataControllerClient {
     var deleteJourney: @Sendable (_ journeyID: UUID) async -> Void
     var deleteAllJourneys: @Sendable () async -> Void
     var saveRouteShape: @Sendable (_ journeyID: UUID, _ coordinates: [CLLocationCoordinate2D], _ source: String) async -> Void
+    var setRefundBannerDismissed: @Sendable (_ journeyID: UUID, _ dismissed: Bool) async -> Void
     var getModelContainer: @Sendable () -> ModelContainer? = { nil }
 }
 
@@ -40,6 +41,9 @@ extension DataControllerClient: DependencyKey {
         },
         saveRouteShape: { journeyID, coordinates, source in
             await MainActor.run { shared?.saveRouteShape(journeyID: journeyID, coordinates: coordinates, source: source) }
+        },
+        setRefundBannerDismissed: { journeyID, dismissed in
+            await MainActor.run { shared?.setRefundBannerDismissed(journeyID: journeyID, dismissed: dismissed) }
         },
         getModelContainer: { shared?.modelContainer }
     )

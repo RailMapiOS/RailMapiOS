@@ -12,8 +12,8 @@ struct BottomSheetView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             contentWithBars
-                .navigationTitle(store.selectedTab.title)
-                .navigationBarTitleDisplayMode(.inline)
+                .background(.ultraThinMaterial)
+                .toolbar(.hidden, for: .navigationBar)
                 .sheet(item: $store.scope(state: \.signIn, action: \.signIn)) { signInStore in
                     SignInView(store: signInStore)
                 }
@@ -39,26 +39,71 @@ struct BottomSheetView: View {
 
     @ViewBuilder
     private var contentWithBars: some View {
-        tabContent
-            .safeAreaInset(edge: .bottom) {
-                VStack(spacing: 0) {
-                    if store.selectedTab == .search {
-                        bottomSearchBar
-                    }
-                    CustomTabBarView(selectedTab: Binding(
-                        get: { store.selectedTab },
-                        set: { store.send(.tabSelected($0)) }
-                    ))
+        VStack(spacing: 0) {
+            customHeader
+            tabContent
+        }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 0) {
+                if store.selectedTab == .search {
+                    bottomSearchBar
                 }
-                .background(.regularMaterial)
+                CustomTabBarView(selectedTab: Binding(
+                    get: { store.selectedTab },
+                    set: { store.send(.tabSelected($0)) }
+                ))
+                .background(.ultraThinMaterial)
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { store.send(.profileButtonTapped) } label: {
-                        profileImage
+        }
+    }
+
+    // MARK: - Custom Header (large title + profile button side by side)
+
+    private var customHeader: some View {
+        HStack(alignment: .center) {
+            // Compact sheet: shrink the title from .title (~28pt) to .headline
+            // (~17pt) and tighten paddings — saves ~16pt of vertical space when
+            // the sheet is at .fraction(0.3) (~256pt total).
+            Text(store.selectedTab.title)
+                .font(store.isCompact ? .headline : .title)
+                .fontWeight(.bold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Spacer()
+            #if DEBUG
+            // DEBUG-only: replace the profile button with a menu to seed mock
+            // journeys (refund eligible, multi-stop, OUIGO, cancelled, etc.)
+            // so we can verify UI states without depending on real GTFS data.
+            Menu {
+                ForEach(MockJourneyKind.allCases) { kind in
+                    Button {
+                        store.send(.insertMockJourney(kind))
+                    } label: {
+                        Label(kind.label, systemImage: kind.systemImage)
                     }
                 }
+                Divider()
+                Button {
+                    store.send(.profileButtonTapped)
+                } label: {
+                    Label("Open profile (real)", systemImage: "person.crop.circle")
+                }
+            } label: {
+                Image(systemName: "ladybug.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.purple)
+                    .frame(height: 30)
             }
+            #else
+            Button { store.send(.profileButtonTapped) } label: {
+                profileImage
+            }
+            .buttonStyle(.plain)
+            #endif
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, store.isCompact ? 8 : 12)
+        .padding(.bottom, store.isCompact ? 4 : 8)
     }
 
     // MARK: - Tab Content
@@ -85,7 +130,7 @@ struct BottomSheetView: View {
                 .foregroundStyle(.secondary)
                 .font(.system(size: 16))
 
-            TextField("Rechercher un trajet...", text: Binding(
+            TextField("Search for a journey...", text: Binding(
                 get: { store.searchText },
                 set: { store.send(.searchTextChanged($0)) }
             ))
@@ -104,7 +149,7 @@ struct BottomSheetView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
     }
@@ -116,22 +161,88 @@ struct BottomSheetView: View {
             if store.shouldShowEmptyState {
                 EmptyListJourneyView(compact: store.isCompact)
             } else {
-                List(store.filteredJourneys, id: \.id) { journey in
-                    JourneyRowView(journey: journey)
-                        .onTapGesture { store.send(.journeyTapped(journey)) }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                store.send(.journeyDeleted(journey))
-                            } label: {
-                                Label("Supprimer", systemImage: "trash")
-                            }
+                List {
+                    // 1) Active — currently in transit, on time
+                    if !store.activeJourneys.isEmpty {
+                        Section {
+                            journeyRows(store.activeJourneys)
+                        } header: {
+                            sectionHeader("In transit", systemImage: "tram.fill")
                         }
+                    }
+
+                    // 2) Delayed / Cancelled — orange pastille (delay) or red (cancelled)
+                    if !store.delayedJourneys.isEmpty {
+                        Section {
+                            journeyRows(store.delayedJourneys)
+                        } header: {
+                            sectionHeader("Delayed", systemImage: "clock.badge.exclamationmark.fill")
+                        }
+                    }
+
+                    // 3) Upcoming — future, not yet active
+                    if !store.upcomingJourneys.isEmpty {
+                        Section {
+                            journeyRows(store.upcomingJourneys)
+                        } header: {
+                            sectionHeader("Upcoming", systemImage: "calendar")
+                        }
+                    }
+
+                    // 4) Archived — past, no delay
+                    if !store.pastJourneys.isEmpty {
+                        Section {
+                            journeyRows(store.pastJourneys, dimmed: true)
+                        } header: {
+                            sectionHeader("Past journeys", systemImage: "clock.arrow.circlepath")
+                        }
+                    }
                 }
                 .listStyle(.plain)
                 .scrollIndicators(.visible)
             }
         }
         .frame(maxWidth: .infinity)
+    }
+
+    /// Derives the badge to overlay on a row from its realtime status.
+    /// View-side equivalent of the same-named computation in the reducer
+    /// state — kept here because TCA's @ObservableState dynamic-member
+    /// lookup forwards properties but not methods.
+    private func badge(from status: RealtimeStatus?) -> SavedJourneyBadge? {
+        guard let status else { return nil }
+        if status.isCancelled { return .cancelled }
+        let delaySec = status.arrivalDelaySeconds ?? 0
+        guard delaySec >= 60 else { return nil }
+        return .delayed(minutes: delaySec / 60)
+    }
+
+    /// Common row builder for all 4 priority sections. The badge (delayed
+    /// or cancelled) is derived per-journey from the realtime status; rows
+    /// in archived sections are dimmed for visual hierarchy.
+    @ViewBuilder
+    private func journeyRows(_ journeys: [Journey], dimmed: Bool = false) -> some View {
+        ForEach(journeys, id: \.persistentModelID) { journey in
+            let status = journey.id.flatMap { store.realtimeUpdates[$0] }
+            SavedJourneyRow(
+                journey: journey,
+                realtimeStatus: status
+            )
+            .overlay(alignment: .topTrailing) {
+                if let badge = badge(from: status) {
+                    badge.view.padding(8)
+                }
+            }
+            .opacity(dimmed ? 0.65 : 1)
+            .onTapGesture { store.send(.journeyTapped(journey)) }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button(role: .destructive) {
+                    store.send(.journeyDeleted(journey))
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
     }
 
     // MARK: - Search Tab
@@ -141,22 +252,63 @@ struct BottomSheetView: View {
             if store.searchText.isEmpty {
                 placeholderView(
                     icon: "magnifyingglass",
-                    title: "Rechercher un trajet",
-                    subtitle: "Entrez un numéro de train"
+                    title: "Search for a journey",
+                    subtitle: "Enter a train number (e.g. 6234, 8541)"
                 )
-            } else if !store.filteredJourneys.isEmpty {
-                List(store.filteredJourneys, id: \.id) { journey in
-                    JourneyRowView(journey: journey)
-                        .onTapGesture { store.send(.journeyTapped(journey)) }
+            } else if !store.filteredJourneys.isEmpty || !store.searchResults.isEmpty {
+                List {
+                    if !store.filteredJourneys.isEmpty {
+                        Section {
+                            ForEach(store.filteredJourneys, id: \.persistentModelID) { journey in
+                                SavedJourneyRow(journey: journey)
+                                    .onTapGesture { store.send(.journeyTapped(journey)) }
+                            }
+                        } header: {
+                            sectionHeader("Your journeys", systemImage: "bookmark.fill")
+                        }
+                    }
+
+                    if !store.searchResults.isEmpty {
+                        Section {
+                            ForEach(store.searchResults) { result in
+                                SearchResultRow(result: result)
+                                    .onTapGesture { store.send(.searchResultTapped(result)) }
+                            }
+                        } header: {
+                            sectionHeader("Add a new journey", systemImage: "plus.circle")
+                        }
+                    }
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+            } else if store.isCompact {
+                // Compact sheet: collapse the empty/loading state to a single
+                // line that fits between the header and the search bar (~92pt).
+                HStack(spacing: 8) {
+                    if store.isSearchingAPI {
+                        ProgressView().controlSize(.small)
+                        Text("Searching…")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.tertiary)
+                        Text("No results — check the train number")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 24)
             } else {
                 ScrollView {
                     VStack(spacing: 12) {
                         if store.isSearchingAPI {
                             ProgressView()
                                 .padding(.bottom, 8)
-                        } else if !store.isCompact {
+                        } else {
                             Image(systemName: "magnifyingglass")
                                 .resizable()
                                 .foregroundStyle(.tertiary)
@@ -164,11 +316,11 @@ struct BottomSheetView: View {
                                 .frame(maxWidth: 60)
                                 .padding(.bottom, 8)
                         }
-                        Text(store.isSearchingAPI ? "Recherche..." : "Entrez un numéro de train")
+                        Text(store.isSearchingAPI ? "Searching..." : "No results")
                             .font(.title2)
                             .fontWeight(.bold)
                         if !store.isSearchingAPI {
-                            Text("ex. 6234, 8541...")
+                            Text("Check the train number")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
@@ -193,10 +345,10 @@ struct BottomSheetView: View {
                         .frame(maxWidth: 80)
                         .padding(.bottom, 8)
                 }
-                Text("Mes Amis")
+                Text("Friends")
                     .font(.title2)
                     .fontWeight(.bold)
-                Text("Bientôt disponible")
+                Text("Coming soon")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -237,10 +389,10 @@ struct BottomSheetView: View {
                                 .frame(maxWidth: 80)
                                 .padding(.bottom, 8)
                         }
-                        Text("Se connecter")
+                        Text("Sign in")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("Connectez-vous pour accéder à votre profil")
+                        Text("Sign in to access your profile")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Button("Se connecter") {
@@ -254,6 +406,22 @@ struct BottomSheetView: View {
             .frame(maxWidth: .infinity)
             .padding(.top, 16)
         }
+    }
+
+    // MARK: - Section Header
+
+    private func sectionHeader(_ title: LocalizedStringResource, systemImage: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemImage)
+                .font(.caption)
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+            Spacer()
+        }
+        .foregroundStyle(.secondary)
+        .padding(.vertical, 4)
+        .textCase(nil)
     }
 
     // MARK: - Profile Image
@@ -286,26 +454,37 @@ struct BottomSheetView: View {
 
     // MARK: - Helpers
 
-    private func placeholderView(icon: String, title: String, subtitle: String) -> some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                if !store.isCompact {
-                    Image(systemName: icon)
-                        .resizable()
-                        .foregroundStyle(.tertiary)
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 60)
-                        .padding(.bottom, 8)
-                }
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.bold)
+    private func placeholderView(icon: String, title: LocalizedStringResource, subtitle: LocalizedStringResource) -> some View {
+        Group {
+            if store.isCompact {
+                // Compact sheet: only show the guidance line, centered above the
+                // search bar — no icon, no title, just the instruction.
                 Text(subtitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.horizontal, 24)
+            } else {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        Image(systemName: icon)
+                            .resizable()
+                            .foregroundStyle(.tertiary)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: 60)
+                            .padding(.bottom, 8)
+                        Text(title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
+                }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 16)
         }
     }
 }

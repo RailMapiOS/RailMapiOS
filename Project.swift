@@ -2,6 +2,10 @@ import ProjectDescription
 
 let project = Project(
     name: "RailMapiOS",
+    // Source language is English. The String Catalog at
+    // `RailMapiOS/Resources/Localizable.xcstrings` lists target languages —
+    // Xcode reads this list and expects translations for each.
+    options: .options(developmentRegion: "en"),
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
             .package(url: "https://github.com/AliSoftware/OHHTTPStubs", .upToNextMinor(from: "9.1.0")),
