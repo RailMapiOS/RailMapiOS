@@ -18,7 +18,18 @@ final class DataService {
     private let modelContext: ModelContext
 
     init() throws {
-        modelContainer = try ModelContainer(for: Journey.self, Stop.self, StopInfos.self)
+        // CloudKit sync is only enabled once the user has signed in through the
+        // iCloud / Apple SSO flow (see `SignInFeature`). Until then — and on
+        // simulators or devices with no iCloud account — the store stays
+        // local-only. This avoids the `CKAccountStatusNoAccount` setup error at
+        // launch and removes the CloudKit setup latency that delayed first render.
+        let configuration = ModelConfiguration(
+            cloudKitDatabase: UserStorage.shared.isLoggedIn() ? .automatic : .none
+        )
+        modelContainer = try ModelContainer(
+            for: Journey.self, Stop.self, StopInfos.self,
+            configurations: configuration
+        )
         modelContext = ModelContext(modelContainer)
     }
 

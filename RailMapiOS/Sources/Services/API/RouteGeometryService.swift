@@ -26,10 +26,21 @@ struct RouteGeometryService: Sendable {
         self.baseURL = baseURL
     }
 
-    /// Fetches the route shape for a specific train number from RailMapAPI.
-    func fetchRouteShape(trainNumber: String, source: String) async throws -> TrainShapeResult {
+    /// Fetches the route shape for a specific train from RailMapAPI.
+    ///
+    /// Pass `tripID` (the journey's `idVehiculeJourney`) whenever available so
+    /// the backend resolves the exact saved service — a train number maps to
+    /// many daily variants with different stop sets, so number-only matching
+    /// can return the wrong shape (e.g. one running past the destination).
+    func fetchRouteShape(trainNumber: String, source: String, tripID: String? = nil) async throws -> TrainShapeResult {
         let encodedTrain = trainNumber.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? trainNumber
-        guard let url = URL(string: "\(baseURL)/train/\(encodedTrain)/shape?source=\(source)") else {
+        var components = URLComponents(string: "\(baseURL)/train/\(encodedTrain)/shape")
+        var queryItems = [URLQueryItem(name: "source", value: source)]
+        if let tripID, !tripID.isEmpty {
+            queryItems.append(URLQueryItem(name: "tripID", value: tripID))
+        }
+        components?.queryItems = queryItems
+        guard let url = components?.url else {
             throw ServiceError.invalidURL
         }
         // RailMapAPI call → token attached.

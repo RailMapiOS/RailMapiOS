@@ -135,11 +135,14 @@ struct MapFeature {
             // Pick the right API source based on the journey's operator
             // (TGV/INOUI → sncf-tgv, OUIGO → ouigo, etc.). Falls back to sncf-ter.
             let source = matchingJourney.map(AppFeature.apiSource(for:)) ?? "sncf-ter"
+            // Exact trip so the backend returns THIS service's shape, not an
+            // arbitrary same-number variant (different stops/endpoint).
+            let tripID = matchingJourney?.idVehiculeJourney
 
             return .run { send in
                 do {
                     if let headsign {
-                        let result = try await routeGeometry.fetchRouteShape(headsign, source)
+                        let result = try await routeGeometry.fetchRouteShape(headsign, source, tripID)
                         await send(.routeGeometryResolved(routeID: routeID, coordinates: result.coordinates, source: result.shapeSource, journeyID: journeyID))
                     } else {
                         let resolved = try await routeGeometry.fetchRouteGeometry(stops)
