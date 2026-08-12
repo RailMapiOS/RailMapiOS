@@ -4,45 +4,54 @@
 // swiftformat:disable all
 // Generated using tuist — https://github.com/tuist/tuist
 
+
+
 #if os(macOS)
-  import AppKit
-#elseif os(iOS)
-  import UIKit
-#elseif os(tvOS) || os(watchOS)
-  import UIKit
+#if hasFeature(InternalImportsByDefault)
+public import AppKit
+#else
+import AppKit
 #endif
-#if canImport(SwiftUI)
-  import SwiftUI
+#else
+#if hasFeature(InternalImportsByDefault)
+public import UIKit
+#else
+import UIKit
+#endif
 #endif
 
-// swiftlint:disable superfluous_disable_command file_length implicit_return
+#if canImport(SwiftUI)
+#if hasFeature(InternalImportsByDefault)
+public import SwiftUI
+#else
+import SwiftUI
+#endif
+#endif
 
 // MARK: - Asset Catalogs
 
-// swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum RailMapiOSAsset: Sendable {
   public enum Assets {
   public static let accentColor = RailMapiOSColors(name: "AccentColor")
+    public static let logoTER = RailMapiOSImages(name: "Logo_TER")
+    public static let iconSNCF = RailMapiOSImages(name: "icon_SNCF")
+    public static let iconTER = RailMapiOSImages(name: "icon_TER")
     public static let iconDeutschebahn = RailMapiOSImages(name: "icon_deutschebahn")
     public static let iconEurostar = RailMapiOSImages(name: "icon_eurostar")
     public static let iconEurostarMinimal = RailMapiOSImages(name: "icon_eurostar_minimal")
     public static let iconInoui = RailMapiOSImages(name: "icon_inoui")
     public static let iconInouiMinimal = RailMapiOSImages(name: "icon_inoui_minimal")
     public static let iconRenfe = RailMapiOSImages(name: "icon_renfe")
-    public static let iconSncf = RailMapiOSImages(name: "icon_sncf")
-    public static let iconTer = RailMapiOSImages(name: "icon_ter")
     public static let iconTrenitalia = RailMapiOSImages(name: "icon_trenitalia")
     public static let logoDeutschebahn = RailMapiOSImages(name: "logo_deutschebahn")
     public static let logoEurostar = RailMapiOSImages(name: "logo_eurostar")
     public static let logoRenfe = RailMapiOSImages(name: "logo_renfe")
     public static let logoSncf = RailMapiOSImages(name: "logo_sncf")
-    public static let logoTer = RailMapiOSImages(name: "logo_ter")
     public static let logoTrenitalia = RailMapiOSImages(name: "logo_trenitalia")
   }
   public enum PreviewAssets {
   }
 }
-// swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
 // MARK: - Implementation Details
 
@@ -151,5 +160,5 @@ public extension SwiftUI.Image {
 }
 #endif
 
-// swiftlint:enable all
 // swiftformat:enable all
+// swiftlint:enable all

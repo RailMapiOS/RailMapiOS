@@ -29,7 +29,7 @@
 		34662B77F5B9E981B7645E7D /* JourneyDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A021F07CBFDD3F53C7A8051 /* JourneyDataService.swift */; };
 		38EC890DD311A4D188CFF83E /* Journey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C746D1EAB39D05C145E990A6 /* Journey.swift */; };
 		39BE0360B1760E02615FEEFD /* TrainIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */; };
-		3B4F92AA54D715F9C93D7244 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */; };
+		3B4F92AA54D715F9C93D7244 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = AC4CAFD81B22DE5528812781 /* OHHTTPStubs */; };
 		3BB25C9492436AA4C397FF94 /* RefundFlowFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613A81141E17AEF6DA7462D7 /* RefundFlowFeature.swift */; };
 		3D961645E4C0CF986720952D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858E5570D756DAB4C01D2D7B /* MapView.swift */; };
 		3E3B5AC14679E5A779C483EB /* VehicleJourneyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDA5976FF900E08791F4B10 /* VehicleJourneyService.swift */; };
@@ -41,7 +41,7 @@
 		491A68D8831C9690DC0FB924 /* RefundEligibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3229527528B849B6566690D8 /* RefundEligibilityTests.swift */; };
 		4DC2529E0BD6B6CECA6686C1 /* JourneyFilterClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4CFB54F09F6E6A8EFFA2C /* JourneyFilterClient.swift */; };
 		502D052AA66E61B79F8A0B1E /* UKTrainParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636EB8BC3994592EB7767017 /* UKTrainParser.swift */; };
-		523C35C99390C21127C16665 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = AC4CAFD81B22DE5528812781 /* OHHTTPStubs */; };
+		523C35C99390C21127C16665 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
 		54049F69D835C83A29F49BAF /* StringParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3ED15BDED9C9B12448E8B9C /* StringParserService.swift */; };
 		561BBB54063A2CEF9949F9D0 /* TrainIdentifierParserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED2350EB21DEAF3DA1E292E /* TrainIdentifierParserClient.swift */; };
 		567A990DEF4D80F08511CA18 /* JourneyRowDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4AF211120BE9EC3EE9133AB /* JourneyRowDataSource.swift */; };
@@ -88,7 +88,7 @@
 		9F02AAD34AFDAA3DEF1447B3 /* RealtimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468EB4AFCE47F2753FC7ED2 /* RealtimeService.swift */; };
 		A05B87D14DC5D12902D0A6F5 /* VehicleJourneysModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F86A5BC0A0D5D644CDFE01 /* VehicleJourneysModel.swift */; };
 		A0F766F01C42B7F6BF394B85 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
-		A19835942DC54BC384B7E9EE /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 01D88139408D450DEDE60A1B /* ComposableArchitecture */; };
+		A19835942DC54BC384B7E9EE /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */; };
 		A6B768127FB6F381263303F5 /* CompositeTrainParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4B174691222490F0F6348B /* CompositeTrainParser.swift */; };
 		A7D33413114034BF928DFFDE /* MapClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C3012B20C2A4DCDF723BF3 /* MapClient.swift */; };
 		A87F1CDE1C86D30BA08D26B7 /* ClockIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F070D96178C8D25D6AF725D7 /* ClockIcon.swift */; };
@@ -107,7 +107,7 @@
 		BC053432A6F5BC9030133FCF /* CompanyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48EC3E26A96904215273AE /* CompanyLogo.swift */; };
 		BC40EC16F3509B378705D675 /* RefundFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041ABC0EE9C6E7F025515C62 /* RefundFlowView.swift */; };
 		BCB46F352E8434777C71704A /* CFFRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB7444544C6BC958E7986CC /* CFFRules.swift */; };
-		BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2BA524F6EF416B27CCA98329 /* Helpers */; };
+		BD74FEB5C406BECBC6CD2367 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 01D88139408D450DEDE60A1B /* ComposableArchitecture */; };
 		C2BDE32EEF44592AD9B66BD2 /* StationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F964E4E8A300A519005EC01 /* StationPickerView.swift */; };
 		C49B962A8A08B9A78513906A /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C345E7AD75BDF57432884D44 /* APIConfiguration.swift */; };
 		C5C42CE60273C1091AD3C53B /* RealtimeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCC6E6EC6930FDFA03FD553 /* RealtimeStatus.swift */; };
@@ -132,7 +132,6 @@
 		F69769B0D54780CD3FBC2BE0 /* ConfirmationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DB64CE12E89C8C664171D1 /* ConfirmationPickerView.swift */; };
 		F7267D6E129B1AFC8A6544B7 /* AccountFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A70D6155D25C08F8F9B1008 /* AccountFeature.swift */; };
 		F7BB4AC6D0AB42ED35648964 /* DBTrainParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F283C85A04498D8A600C5CC /* DBTrainParser.swift */; };
-		F9B9152F6DCFE428D46101F2 /* Helpers in Frameworks */ = {isa = PBXBuildFile; productRef = B84FBECDF06B2687B7C68274 /* Helpers */; };
 		FAABBC5C9A7998ABBCC66E27 /* OUIGORules.swift in Sources */ = {isa = PBXBuildFile; fileRef = A790788501A864FA56D019D6 /* OUIGORules.swift */; };
 		FEC52261390F89EA6F5E9E9E /* TrainTravelSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96392A880A67BC4A9960D69 /* TrainTravelSummaryCard.swift */; };
 		FEF5C7D189895CFF0BD6802D /* DatePickerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A855A2EEF61673ED417B59 /* DatePickerFeature.swift */; };
@@ -325,7 +324,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F9B9152F6DCFE428D46101F2 /* Helpers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,10 +341,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD74FEB5C406BECBC6CD2367 /* Helpers in Frameworks */,
-				523C35C99390C21127C16665 /* OHHTTPStubs in Frameworks */,
-				3B4F92AA54D715F9C93D7244 /* OHHTTPStubsSwift in Frameworks */,
-				A19835942DC54BC384B7E9EE /* ComposableArchitecture in Frameworks */,
+				BD74FEB5C406BECBC6CD2367 /* ComposableArchitecture in Frameworks */,
+				523C35C99390C21127C16665 /* Helpers in Frameworks */,
+				3B4F92AA54D715F9C93D7244 /* OHHTTPStubs in Frameworks */,
+				A19835942DC54BC384B7E9EE /* OHHTTPStubsSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -798,8 +796,8 @@
 		CF1E7906C8878DA5FB2F9A1B = {
 			isa = PBXGroup;
 			children = (
-				B36CDB855BCE2FB0D7116ADA /* Project */,
 				BCADE8619646559D8AB08D21 /* Products */,
+				B36CDB855BCE2FB0D7116ADA /* Project */,
 				50D3443561B7F5BAC3BE31D7 /* Packages */,
 			);
 			sourceTree = "<group>";
@@ -906,10 +904,10 @@
 			);
 			name = RailMapiOS;
 			packageProductDependencies = (
+				01D88139408D450DEDE60A1B /* ComposableArchitecture */,
 				2BA524F6EF416B27CCA98329 /* Helpers */,
 				AC4CAFD81B22DE5528812781 /* OHHTTPStubs */,
 				56C7F6232F7EA72EECA3F3DA /* OHHTTPStubsSwift */,
-				01D88139408D450DEDE60A1B /* ComposableArchitecture */,
 			);
 			productName = RailMapiOS;
 			productReference = 58E5DCB89A6A9966D527DF79 /* RailMapiOS.app */;
@@ -931,7 +929,6 @@
 			);
 			name = RailMapiOSTests;
 			packageProductDependencies = (
-				B84FBECDF06B2687B7C68274 /* Helpers */,
 			);
 			productName = RailMapiOSTests;
 			productReference = B3DDAE81BE3BDE10CEAD32F6 /* RailMapiOSTests.xctest */;
@@ -989,6 +986,7 @@
 			packageReferences = (
 				43A44A60A3D5E814333415B4 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
 				D415899A7326D27D6C690E51 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				C5DE069C8435CB3BC03950EE /* XCLocalSwiftPackageReference "RailMapiOS/Packages/Helpers" */,
 			);
 			productRefGroup = BCADE8619646559D8AB08D21 /* Products */;
 			projectDirPath = "";
@@ -1190,8 +1188,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Config/RailMapiOSDebug.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MZ3E779E6C;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Derived/InfoPlists/RailMapiOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1199,8 +1200,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOS;
 				PRODUCT_NAME = RailMapiOS;
+				RAILMAP_API_URL = "http://127.0.0.1:8080";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1228,6 +1234,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOSTests;
 				PRODUCT_NAME = RailMapiOSTests;
 				SDKROOT = iphoneos;
@@ -1235,8 +1245,8 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RailMapiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RailMapiOS";
 				TEST_TARGET_NAME = RailMapiOS;
@@ -1313,6 +1323,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOSUITests;
 				PRODUCT_NAME = RailMapiOSUITests;
 				SDKROOT = iphoneos;
@@ -1320,8 +1334,8 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RailMapiOS;
 			};
@@ -1339,6 +1353,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOSTests;
 				PRODUCT_NAME = RailMapiOSTests;
 				SDKROOT = iphoneos;
@@ -1351,7 +1369,7 @@
 				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RailMapiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RailMapiOS";
 				TEST_TARGET_NAME = RailMapiOS;
@@ -1422,6 +1440,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOSUITests;
 				PRODUCT_NAME = RailMapiOSUITests;
 				SDKROOT = iphoneos;
@@ -1434,7 +1456,7 @@
 				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RailMapiOS;
 			};
@@ -1444,8 +1466,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Config/RailMapiOSDebug.entitlements;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/RailMapiOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = MZ3E779E6C;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Derived/InfoPlists/RailMapiOS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1453,14 +1478,19 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-L$(DT_TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.railmap.RailMapiOS;
 				PRODUCT_NAME = RailMapiOS;
+				RAILMAP_API_URL = "https://api.jeremiepatot.fr";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1507,6 +1537,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		C5DE069C8435CB3BC03950EE /* XCLocalSwiftPackageReference "RailMapiOS/Packages/Helpers" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = RailMapiOS/Packages/Helpers;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		43A44A60A3D5E814333415B4 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1550,10 +1587,6 @@
 		AC4CAFD81B22DE5528812781 /* OHHTTPStubs */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = OHHTTPStubs;
-		};
-		B84FBECDF06B2687B7C68274 /* Helpers */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Helpers;
 		};
 		E6FB2C5FFD7C2900CF0A7C74 /* OHHTTPStubsSwift */ = {
 			isa = XCSwiftPackageProductDependency;
