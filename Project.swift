@@ -9,7 +9,18 @@ let project = Project(
     packages: [
             .package(path: "RailMapiOS/Packages/Helpers"),
             .package(url: "https://github.com/AliSoftware/OHHTTPStubs", .upToNextMinor(from: "9.1.0")),
-            .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.25.5")
+            // 1.26.0 carries "Fixed: Xcode 27 Beta 1 Support". On 1.25.5 the
+            // Xcode 27 compiler rejects TCA's own NavigationStack+Observation.swift
+            // with "Cannot form key path to main actor-isolated subscript".
+            .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.26.1"),
+            // Not used directly — declared only to raise the floor on a
+            // transitive of TCA. TCA allows "1.0.0"..<"3.0.0" and the resolver
+            // otherwise settles on 2.8.0, whose `Shared.__generation` emits a
+            // `SwiftUI.State` symbol the Xcode 27 SDK refuses to let the app
+            // link (SwiftUICore is no longer an allowed direct client).
+            // swift-sharing 2.8.1 carries "Fixed: Xcode 27 Beta 1 Support".
+            // Remove once TCA's own floor is at or above this.
+            .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.9.1")
         ],
     targets: [
         .target(
