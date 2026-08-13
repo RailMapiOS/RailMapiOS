@@ -10,6 +10,9 @@ import SwiftUI
 
 struct CustomTabBarView: View {
     @Binding var selectedTab: TabItem
+    /// Safe area actually available under the bar, measured — it varies with
+    /// orientation and with how iOS places the sheet.
+    @State private var safeAreaBottom: CGFloat = 0
 
     var body: some View {
         VStack {
@@ -24,7 +27,20 @@ struct CustomTabBarView: View {
             }
             .padding(.top, 10)
         }
+        // The bar used to contribute no bottom room at all: the gap under the
+        // labels was entirely the ambient safe area — ~34pt of home indicator in
+        // portrait. Anywhere that inset shrinks (landscape, and the wide iPhone
+        // layouts where iOS 27 floats the sheet against an edge) the labels ended
+        // up nearly on the sheet's edge. Top up to a floor instead of stacking on
+        // top, so portrait is unchanged.
+        .padding(.bottom, max(0, Self.minimumBottomInset - safeAreaBottom))
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.safeAreaInsets.bottom
+        } action: { safeAreaBottom = $0 }
     }
+
+    /// Clearance the labels always keep below them, safe area included.
+    private static let minimumBottomInset: CGFloat = 20
 }
 
 struct TabBarButton: View {

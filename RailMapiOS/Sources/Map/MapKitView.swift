@@ -14,12 +14,12 @@ struct MapKitView: UIViewRepresentable {
     let selectedRoute: TrainRoute?
     /// Live train markers (GTFS-RT vehicle positions).
     let vehicleMarkers: [VehicleMarker]
-    /// Bottom layout margin: pushes compass, scale, and Apple Maps watermark above the sheet.
-    let bottomInset: CGFloat
-    /// Bottom inset used **only** when fitting the camera to journeys/routes —
-    /// pretends the sheet is at medium so the framing stays visible when the
-    /// user expands the sheet beyond the smallest detent.
-    let cameraBottomInset: CGFloat
+    /// Which edge of the map the journeys sheet covers, and by how much. Drives
+    /// both the layout margins (compass, scale, Apple Maps watermark) and the
+    /// camera fit, so the framing lands in whatever area is actually visible —
+    /// above a bottom sheet, or beside a trailing one on the wide iPhone
+    /// layouts.
+    let obscured: MapObscuredInsets
     /// Recompute camera region (set of all routes' coords or selected route).
     let cameraTrigger: Int
 
@@ -44,8 +44,14 @@ struct MapKitView: UIViewRepresentable {
     }
 
     func updateUIView(_ mapView: MKMapView, context: UIViewRepresentableContext<MapKitView>) {
-        // Update insets so controls + watermark stay above the sheet
-        mapView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
+        // Keep the controls + watermark clear of the sheet, whichever edge it is
+        // on. Directional margins let UIKit resolve leading/trailing for RTL.
+        mapView.directionalLayoutMargins = NSDirectionalEdgeInsets(
+            top: obscured.top,
+            leading: obscured.leading,
+            bottom: obscured.bottom,
+            trailing: obscured.trailing
+        )
 
         // Sync overlays + annotations. Polylines need vehicle positions to split into
         // past (grey) and remaining (colored) portions.
@@ -104,13 +110,25 @@ struct MapKitView: UIViewRepresentable {
         // arbitrary zoom, so give it a real neighbourhood to frame instead.
         let fitted = rect.isEmpty ? Self.neighbourhood(around: rect.origin) : rect
 
-        let horizontalPadding: CGFloat = selectedRoute == nil ? 24 : 32
-        let topPadding: CGFloat = 48
+        // Each edge takes whichever is larger: the area the sheet covers, or a
+        // cosmetic margin. Not the sum — adding them on the obscured edge would
+        // push the framing further from the sheet than it needs to be, which is
+        // wasted map on the one edge that has the least room to spare.
+        let horizontal: CGFloat = selectedRoute == nil ? 24 : 32
+        let margin = NSDirectionalEdgeInsets(
+            top: max(48, obscured.top),
+            leading: max(horizontal, obscured.leading),
+            bottom: max(24, obscured.bottom),
+            trailing: max(horizontal, obscured.trailing)
+        )
+        // `setVisibleMapRect` takes left/right, so leading/trailing are resolved
+        // here — the map is the only place that knows the layout direction.
+        let isRTL = mapView.effectiveUserInterfaceLayoutDirection == .rightToLeft
         let edgePadding = UIEdgeInsets(
-            top: topPadding,
-            left: horizontalPadding,
-            bottom: cameraBottomInset,
-            right: horizontalPadding
+            top: margin.top,
+            left: isRTL ? margin.trailing : margin.leading,
+            bottom: margin.bottom,
+            right: isRTL ? margin.leading : margin.trailing
         )
 
         coordinator.setCamera(rect: fitted, edgePadding: edgePadding, on: mapView)
