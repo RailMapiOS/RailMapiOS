@@ -15,7 +15,8 @@ struct MapFeature {
             lhs.trainRoutes == rhs.trainRoutes &&
             lhs.selectedRoute == rhs.selectedRoute &&
             lhs.journeys.compactMap(\.id) == rhs.journeys.compactMap(\.id) &&
-            lhs.vehicleMarkers == rhs.vehicleMarkers
+            lhs.vehicleMarkers == rhs.vehicleMarkers &&
+            lhs.cameraUpdateTrigger == rhs.cameraUpdateTrigger
         }
 
         var trainRoutes: [TrainRoute] = []
@@ -97,7 +98,7 @@ struct MapFeature {
                 mutableStops.insert(waypoint, at: insertAt)
                 let stops = mutableStops
 
-                let matchingJourney = state.journeys.first { $0.headsign == route.headsign }
+                let matchingJourney = state.journeys.first { $0.id == routeID }
                 let journeyID = matchingJourney?.id
 
                 return .run { send in
@@ -130,7 +131,10 @@ struct MapFeature {
             let routeID = route.id
             let headsign = route.headsign
             let stops = route.stopCoordinates
-            let matchingJourney = state.journeys.first { $0.headsign == headsign }
+            // Route ids are journey ids — matching on headsign resolved the
+            // wrong trip when two saved journeys share a train number, which
+            // also persisted the shape onto the wrong journey.
+            let matchingJourney = state.journeys.first { $0.id == routeID }
             let journeyID = matchingJourney?.id
             // Pick the right API source based on the journey's operator
             // (TGV/INOUI → sncf-tgv, OUIGO → ouigo, etc.). Falls back to sncf-ter.

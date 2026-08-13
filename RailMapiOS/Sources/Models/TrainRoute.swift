@@ -9,7 +9,14 @@ import SwiftUI
 
 /// Représente une route de train sur la carte
 public struct TrainRoute: Identifiable, Equatable {
-    public let id = UUID()
+    /// Identity of the `Journey` this route was generated from.
+    ///
+    /// It must NOT be a freshly minted `UUID()`: routes are regenerated from
+    /// scratch on every journey update, and live markers, map selection and
+    /// resolved geometries all refer to a route by this id. A per-instance
+    /// UUID made those references dangle after each regeneration, and made
+    /// two trips on the same train number indistinguishable.
+    public let id: UUID
     /// Stop coordinates (for annotations)
     let stopCoordinates: [CLLocationCoordinate2D]
     /// Detailed rail track coordinates (resolved via OSRM/GTFS shapes, or same as stopCoordinates)
@@ -21,7 +28,14 @@ public struct TrainRoute: Identifiable, Equatable {
     /// Hidden from the default map view (re-shown when selected).
     var isPast: Bool
 
-    init(coordinates: [CLLocationCoordinate2D], company: String? = nil, headsign: String? = nil, isPast: Bool = false) {
+    init(
+        id: UUID,
+        coordinates: [CLLocationCoordinate2D],
+        company: String? = nil,
+        headsign: String? = nil,
+        isPast: Bool = false
+    ) {
+        self.id = id
         self.stopCoordinates = coordinates
         self.routeCoordinates = coordinates
         self.company = company
@@ -44,8 +58,14 @@ public struct TrainRoute: Identifiable, Equatable {
 
     public static func == (lhs: TrainRoute, rhs: TrainRoute) -> Bool {
         lhs.id == rhs.id &&
+        lhs.isPast == rhs.isPast &&
         lhs.stopCoordinates.first == rhs.stopCoordinates.first &&
-        lhs.stopCoordinates.last == rhs.stopCoordinates.last
+        lhs.stopCoordinates.last == rhs.stopCoordinates.last &&
+        // Fingerprint rather than a full compare: shapes run to ~10k points and
+        // equality is evaluated on every state diff. Without it, swapping the
+        // stop-to-stop line for the resolved rail shape read as "no change".
+        lhs.routeCoordinates.count == rhs.routeCoordinates.count &&
+        lhs.routeCoordinates.last == rhs.routeCoordinates.last
     }
 }
 

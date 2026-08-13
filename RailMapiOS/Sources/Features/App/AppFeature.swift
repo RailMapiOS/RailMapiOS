@@ -279,7 +279,11 @@ struct AppFeature {
             .compactMap { journey -> VehicleMarker? in
                 guard let journeyID = journey.id else { return nil }
                 let status = updates[journeyID]
-                let route = routes.first { $0.headsign == journey.headsign }
+                // By id, not by train number: two saved trips can share a
+                // headsign, and matching on it sent both markers to the same
+                // route — leaving the other polyline undivided (no grey
+                // travelled portion, so the trip looked frozen).
+                let route = routes.first { $0.id == journeyID }
                 let polyline = route?.routeCoordinates ?? []
 
                 // 1. Real GPS position from GTFS-RT — never snap, this is ground truth.
@@ -336,7 +340,7 @@ struct AppFeature {
             .compactMap { journey -> ShapeDrift? in
                 guard let journeyID = journey.id,
                       let coord = updates[journeyID]?.vehicleCoordinate,
-                      let route = routes.first(where: { $0.headsign == journey.headsign })
+                      let route = routes.first(where: { $0.id == journeyID })
                 else { return nil }
 
                 // Drift = distance from GPS to the (smooth) polyline.

@@ -36,6 +36,7 @@ struct MapService: Sendable {
             guard coordinates.count >= 2 else { return nil }
 
             var route = TrainRoute(
+                id: journey.id ?? UUID(),
                 coordinates: coordinates,
                 company: journey.company,
                 headsign: journey.headsign,
@@ -64,8 +65,18 @@ struct MapService: Sendable {
 
     // MARK: - Route matching
 
-    /// Finds a route in `routes` that matches the journey's first/last stops.
+    /// Finds the route generated from `journey`.
+    ///
+    /// Routes carry their journey's id, so this is an exact lookup. The
+    /// departure/arrival coordinate match below is only a fallback for
+    /// journeys that have no id yet (never persisted): on its own it picks the
+    /// first route sharing the same origin and destination, which is the wrong
+    /// trip as soon as the user has saved the same route twice.
     func findMatchingRoute(for journey: Journey, in routes: [TrainRoute]) -> TrainRoute? {
+        if let journeyID = journey.id, let exact = routes.first(where: { $0.id == journeyID }) {
+            return exact
+        }
+
         guard let stops = journey.stops,
               let firstStop = stops.first(where: { $0.status?.lowercased() == "departure" }),
               let lastStop = stops.last(where: { $0.status?.lowercased() == "arrival" }),

@@ -26,8 +26,16 @@ struct MapKitView: UIViewRepresentable {
     // MARK: - UIViewRepresentable
 
     func makeUIView(context: UIViewRepresentableContext<MapKitView>) -> MKMapView {
-        let mapView = MKMapView()
+        let mapView = LayoutReportingMapView()
         mapView.delegate = context.coordinator
+        // The first `updateUIView` runs before the map has been laid out, so a
+        // camera fit requested there lands on a zero-sized view and is silently
+        // dropped. Replaying it on the first real layout is what keeps the map
+        // framed on the journeys instead of stuck at MapKit's default region.
+        mapView.onLayout = { [weak mapView, weak coordinator = context.coordinator] in
+            guard let mapView, let coordinator else { return }
+            coordinator.flushPendingCamera(on: mapView)
+        }
         mapView.showsCompass = true
         mapView.showsScale = true
         mapView.showsUserLocation = false
@@ -47,7 +55,7 @@ struct MapKitView: UIViewRepresentable {
         // Update camera if trigger changed
         if context.coordinator.lastCameraTrigger != cameraTrigger {
             context.coordinator.lastCameraTrigger = cameraTrigger
-            applyCamera(to: mapView)
+            requestCamera(on: mapView, coordinator: context.coordinator)
         }
     }
 
@@ -55,7 +63,7 @@ struct MapKitView: UIViewRepresentable {
 
     // MARK: - Camera
 
-    private func applyCamera(to mapView: MKMapView) {
+    private func requestCamera(on mapView: MKMapView, coordinator: Coordinator) {
         let coords: [CLLocationCoordinate2D]
         if let selected = selectedRoute, !selected.stopCoordinates.isEmpty {
             coords = selected.stopCoordinates
@@ -83,13 +91,44 @@ struct MapKitView: UIViewRepresentable {
             right: horizontalPadding
         )
 
-        mapView.setVisibleMapRect(rect, edgePadding: edgePadding, animated: true)
+        coordinator.setCamera(rect: rect, edgePadding: edgePadding, on: mapView)
     }
 
     // MARK: - Coordinator
 
     final class Coordinator: NSObject, MKMapViewDelegate {
         var lastCameraTrigger: Int = -1
+
+        // MARK: Camera
+
+        /// A fit requested while the map still had no size. Replayed by
+        /// `flushPendingCamera(on:)` on the first layout that gives it one.
+        private var pendingCamera: (rect: MKMapRect, edgePadding: UIEdgeInsets)?
+
+        func setCamera(rect: MKMapRect, edgePadding: UIEdgeInsets, on mapView: MKMapView) {
+            guard canFit(edgePadding, in: mapView) else {
+                pendingCamera = (rect, edgePadding)
+                return
+            }
+            pendingCamera = nil
+            mapView.setVisibleMapRect(rect, edgePadding: edgePadding, animated: true)
+        }
+
+        func flushPendingCamera(on mapView: MKMapView) {
+            guard let pending = pendingCamera, canFit(pending.edgePadding, in: mapView) else { return }
+            pendingCamera = nil
+            // Not animated: this is the initial framing, not a change the user
+            // is watching happen.
+            mapView.setVisibleMapRect(pending.rect, edgePadding: pending.edgePadding, animated: false)
+        }
+
+        /// The map must be laid out *and* leave room once the paddings are
+        /// subtracted, otherwise `setVisibleMapRect` produces an arbitrary zoom.
+        private func canFit(_ edgePadding: UIEdgeInsets, in mapView: MKMapView) -> Bool {
+            let size = mapView.bounds.size
+            return size.width - edgePadding.left - edgePadding.right > 0
+                && size.height - edgePadding.top - edgePadding.bottom > 0
+        }
 
         /// Per-polyline render metadata — which route it belongs to, and whether it
         /// represents the already-travelled portion (rendered in grey).
@@ -326,6 +365,19 @@ struct MapKitView: UIViewRepresentable {
             glyphCache[bucket] = image
             return image
         }
+    }
+}
+
+// MARK: - Map view reporting its layout
+
+/// `MKMapView` that tells the coordinator when it gets laid out, so a camera
+/// fit requested before the view had a size can be applied instead of lost.
+private final class LayoutReportingMapView: MKMapView {
+    var onLayout: (() -> Void)?
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        onLayout?()
     }
 }
 

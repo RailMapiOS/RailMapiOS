@@ -82,9 +82,39 @@ let project = Project(
             bundleId: "com.railmap.RailMapiOSTests",
             deploymentTargets: .iOS("18.0"),
             infoPlist: .default,
-            sources: ["RailMapiOS/Tests/UnitTests/**"],
+            // No host application. The app's sources are compiled straight into
+            // the test bundle rather than linked from a running host, so there
+            // is no `.target(name: "RailMapiOS")` dependency here — adding one
+            // back makes Tuist host the bundle again.
+            //
+            // Why: hosted, the app launched alongside the tests, and
+            // `AppFeature.startRealtimeTracking` fired its 1s/30s timers through
+            // `@Dependency(\.continuousClock)` and `\.realtimeClient`. Neither
+            // has a test implementation, so TCA reported those accesses as
+            // failures against whichever test happened to be running — the
+            // suite failed at random, usually on a cold build. Nothing in the
+            // tests instantiates `RailMapiOSApp`, so no app code runs now.
+            //
+            // Trade-off: the app sources are compiled twice (once per target),
+            // and `Bundle.main` here is the test runner, not the app — the
+            // sources must keep tolerating that (`APIConfiguration.baseURL`
+            // already falls back, `Logger` already defaults its subsystem).
+            sources: [
+                "RailMapiOS/Sources/**",
+                "SwiftData/**",
+                "RailMapiOS/Tests/UnitTests/**"
+            ],
             resources: [],
-            dependencies: [.target(name: "RailMapiOS"), .package(product: "Helpers")]
+            dependencies: [
+                .package(product: "Helpers"),
+                .package(product: "OHHTTPStubs"),
+                .package(product: "OHHTTPStubsSwift"),
+                .package(product: "ComposableArchitecture")
+            ],
+            settings: .settings(base: [
+                // Must track the app target: the same sources are built here.
+                "SWIFT_VERSION": "5"
+            ])
         ),
         .target(
             name: "RailMapiOSUITests",

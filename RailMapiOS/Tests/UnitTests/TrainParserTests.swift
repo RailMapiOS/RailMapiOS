@@ -4,7 +4,8 @@
 //
 
 import XCTest
-@testable import RailMapiOS
+// The app sources are compiled into this test target (see Project.swift),
+// so the code under test is already in this module — no import needed.
 
 final class TrainParserTests: XCTestCase {
 

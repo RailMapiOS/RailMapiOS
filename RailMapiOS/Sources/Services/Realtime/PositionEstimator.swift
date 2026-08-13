@@ -18,10 +18,21 @@ struct PositionEstimator: Sendable {
         let bearing: Double
     }
 
+    /// A stop with its delay-adjusted time and coordinate.
+    private typealias TimedStop = (stop: Stop, time: Date, coord: CLLocationCoordinate2D)
+
     /// Estimates the current position of a journey based on stop times.
     /// Applies GTFS-RT delays with forward propagation (a delay at stop N
     /// carries over to stops N+1, N+2, … until a new explicit delay is announced —
     /// this is the standard GTFS-RT semantics).
+    ///
+    /// The estimate is confined to the leg the user actually travels (their
+    /// boarding stop → their alighting stop). `journey.stops` holds the train's
+    /// whole run, which is usually longer at one or both ends, and the rendered
+    /// polyline only covers the user's leg: interpolating over the full run put
+    /// the marker outside the polyline, where snapping pinned it to an endpoint
+    /// and it sat there, apparently frozen.
+    ///
     /// - Parameters:
     ///   - journey: persisted Journey with at least 2 stops with coordinates and times.
     ///   - now: reference time (use `Date()` in production, mockable for tests).
@@ -42,9 +53,11 @@ struct PositionEstimator: Sendable {
         guard scheduled.count >= 2 else { return nil }
 
         // 2. Apply GTFS-RT delays with forward propagation.
-        // A stop without an explicit delay inherits the previous one.
+        // A stop without an explicit delay inherits the previous one. Run this
+        // over the *whole* trip, before narrowing to the user's leg: a delay
+        // announced upstream of their boarding stop still propagates onto it.
         var lastKnownDelay = 0
-        let timed: [(stop: Stop, time: Date, coord: CLLocationCoordinate2D)] = scheduled.map { entry in
+        let wholeRun: [TimedStop] = scheduled.map { entry in
             if let stopID = entry.stop.stopinfo?.id,
                let update = stopUpdates.first(where: { $0.stopID == stopID }),
                let delay = update.departureDelay.map(Int.init) ?? update.arrivalDelay.map(Int.init) {
@@ -54,7 +67,10 @@ struct PositionEstimator: Sendable {
             return (entry.stop, adjusted, entry.coord)
         }
 
-        guard let first = timed.first, let last = timed.last else { return nil }
+        // 3. Narrow to the user's leg, so the estimate spans exactly what the
+        // map draws. Same slicing as `MapService.generateTrainRoutes`.
+        let timed = Self.travelledLeg(of: wholeRun)
+        guard timed.count >= 2, let first = timed.first, let last = timed.last else { return nil }
 
         // Before departure: train parked at origin. Bearing points along first segment
         // so the icon faces the right direction.
@@ -84,5 +100,19 @@ struct PositionEstimator: Sendable {
 
         let bearing = BearingMath.bearing(from: a.coord, to: b.coord)
         return Estimate(coordinate: coord, bearing: bearing)
+    }
+
+    /// The slice of the run between the stop the user boards at (`departure`)
+    /// and the one they get off at (`arrival`). Every other stop carries an
+    /// empty status — see `DateRow.toNewJourneyModel`.
+    ///
+    /// Falls back to the whole run when the markers are missing or inverted, so
+    /// a malformed journey still yields a position rather than none.
+    private static func travelledLeg(of run: [TimedStop]) -> [TimedStop] {
+        guard let depIdx = run.firstIndex(where: { $0.stop.status?.lowercased() == "departure" }),
+              let arrIdx = run.lastIndex(where: { $0.stop.status?.lowercased() == "arrival" }),
+              depIdx < arrIdx
+        else { return run }
+        return Array(run[depIdx...arrIdx])
     }
 }
