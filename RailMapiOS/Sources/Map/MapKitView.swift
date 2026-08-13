@@ -347,12 +347,32 @@ struct MapKitView: UIViewRepresentable {
                 // an observer". Never hand it one.
                 guard CLLocationCoordinate2DIsValid(marker.coordinate) else { continue }
                 if let existing = vehicleAnnotations[marker.id] {
-                    existing.update(coordinate: marker.coordinate)
+                    existing.update(coordinate: marker.coordinate, bearing: marker.bearing)
+                    if let view = mapView.view(for: existing) as? LocationPuckAnnotationView {
+                        view.setDirection(marker.bearing - mapView.camera.heading)
+                    }
                 } else {
                     let annotation = VehicleAnnotation(marker: marker)
                     vehicleAnnotations[marker.id] = annotation
                     mapView.addAnnotation(annotation)
                 }
+            }
+        }
+
+        // MARK: Map rotation → arrow re-aim
+
+        /// Last camera heading the arrows were aimed for, to skip no-op work.
+        private var lastHeading: CLLocationDirection = .nan
+
+        /// Fires continuously while the user rotates, so the arrows track the
+        /// gesture instead of snapping at the end. Cheap: one transform each.
+        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+            let heading = mapView.camera.heading
+            guard lastHeading.isNaN || abs(heading - lastHeading) > 0.5 else { return }
+            lastHeading = heading
+            for annotation in vehicleAnnotations.values {
+                guard let view = mapView.view(for: annotation) as? LocationPuckAnnotationView else { continue }
+                view.setDirection(annotation.bearing - heading)
             }
         }
 
@@ -377,9 +397,8 @@ struct MapKitView: UIViewRepresentable {
         }
 
         func mapView(_ mapView: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
-            // Live train: the system location puck, same as the GPS position dot
-            // in Maps. It has no orientation, so nothing has to be re-rendered
-            // when the train turns or the map rotates.
+            // Live train: the GPS position dot from Maps, with a heading arrow
+            // pointing forward along the route.
             if let vehicle = annotation as? VehicleAnnotation {
                 let id = "vehicle"
                 let view = (mapView.dequeueReusableAnnotationView(withIdentifier: id) as? LocationPuckAnnotationView)
@@ -388,6 +407,7 @@ struct MapKitView: UIViewRepresentable {
                 view.canShowCallout = false
                 view.displayPriority = .required
                 view.zPriority = MKAnnotationViewZPriority(rawValue: 1000)
+                view.setDirection(vehicle.bearing - mapView.camera.heading)
                 return view
             }
 
@@ -431,32 +451,98 @@ struct MapKitView: UIViewRepresentable {
 // MARK: - Location puck (live train)
 
 /// The GPS-position look from Maps: a blue disc with a white ring and a soft
-/// shadow. Replaces a `MKMarkerAnnotationView` balloon whose train glyph was
-/// re-rendered, rotated to the bearing, on every position tick and every map
-/// heading change. Being orientation-free, it needs no redraw at all — the
-/// annotation's coordinate change is the only thing that moves it.
+/// shadow, plus a heading arrow just outside the ring pointing the way the train
+/// is going along its route.
+///
+/// The arrow is a `CAShapeLayer` turned with a `CGAffineTransform`, not a UIImage
+/// re-rendered per angle as the old train glyph was — rotating is then free
+/// enough to follow the map's own rotation live.
 private final class LocationPuckAnnotationView: MKAnnotationView {
-    private static let diameter: CGFloat = 22
+    private static let dotDiameter: CGFloat = 22
+    /// Leaves room for the arrow all the way round, whatever the heading.
+    private static let boxSize: CGFloat = 46
+
+    private let dot = UIView()
+    /// Full-bounds container, so rotating it turns the arrow about the dot.
+    private let arrowContainer = UIView()
+    private var appliedRotation: CGFloat?
 
     override init(annotation: (any MKAnnotation)?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
-        let size = Self.diameter
-        frame = CGRect(x: 0, y: 0, width: size, height: size)
-        // Centred on the coordinate rather than pinned by its tip.
+        let box = Self.boxSize
+        frame = CGRect(x: 0, y: 0, width: box, height: box)
+        // Centred on the coordinate rather than pinned by a tip.
         centerOffset = .zero
-        backgroundColor = .systemBlue
-        layer.cornerRadius = size / 2
-        layer.borderWidth = 3
-        layer.borderColor = UIColor.white.cgColor
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.25
-        layer.shadowOffset = CGSize(width: 0, height: 1)
-        layer.shadowRadius = 3
+        backgroundColor = .clear
+
+        arrowContainer.frame = bounds
+        arrowContainer.isUserInteractionEnabled = false
+        arrowContainer.layer.addSublayer(Self.makeArrow(in: bounds, dotDiameter: Self.dotDiameter))
+        addSubview(arrowContainer)
+
+        let dotSize = Self.dotDiameter
+        dot.frame = CGRect(
+            x: (box - dotSize) / 2,
+            y: (box - dotSize) / 2,
+            width: dotSize,
+            height: dotSize
+        )
+        dot.backgroundColor = .systemBlue
+        dot.layer.cornerRadius = dotSize / 2
+        dot.layer.borderWidth = 3
+        dot.layer.borderColor = UIColor.white.cgColor
+        dot.layer.shadowColor = UIColor.black.cgColor
+        dot.layer.shadowOpacity = 0.25
+        dot.layer.shadowOffset = CGSize(width: 0, height: 1)
+        dot.layer.shadowRadius = 3
+        addSubview(dot)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    /// Points the arrow at `degrees`, clockwise from straight up. Pass the
+    /// bearing already corrected for the map's heading so it stays tied to the
+    /// world; pass nil when there is no direction to show.
+    func setDirection(_ degrees: Double?) {
+        guard let degrees else {
+            arrowContainer.isHidden = true
+            return
+        }
+        arrowContainer.isHidden = false
+        let rotation = CGFloat(degrees * .pi / 180)
+        // Below ~0.5° the arrow does not visibly move.
+        if let applied = appliedRotation, abs(applied - rotation) < 0.009 { return }
+        appliedRotation = rotation
+        arrowContainer.transform = CGAffineTransform(rotationAngle: rotation)
+    }
+
+    /// A triangle sitting above the ring, tip outwards, drawn at angle zero
+    /// (north). Rotating the container swings it round the dot.
+    private static func makeArrow(in bounds: CGRect, dotDiameter: CGFloat) -> CAShapeLayer {
+        let centerX = bounds.midX
+        let width: CGFloat = 11
+        let height: CGFloat = 9
+        // Base sits clear of the ring, tip further out — overlapping the ring
+        // makes the arrow read as part of the dot instead of a direction.
+        let baseY = (bounds.height - dotDiameter) / 2 - 2
+        let tipY = baseY - height
+
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: centerX, y: tipY))
+        path.addLine(to: CGPoint(x: centerX - width / 2, y: baseY))
+        path.addLine(to: CGPoint(x: centerX + width / 2, y: baseY))
+        path.close()
+
+        let arrow = CAShapeLayer()
+        arrow.path = path.cgPath
+        arrow.fillColor = UIColor.systemBlue.cgColor
+        arrow.strokeColor = UIColor.white.cgColor
+        arrow.lineWidth = 1.5
+        arrow.lineJoin = .round
+        return arrow
     }
 }
 
@@ -493,10 +579,14 @@ private final class StopAnnotation: NSObject, MKAnnotation {
 final class VehicleAnnotation: NSObject, MKAnnotation {
     let id: UUID
     @objc dynamic var coordinate: CLLocationCoordinate2D
+    /// Compass azimuth of travel, kept here so the heading arrow can be restored
+    /// after view reuse and re-aimed when the map itself rotates.
+    var bearing: Double
 
     init(marker: VehicleMarker) {
         self.id = marker.id
         self.coordinate = marker.coordinate
+        self.bearing = marker.bearing
     }
 
     /// Updates the position in place. The KVO change triggers MapKit's implicit
@@ -511,8 +601,9 @@ final class VehicleAnnotation: NSObject, MKAnnotation {
     /// to desynchronise an observer's bookkeeping — `MKAnnotationManager` then
     /// tried to deregister itself from an annotation it no longer considered
     /// observed and threw "not registered as an observer".
-    func update(coordinate: CLLocationCoordinate2D) {
+    func update(coordinate: CLLocationCoordinate2D, bearing: Double) {
         guard CLLocationCoordinate2DIsValid(coordinate) else { return }
+        self.bearing = bearing
         CATransaction.begin()
         CATransaction.setAnimationDuration(VehicleAnnotation.animationDuration)
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .linear))

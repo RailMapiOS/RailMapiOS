@@ -292,8 +292,14 @@ struct AppFeature {
 
                 // 1. Real GPS position from GTFS-RT — never snap, this is ground truth.
                 if let coord = status?.vehicleCoordinate {
-                    let bearing = status?.vehicleBearing
-                        ?? BearingMath.bearingAlongRoute(near: coord, route: polyline)
+                    // The polyline tangent wins over the operator's reported
+                    // bearing: the heading arrow is drawn on that line, and an
+                    // arrow a few degrees off it reads as a rendering bug even
+                    // when the reported value is the more accurate one. Falls
+                    // back to the report when there is no geometry to follow.
+                    let bearing = polyline.count >= 2
+                        ? BearingMath.bearingAlongRoute(near: coord, route: polyline)
+                        : (status?.vehicleBearing ?? 0)
                     return VehicleMarker(
                         id: journeyID,
                         coordinate: coord,
