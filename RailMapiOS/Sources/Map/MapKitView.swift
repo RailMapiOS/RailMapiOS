@@ -64,12 +64,15 @@ struct MapKitView: UIViewRepresentable {
     // MARK: - Camera
 
     private func requestCamera(on mapView: MKMapView, coordinator: Coordinator) {
-        let coords: [CLLocationCoordinate2D]
+        let candidates: [CLLocationCoordinate2D]
         if let selected = selectedRoute, !selected.stopCoordinates.isEmpty {
-            coords = selected.stopCoordinates
+            candidates = selected.stopCoordinates
         } else {
-            coords = routes.flatMap(\.stopCoordinates)
+            candidates = routes.flatMap(\.stopCoordinates)
         }
+        // Drop anything MapKit would refuse: one bad coordinate stretches the
+        // bounding box across the planet and the framing is lost.
+        let coords = candidates.filter { CLLocationCoordinate2DIsValid($0) }
         guard !coords.isEmpty else { return }
 
         // Build a tight bounding rect from the coords and let MapKit fit it
@@ -82,6 +85,11 @@ struct MapKitView: UIViewRepresentable {
             }
         guard !rect.isNull else { return }
 
+        // A single stop — or several that resolved to the same point — makes a
+        // zero-sized rect. `setVisibleMapRect` cannot fit that and lands on an
+        // arbitrary zoom, so give it a real neighbourhood to frame instead.
+        let fitted = rect.isEmpty ? Self.neighbourhood(around: rect.origin) : rect
+
         let horizontalPadding: CGFloat = selectedRoute == nil ? 24 : 32
         let topPadding: CGFloat = 48
         let edgePadding = UIEdgeInsets(
@@ -91,7 +99,19 @@ struct MapKitView: UIViewRepresentable {
             right: horizontalPadding
         )
 
-        coordinator.setCamera(rect: rect, edgePadding: edgePadding, on: mapView)
+        coordinator.setCamera(rect: fitted, edgePadding: edgePadding, on: mapView)
+    }
+
+    /// A ~2 km square centred on `point`, used when the bounding box collapses
+    /// to a single location.
+    private static func neighbourhood(around point: MKMapPoint) -> MKMapRect {
+        let side = 2_000 * MKMapPointsPerMeterAtLatitude(point.coordinate.latitude)
+        return MKMapRect(
+            x: point.x - side / 2,
+            y: point.y - side / 2,
+            width: side,
+            height: side
+        )
     }
 
     // MARK: - Coordinator
@@ -216,6 +236,11 @@ struct MapKitView: UIViewRepresentable {
                 }
             }
             for marker in markers {
+                // MapKit silently ignores an annotation with an invalid
+                // coordinate — it never registers as its KVO observer, and the
+                // matching `removeAnnotation` later throws "not registered as
+                // an observer". Never hand it one.
+                guard CLLocationCoordinate2DIsValid(marker.coordinate) else { continue }
                 if let existing = vehicleAnnotations[marker.id] {
                     existing.update(coordinate: marker.coordinate, bearing: marker.bearing)
                     if let view = mapView.view(for: existing) as? MKMarkerAnnotationView {
@@ -413,13 +438,19 @@ final class VehicleAnnotation: NSObject, MKAnnotation {
     /// implicit Core Animation on the annotation view's position; we wrap it in
     /// a CATransaction with linear timing matching the tick interval so the
     /// marker glides continuously between updates instead of snapping.
+    /// `coordinate` is `@objc dynamic`, so assigning to it already emits the
+    /// KVO will/did pair MapKit listens for. The explicit
+    /// `willChangeValue`/`didChangeValue` that used to wrap this assignment
+    /// nested a second pair inside the automatic one, which is a documented way
+    /// to desynchronise an observer's bookkeeping — `MKAnnotationManager` then
+    /// tried to deregister itself from an annotation it no longer considered
+    /// observed and threw "not registered as an observer".
     func update(coordinate: CLLocationCoordinate2D, bearing: Double) {
+        guard CLLocationCoordinate2DIsValid(coordinate) else { return }
         CATransaction.begin()
         CATransaction.setAnimationDuration(VehicleAnnotation.animationDuration)
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .linear))
-        self.willChangeValue(forKey: "coordinate")
         self.coordinate = coordinate
-        self.didChangeValue(forKey: "coordinate")
         self.bearing = bearing
         CATransaction.commit()
     }

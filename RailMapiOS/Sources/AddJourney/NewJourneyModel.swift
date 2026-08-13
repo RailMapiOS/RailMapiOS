@@ -57,8 +57,12 @@ struct NewStop {
 struct NewStopInfo {
     let id: String
     let label: String
-    let latitude: Double
-    let longitude: Double
+    /// Nil when the source payload carried no usable coordinate. Must stay
+    /// optional all the way to `StopInfos`: substituting a placeholder here
+    /// puts the stop at (0, 0) and drags the map to the Gulf of Guinea, where
+    /// `MapService` and `PositionEstimator` would otherwise simply skip it.
+    let latitude: Double?
+    let longitude: Double?
     let adress: String
     let pickUpAllowed: Bool
     let dropOffAllowed: Bool
@@ -68,8 +72,8 @@ struct NewStopInfo {
     init(
         id: String,
         label: String,
-        latitude: Double,
-        longitude: Double,
+        latitude: Double?,
+        longitude: Double?,
         adress: String,
         pickUpAllowed: Bool,
         dropOffAllowed: Bool,

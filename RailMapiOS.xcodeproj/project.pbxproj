@@ -88,6 +88,7 @@
 		5D8668738FBA74B467BE1D65 /* ClaimRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8F3B56AE6FFD5DAEA9434D /* ClaimRegistry.swift */; };
 		5EEAAC64D2B67CD91D8F1E5F /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A251A30D989D02F4B344A856 /* BottomSheetView.swift */; };
 		5F6736A4B03512CEB8B8C362 /* JourneyRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9088CEFBBCAE271DBA6F8A /* JourneyRowView.swift */; };
+		604392DEAA031D1B102B8D3B /* JourneyCoordinateParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0137DA994BF89BA9FFD85894 /* JourneyCoordinateParsingTests.swift */; };
 		60FC7662873BC4F83C992F36 /* TrainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2066B5F7886F716C406D18E /* TrainService.swift */; };
 		616DFDC781C5B4F72AED3D26 /* TrainIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC6762BE7529F0F88A22AE3 /* TrainIcon.swift */; };
 		64195B474766902AFA5FC51F /* SavedJourneyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A8655856D99996A4EAC6B2 /* SavedJourneyBadge.swift */; };
@@ -298,6 +299,7 @@
 
 /* Begin PBXFileReference section */
 		0031F231D734849B7FFD67C8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0137DA994BF89BA9FFD85894 /* JourneyCoordinateParsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyCoordinateParsingTests.swift; sourceTree = "<group>"; };
 		014011F4C3CAD2CD786779EE /* JourneyTimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyTimes.swift; sourceTree = "<group>"; };
 		03FE0E979B75964FBA0E5749 /* StationPickerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerFeature.swift; sourceTree = "<group>"; };
 		041ABC0EE9C6E7F025515C62 /* RefundFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefundFlowView.swift; sourceTree = "<group>"; };
@@ -818,6 +820,7 @@
 		AE11E292A41C995755D08DE4 /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				0137DA994BF89BA9FFD85894 /* JourneyCoordinateParsingTests.swift */,
 				CBD371C5E2BF3A5EE3E5A92D /* MapRouteMatchingTests.swift */,
 				3229527528B849B6566690D8 /* RefundEligibilityTests.swift */,
 				5B81D9677388A75E034072D8 /* TrainParserTests.swift */,
@@ -1384,6 +1387,7 @@
 				02DE3F9D6AC37B79B913A5BA /* SearchResultRow.swift in Sources */,
 				0B309A1E1D3732AB13D469F1 /* AccessibilityID.swift in Sources */,
 				68E95BD4B9CD0DA9E51868FF /* Logger.swift in Sources */,
+				604392DEAA031D1B102B8D3B /* JourneyCoordinateParsingTests.swift in Sources */,
 				3A635EC1460CDCDD942DFED2 /* MapRouteMatchingTests.swift in Sources */,
 				491A68D8831C9690DC0FB924 /* RefundEligibilityTests.swift in Sources */,
 				6532F0B938820812140607C2 /* TrainParserTests.swift in Sources */,

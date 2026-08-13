@@ -74,8 +74,11 @@ extension DateRow {
                 stopInfo: NewStopInfo(
                     id: stopTime.stopPoint.id,
                     label: stopTime.stopPoint.label,
-                    latitude: stopTime.stopPoint.coord.lat.convertToDouble() ?? 0.0,
-                    longitude: stopTime.stopPoint.coord.lon.convertToDouble() ?? 0.0,
+                    // No `?? 0.0` fallback: an unparseable coordinate must stay
+                    // nil so the stop is skipped on the map, not pinned to the
+                    // Gulf of Guinea and dragged into the camera's bounding box.
+                    latitude: stopTime.stopPoint.coord.lat.convertToDouble(),
+                    longitude: stopTime.stopPoint.coord.lon.convertToDouble(),
                     adress: "N/A",
                     pickUpAllowed: stopTime.pickupAllowed,
                     dropOffAllowed: stopTime.dropOffAllowed,
