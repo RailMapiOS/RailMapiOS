@@ -347,40 +347,13 @@ struct MapKitView: UIViewRepresentable {
                 // an observer". Never hand it one.
                 guard CLLocationCoordinate2DIsValid(marker.coordinate) else { continue }
                 if let existing = vehicleAnnotations[marker.id] {
-                    existing.update(coordinate: marker.coordinate, bearing: marker.bearing)
-                    if let view = mapView.view(for: existing) as? MKMarkerAnnotationView {
-                        Self.applyGlyphRotation(to: view, bearing: marker.bearing, mapHeading: mapView.camera.heading)
-                    }
+                    existing.update(coordinate: marker.coordinate)
                 } else {
                     let annotation = VehicleAnnotation(marker: marker)
                     vehicleAnnotations[marker.id] = annotation
                     mapView.addAnnotation(annotation)
                 }
             }
-        }
-
-        /// Re-applies glyph rotation to every visible vehicle pin when the map's heading
-        /// changes — keeps the train glyph pointing in geographic direction while the
-        /// pin shape itself stays upright.
-        func refreshVehicleRotations(on mapView: MKMapView) {
-            for (_, annotation) in vehicleAnnotations {
-                if let view = mapView.view(for: annotation) as? MKMarkerAnnotationView {
-                    Self.applyGlyphRotation(to: view, bearing: annotation.bearing, mapHeading: mapView.camera.heading)
-                }
-            }
-        }
-
-        /// Rotates only the glyph inside the native pin. Bearing is a compass azimuth
-        /// (0 = N, clockwise). We subtract `mapHeading` so the glyph stays tied to the
-        /// world, not the screen.
-        static func applyGlyphRotation(to view: MKMarkerAnnotationView, bearing: Double, mapHeading: Double) {
-            let radians = CGFloat((bearing - mapHeading) * .pi / 180)
-            let glyph = trainGlyph(rotation: radians)
-            // Glyphs are cached per 5° bucket, so an unchanged heading yields
-            // the very same instance. Assigning it anyway would redraw the pin
-            // on every tick for nothing.
-            guard view.glyphImage !== glyph else { return }
-            view.glyphImage = glyph
         }
 
         // MARK: MKMapViewDelegate
@@ -404,18 +377,17 @@ struct MapKitView: UIViewRepresentable {
         }
 
         func mapView(_ mapView: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
-            // Vehicle marker: native pin (MKMarkerAnnotationView) with a rotating glyph.
-            // The pin shape stays upright; only the inner train icon turns to indicate heading.
+            // Live train: the system location puck, same as the GPS position dot
+            // in Maps. It has no orientation, so nothing has to be re-rendered
+            // when the train turns or the map rotates.
             if let vehicle = annotation as? VehicleAnnotation {
                 let id = "vehicle"
-                let view = (mapView.dequeueReusableAnnotationView(withIdentifier: id) as? MKMarkerAnnotationView)
-                    ?? MKMarkerAnnotationView(annotation: vehicle, reuseIdentifier: id)
+                let view = (mapView.dequeueReusableAnnotationView(withIdentifier: id) as? LocationPuckAnnotationView)
+                    ?? LocationPuckAnnotationView(annotation: vehicle, reuseIdentifier: id)
                 view.annotation = vehicle
                 view.canShowCallout = false
-                view.markerTintColor = .systemBlue
                 view.displayPriority = .required
                 view.zPriority = MKAnnotationViewZPriority(rawValue: 1000)
-                Self.applyGlyphRotation(to: view, bearing: vehicle.bearing, mapHeading: mapView.camera.heading)
                 return view
             }
 
@@ -453,52 +425,38 @@ struct MapKitView: UIViewRepresentable {
             return view
         }
 
-        // MARK: Map heading → marker rotation
+    }
+}
 
-        /// Last camera heading we reacted to. Used to skip no-op redraws.
-        private var lastHeading: CLLocationDirection = -1
+// MARK: - Location puck (live train)
 
-        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-            let heading = mapView.camera.heading
-            guard abs(heading - lastHeading) > 0.5 else { return }
-            lastHeading = heading
-            refreshVehicleRotations(on: mapView)
-        }
+/// The GPS-position look from Maps: a blue disc with a white ring and a soft
+/// shadow. Replaces a `MKMarkerAnnotationView` balloon whose train glyph was
+/// re-rendered, rotated to the bearing, on every position tick and every map
+/// heading change. Being orientation-free, it needs no redraw at all — the
+/// annotation's coordinate change is the only thing that moves it.
+private final class LocationPuckAnnotationView: MKAnnotationView {
+    private static let diameter: CGFloat = 22
 
-        // MARK: - Train glyph (rotates inside the native pin)
+    override init(annotation: (any MKAnnotation)?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        let size = Self.diameter
+        frame = CGRect(x: 0, y: 0, width: size, height: size)
+        // Centred on the coordinate rather than pinned by its tip.
+        centerOffset = .zero
+        backgroundColor = .systemBlue
+        layer.cornerRadius = size / 2
+        layer.borderWidth = 3
+        layer.borderColor = UIColor.white.cgColor
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.25
+        layer.shadowOffset = CGSize(width: 0, height: 1)
+        layer.shadowRadius = 3
+    }
 
-        /// Cache of rotated glyphs keyed by 5° buckets — keeps re-rendering cheap on
-        /// each frame even with many vehicles.
-        private static var glyphCache: [Int: UIImage] = [:]
-
-        /// Returns a train glyph rotated by `rotation` radians, sized to fit
-        /// `MKMarkerAnnotationView.glyphImage`. The base symbol's "front" faces right,
-        /// so we apply an extra -π/2 to align angle-0 with North (up).
-        static func trainGlyph(rotation: CGFloat) -> UIImage {
-            let bucket = Int((rotation * 180 / .pi).rounded() / 5) * 5
-            if let cached = glyphCache[bucket] { return cached }
-
-            let size: CGFloat = 28
-            let renderer = UIGraphicsImageRenderer(size: CGSize(width: size, height: size))
-            let image = renderer.image { ctx in
-                let cg = ctx.cgContext
-                let cfg = UIImage.SymbolConfiguration(pointSize: 18, weight: .bold)
-                guard let glyph = UIImage(systemName: "train.side.front.car", withConfiguration: cfg)?
-                    .withTintColor(.white, renderingMode: .alwaysOriginal)
-                else { return }
-                cg.translateBy(x: size / 2, y: size / 2)
-                cg.rotate(by: rotation - .pi / 2)
-                let r = CGRect(
-                    x: -glyph.size.width / 2,
-                    y: -glyph.size.height / 2,
-                    width: glyph.size.width,
-                    height: glyph.size.height
-                )
-                glyph.draw(in: r)
-            }
-            glyphCache[bucket] = image
-            return image
-        }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -535,18 +493,17 @@ private final class StopAnnotation: NSObject, MKAnnotation {
 final class VehicleAnnotation: NSObject, MKAnnotation {
     let id: UUID
     @objc dynamic var coordinate: CLLocationCoordinate2D
-    var bearing: Double
 
     init(marker: VehicleMarker) {
         self.id = marker.id
         self.coordinate = marker.coordinate
-        self.bearing = marker.bearing
     }
 
-    /// Updates position + heading in place. The KVO change triggers MapKit's
-    /// implicit Core Animation on the annotation view's position; we wrap it in
-    /// a CATransaction with linear timing matching the tick interval so the
+    /// Updates the position in place. The KVO change triggers MapKit's implicit
+    /// Core Animation on the annotation view's position; we wrap it in a
+    /// CATransaction with linear timing matching the tick interval so the
     /// marker glides continuously between updates instead of snapping.
+    ///
     /// `coordinate` is `@objc dynamic`, so assigning to it already emits the
     /// KVO will/did pair MapKit listens for. The explicit
     /// `willChangeValue`/`didChangeValue` that used to wrap this assignment
@@ -554,13 +511,12 @@ final class VehicleAnnotation: NSObject, MKAnnotation {
     /// to desynchronise an observer's bookkeeping — `MKAnnotationManager` then
     /// tried to deregister itself from an annotation it no longer considered
     /// observed and threw "not registered as an observer".
-    func update(coordinate: CLLocationCoordinate2D, bearing: Double) {
+    func update(coordinate: CLLocationCoordinate2D) {
         guard CLLocationCoordinate2DIsValid(coordinate) else { return }
         CATransaction.begin()
         CATransaction.setAnimationDuration(VehicleAnnotation.animationDuration)
         CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .linear))
         self.coordinate = coordinate
-        self.bearing = bearing
         CATransaction.commit()
     }
 
