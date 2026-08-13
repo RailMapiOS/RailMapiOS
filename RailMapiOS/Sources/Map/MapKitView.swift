@@ -59,6 +59,20 @@ struct MapKitView: UIViewRepresentable {
         }
     }
 
+    /// Hands the map back empty before SwiftUI lets it go.
+    ///
+    /// `MKAnnotationManager.dealloc` walks its quad-trie and calls
+    /// `removeObserver:forKeyPath:` on every annotation it still holds. A
+    /// crash report from 1.0 (1) died exactly there, at window teardown, on an
+    /// annotation MapKit no longer considered itself an observer of. Emptying
+    /// the map first means that walk has nothing of ours left to visit, so the
+    /// teardown cannot raise whatever state it disagrees with us about.
+    static func dismantleUIView(_ mapView: MKMapView, coordinator: Coordinator) {
+        (mapView as? LayoutReportingMapView)?.onLayout = nil
+        mapView.delegate = nil
+        coordinator.detach(from: mapView)
+    }
+
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     // MARK: - Camera
@@ -199,6 +213,23 @@ struct MapKitView: UIViewRepresentable {
         /// same picture. Being screen-space, it self-adjusts with zoom: rare
         /// rebuilds with the whole route framed, finer ones when zoomed in.
         private static let cutRebuildThreshold: CGFloat = 1.5
+
+        /// Empties the map and drops every cache, so nothing of ours is left in
+        /// MapKit's annotation manager when it is destroyed.
+        func detach(from mapView: MKMapView) {
+            for annotation in vehicleAnnotations.values {
+                mapView.removeAnnotation(annotation)
+            }
+            vehicleAnnotations.removeAll()
+            mapView.removeAnnotations(mapView.annotations.filter { $0 is StopAnnotation })
+            mapView.removeOverlays(mapView.overlays)
+
+            polylineRoutes.removeAll()
+            routeOverlays.removeAll()
+            routeBuildKeys.removeAll()
+            routeCutCoordinates.removeAll()
+            stopAnnotationKey.removeAll()
+        }
 
         // MARK: Sync overlays + annotations
 
