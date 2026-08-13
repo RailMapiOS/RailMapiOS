@@ -55,10 +55,14 @@ struct AppFeature {
 
     /// Polling interval for GTFS-RT API fetches (per-journey trip updates + position + alerts).
     private static let pollInterval: Duration = .seconds(30)
-    /// Faster cadence for re-interpolating estimated positions between RT polls.
-    /// 1Hz is plenty visually and the math (linear interp + one orthogonal snap
-    /// per train) is sub-millisecond — Core Animation fills the gaps for free.
-    static let markersTickInterval: Duration = .seconds(1)
+    /// Cadence for re-interpolating estimated positions between RT polls.
+    ///
+    /// 5 Hz. The work per tick is a linear interpolation plus one orthogonal
+    /// snap per train (~0.02 ms since the snap dropped `CLLocation.distance`),
+    /// and the map only repaints the route when the travelled/remaining cut
+    /// actually moved far enough to see — see `MapKitView.Coordinator.paint`.
+    /// Core Animation fills the gaps between ticks for the marker itself.
+    static let markersTickInterval: Duration = .milliseconds(200)
 
     private enum CancelID: Hashable {
         case realtimeTimer

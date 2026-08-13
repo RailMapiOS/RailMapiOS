@@ -150,31 +150,63 @@ struct MapKitView: UIViewRepresentable {
                 && size.height - edgePadding.top - edgePadding.bottom > 0
         }
 
-        /// Per-polyline render metadata — which route it belongs to, and whether it
-        /// represents the already-travelled portion (rendered in grey).
-        struct PolylineMeta {
-            let route: TrainRoute
-            let isPast: Bool
-        }
-        private var polylineRoutes: [ObjectIdentifier: PolylineMeta] = [:]
         /// Selection state, used by the renderer.
         private var selectedRouteID: UUID?
         /// Live vehicle annotations, indexed by journey ID — updated in place.
         private var vehicleAnnotations: [UUID: VehicleAnnotation] = [:]
 
+        // MARK: Route overlays
+        //
+        // Two `MKPolyline`s per route — travelled (grey) and remaining (operator
+        // colour) — rendered by `MKPolylineRenderer`, which re-strokes as vectors
+        // at every zoom level. An `MKGradientPolylineRenderer` painting a single
+        // persistent line was tried here to avoid rebuilding on each tick: it
+        // does not re-rasterise on zoom, so the track turned into thick pixelated
+        // strokes as soon as the user zoomed in. Crispness wins.
+        //
+        // Instead the rebuild is *gated*: it only happens when the shape changes,
+        // when the selection changes, or when the cut has travelled far enough on
+        // screen to be visible. That keeps the previous per-tick teardown — which
+        // is what made the marker stutter — without touching how it is drawn.
+
+        /// Per-polyline render metadata — which route it belongs to, and whether
+        /// it represents the already-travelled portion (rendered in grey).
+        struct PolylineMeta {
+            let route: TrainRoute
+            let isPast: Bool
+        }
+        private var polylineRoutes: [ObjectIdentifier: PolylineMeta] = [:]
+        /// The overlays currently on the map for each route.
+        private var routeOverlays: [UUID: [MKPolyline]] = [:]
+        /// What each route's overlays were built for. Rebuilt when this changes.
+        private var routeBuildKeys: [UUID: RouteBuildKey] = [:]
+        /// Where the travelled/remaining cut sat when the overlays were last
+        /// built, so movement can be measured in screen points.
+        private var routeCutCoordinates: [UUID: CLLocationCoordinate2D] = [:]
+        /// Route ids + selection the stop annotations were last built for.
+        private var stopAnnotationKey: [UUID: Bool] = [:]
+
+        /// Everything except the cut position: a change here always forces a
+        /// rebuild, whereas the cut is compared in screen space.
+        struct RouteBuildKey: Equatable {
+            let geometry: Int
+            let isSelected: Bool
+            let hasSelection: Bool
+            let hasMarker: Bool
+        }
+
+        /// Below this on-screen movement of the cut, rebuilding would redraw the
+        /// same picture. Being screen-space, it self-adjusts with zoom: rare
+        /// rebuilds with the whole route framed, finer ones when zoomed in.
+        private static let cutRebuildThreshold: CGFloat = 1.5
+
         // MARK: Sync overlays + annotations
 
         func sync(routes: [TrainRoute], selected: TrainRoute?, vehicles: [VehicleMarker], on mapView: MKMapView) {
             selectedRouteID = selected?.id
+            let drawable = routes.filter { $0.routeCoordinates.count >= 2 }
 
-            // Replace polylines + stop annotations only — DO NOT touch vehicle annotations
-            // (they are managed separately by syncVehicles to keep their identity across ticks).
-            mapView.removeOverlays(mapView.overlays)
-            let stopAnnotations = mapView.annotations.filter { $0 is StopAnnotation }
-            mapView.removeAnnotations(stopAnnotations)
-            polylineRoutes.removeAll()
-
-            // Index vehicle markers by route so we can split their polylines.
+            // Index vehicle markers by route so we know where to cut each line.
             let markerByRoute: [UUID: VehicleMarker] = Dictionary(
                 vehicles.compactMap { m -> (UUID, VehicleMarker)? in
                     guard let rid = m.routeID else { return nil }
@@ -183,33 +215,108 @@ struct MapKitView: UIViewRepresentable {
                 uniquingKeysWith: { first, _ in first }
             )
 
+            syncRouteOverlays(drawable, markerByRoute: markerByRoute, on: mapView)
+            syncStopAnnotations(drawable, selected: selected, on: mapView)
+        }
+
+        private func syncRouteOverlays(
+            _ routes: [TrainRoute],
+            markerByRoute: [UUID: VehicleMarker],
+            on mapView: MKMapView
+        ) {
+            let wanted = Set(routes.map(\.id))
+            for (id, overlays) in routeOverlays where !wanted.contains(id) {
+                remove(overlays, for: id, from: mapView)
+            }
+
             for route in routes {
-                guard route.routeCoordinates.count >= 2 else { continue }
+                let snap = markerByRoute[route.id].flatMap {
+                    BearingMath.snap(point: $0.coordinate, to: route.routeCoordinates)
+                }
 
-                // If a vehicle is on this route, split the polyline at its snapped
-                // position: past = grey, remaining = colored. Otherwise render whole.
-                if let marker = markerByRoute[route.id],
-                   let snap = BearingMath.snap(point: marker.coordinate, to: route.routeCoordinates) {
+                var hasher = Hasher()
+                hasher.combine(route.routeCoordinates.count)
+                hasher.combine(route.routeCoordinates.last?.latitude ?? 0)
+                hasher.combine(route.routeCoordinates.last?.longitude ?? 0)
+                let key = RouteBuildKey(
+                    geometry: hasher.finalize(),
+                    isSelected: route.id == selectedRouteID,
+                    hasSelection: selectedRouteID != nil,
+                    hasMarker: snap != nil
+                )
+
+                if routeBuildKeys[route.id] == key, !cutMovedVisibly(snap, for: route.id, on: mapView) {
+                    continue
+                }
+
+                remove(routeOverlays[route.id] ?? [], for: route.id, from: mapView)
+                routeBuildKeys[route.id] = key
+                routeCutCoordinates[route.id] = snap?.point
+
+                var built: [MKPolyline] = []
+                if let snap {
                     let coords = route.routeCoordinates
-                    let pastCoords = Array(coords[0...snap.segmentIndex]) + [snap.point]
-                    let futureCoords = [snap.point] + Array(coords[(snap.segmentIndex + 1)...])
-
-                    if pastCoords.count >= 2 {
-                        let pastLine = MKPolyline(coordinates: pastCoords, count: pastCoords.count)
-                        polylineRoutes[ObjectIdentifier(pastLine)] = PolylineMeta(route: route, isPast: true)
-                        mapView.addOverlay(pastLine, level: .aboveRoads)
+                    let travelled = Array(coords[0...snap.segmentIndex]) + [snap.point]
+                    let remaining = [snap.point] + Array(coords[(snap.segmentIndex + 1)...])
+                    if travelled.count >= 2 {
+                        built.append(add(travelled, of: route, isPast: true, to: mapView))
                     }
-                    if futureCoords.count >= 2 {
-                        let futureLine = MKPolyline(coordinates: futureCoords, count: futureCoords.count)
-                        polylineRoutes[ObjectIdentifier(futureLine)] = PolylineMeta(route: route, isPast: false)
-                        mapView.addOverlay(futureLine, level: .aboveRoads)
+                    if remaining.count >= 2 {
+                        built.append(add(remaining, of: route, isPast: false, to: mapView))
                     }
                 } else {
-                    let polyline = MKPolyline(coordinates: route.routeCoordinates, count: route.routeCoordinates.count)
-                    polylineRoutes[ObjectIdentifier(polyline)] = PolylineMeta(route: route, isPast: false)
-                    mapView.addOverlay(polyline)
+                    built.append(add(route.routeCoordinates, of: route, isPast: false, to: mapView))
                 }
-                // Stop annotations
+                routeOverlays[route.id] = built
+            }
+        }
+
+        /// True when the cut has moved at least `cutRebuildThreshold` points on
+        /// screen since the overlays were built.
+        private func cutMovedVisibly(
+            _ snap: BearingMath.SnapResult?,
+            for routeID: UUID,
+            on mapView: MKMapView
+        ) -> Bool {
+            guard let new = snap?.point else { return false }
+            guard let old = routeCutCoordinates[routeID] else { return true }
+            let a = mapView.convert(old, toPointTo: mapView)
+            let b = mapView.convert(new, toPointTo: mapView)
+            return hypot(a.x - b.x, a.y - b.y) >= Self.cutRebuildThreshold
+        }
+
+        private func add(
+            _ coordinates: [CLLocationCoordinate2D],
+            of route: TrainRoute,
+            isPast: Bool,
+            to mapView: MKMapView
+        ) -> MKPolyline {
+            let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+            polylineRoutes[ObjectIdentifier(polyline)] = PolylineMeta(route: route, isPast: isPast)
+            mapView.addOverlay(polyline, level: .aboveRoads)
+            return polyline
+        }
+
+        private func remove(_ overlays: [MKPolyline], for routeID: UUID, from mapView: MKMapView) {
+            for overlay in overlays {
+                mapView.removeOverlay(overlay)
+                polylineRoutes[ObjectIdentifier(overlay)] = nil
+            }
+            routeOverlays[routeID] = nil
+            routeBuildKeys[routeID] = nil
+            routeCutCoordinates[routeID] = nil
+        }
+
+        /// Stop dots depend only on the routes and the selection, so they are
+        /// rebuilt when one of those changes — not on every position tick.
+        private func syncStopAnnotations(_ routes: [TrainRoute], selected: TrainRoute?, on mapView: MKMapView) {
+            let key = Dictionary(routes.map { ($0.id, $0.id == selected?.id) }, uniquingKeysWith: { first, _ in first })
+            guard key != stopAnnotationKey else { return }
+            stopAnnotationKey = key
+
+            mapView.removeAnnotations(mapView.annotations.filter { $0 is StopAnnotation })
+
+            for route in routes {
                 let isSelected = (selected?.id == route.id)
                 if let firstCoord = route.stopCoordinates.first {
                     mapView.addAnnotation(StopAnnotation(coordinate: firstCoord, route: route, kind: isSelected ? .endpointSelected : .endpoint))
@@ -217,9 +324,7 @@ struct MapKitView: UIViewRepresentable {
                 if let lastCoord = route.stopCoordinates.last, route.stopCoordinates.count > 1 {
                     mapView.addAnnotation(StopAnnotation(coordinate: lastCoord, route: route, kind: isSelected ? .endpointSelected : .endpoint))
                 }
-                // Intermediate stops
-                let intermediates = route.stopCoordinates.dropFirst().dropLast()
-                for coord in intermediates {
+                for coord in route.stopCoordinates.dropFirst().dropLast() {
                     mapView.addAnnotation(StopAnnotation(coordinate: coord, route: route, kind: .intermediate))
                 }
             }
@@ -270,7 +375,12 @@ struct MapKitView: UIViewRepresentable {
         /// world, not the screen.
         static func applyGlyphRotation(to view: MKMarkerAnnotationView, bearing: Double, mapHeading: Double) {
             let radians = CGFloat((bearing - mapHeading) * .pi / 180)
-            view.glyphImage = trainGlyph(rotation: radians)
+            let glyph = trainGlyph(rotation: radians)
+            // Glyphs are cached per 5° bucket, so an unchanged heading yields
+            // the very same instance. Assigning it anyway would redraw the pin
+            // on every tick for nothing.
+            guard view.glyphImage !== glyph else { return }
+            view.glyphImage = glyph
         }
 
         // MARK: MKMapViewDelegate
@@ -282,8 +392,7 @@ struct MapKitView: UIViewRepresentable {
             }
             let renderer = MKPolylineRenderer(polyline: polyline)
             let isSelected = (meta.route.id == selectedRouteID)
-            let hasSelection = selectedRouteID != nil
-            let dimmed = hasSelection && !isSelected
+            let dimmed = selectedRouteID != nil && !isSelected
 
             let baseColor: UIColor = meta.isPast
                 ? UIColor.systemGray3
@@ -456,6 +565,7 @@ final class VehicleAnnotation: NSObject, MKAnnotation {
     }
 
     /// Matches `AppFeature.markersTickInterval` so each animation finishes right
-    /// as the next position arrives — no gaps, no overshoot.
-    static let animationDuration: CFTimeInterval = 1.0
+    /// as the next position arrives — no gaps, no overshoot. Changing one
+    /// without the other either stalls the marker or makes it jump.
+    static let animationDuration: CFTimeInterval = 0.2
 }
